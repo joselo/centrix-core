@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<liquidacionCompra id="comprobante" version="1.1.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>CARRION JUMBO JOSE AUGUSTO</razonSocial>
+    <nombreComercial>INITMAIN</nombreComercial>
+    <ruc>1103671804001</ruc>
+    <claveAcceso>0405202603110367180400110011000000000330000000119</claveAcceso>
+    <codDoc>03</codDoc>
+    <estab>001</estab>
+    <ptoEmi>100</ptoEmi>
+    <secuencial>000000033</secuencial>
+    <dirMatriz>Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN</dirMatriz>
+  </infoTributaria>
+  <infoLiquidacionCompra>
+    <fechaEmision>04/05/2026</fechaEmision>
+    <dirEstablecimiento>Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN</dirEstablecimiento>
+    <obligadoContabilidad>NO</obligadoContabilidad>
+    <tipoIdentificacionProveedor>04</tipoIdentificacionProveedor>
+    <razonSocialProveedor>Novaux Inc.</razonSocialProveedor>
+    <identificacionProveedor>1103671804001</identificacionProveedor>
+    <direccionProveedor>East 109 St - 6J Manhattan NY</direccionProveedor>
+    <totalSinImpuestos>100.00</totalSinImpuestos>
+    <totalDescuento>0.00</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>2</codigoPorcentaje>
+        <baseImponible>100.00</baseImponible>
+        <tarifa>12.00</tarifa>
+        <valor>12.00</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <importeTotal>112.00</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>01</formaPago>
+        <total>112.00</total>
+        <plazo>0</plazo>
+        <unidadTiempo>DIAS</unidadTiempo>
+      </pago>
+    </pagos>
+  </infoLiquidacionCompra>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>SERV-001</codigoPrincipal>
+      <descripcion>DESARROLLO DE SOFTWARE</descripcion>
+      <unidadMedida>HORA</unidadMedida>
+      <cantidad>1.000000</cantidad>
+      <precioUnitario>100.000000</precioUnitario>
+      <descuento>0.00</descuento>
+      <precioTotalSinImpuesto>100.00</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>2</codigoPorcentaje>
+          <tarifa>12.00</tarifa>
+          <baseImponible>100.00</baseImponible>
+          <valor>12.00</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
+  <infoAdicional>
+    <campoAdicional nombre="Email">javier@saborpos.com</campoAdicional>
+  </infoAdicional>
+</liquidacionCompra>
