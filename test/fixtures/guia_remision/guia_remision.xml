@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<guiaRemision id="comprobante" version="1.0.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>CARRION JUMBO JOSE AUGUSTO</razonSocial>
+    <nombreComercial>INITMAIN</nombreComercial>
+    <ruc>1103671804001</ruc>
+    <claveAcceso>0405202606110367180400110011000000000330000000118</claveAcceso>
+    <codDoc>06</codDoc>
+    <estab>001</estab>
+    <ptoEmi>100</ptoEmi>
+    <secuencial>000000033</secuencial>
+    <dirMatriz>Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN</dirMatriz>
+  </infoTributaria>
+  <infoGuiaRemision>
+    <dirEstablecimiento>Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN</dirEstablecimiento>
+    <dirPartida>Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN</dirPartida>
+    <razonSocialTransportista>TRANSPORTE RAPIDO SA</razonSocialTransportista>
+    <tipoIdentificacionTransportista>04</tipoIdentificacionTransportista>
+    <rucTransportista>1792049504001</rucTransportista>
+    <obligadoContabilidad>NO</obligadoContabilidad>
+    <fechaIniTransporte>04/05/2026</fechaIniTransporte>
+    <fechaFinTransporte>05/05/2026</fechaFinTransporte>
+    <placa>PCC-1234</placa>
+  </infoGuiaRemision>
+  <destinatarios>
+    <destinatario>
+      <identificacionDestinatario>465219513</identificacionDestinatario>
+      <razonSocialDestinatario>Novaux Inc.</razonSocialDestinatario>
+      <dirDestinatario>East 109 St - 6J Manhattan NY</dirDestinatario>
+      <motivoTraslado>Venta</motivoTraslado>
+      <codDocSustento>01</codDocSustento>
+      <numDocSustento>001-100-000000433</numDocSustento>
+      <numAutDocSustento>0302202001110367180400110011000000000330000000110</numAutDocSustento>
+      <fechaEmisionDocSustento>04/05/2026</fechaEmisionDocSustento>
+      <detalles>
+        <detalle>
+          <codigoInterno>831410399</codigoInterno>
+          <codigoAdicional>2</codigoAdicional>
+          <descripcion>SERVICIOS PROFESIONALES NOVAUX INC.</descripcion>
+          <cantidad>1.000000</cantidad>
+          <detallesAdicionales>
+            <detAdicional valor="desarrollo de software" nombre="informacionAdicional"/>
+          </detallesAdicionales>
+        </detalle>
+      </detalles>
+    </destinatario>
+  </destinatarios>
+  <infoAdicional>
+    <campoAdicional nombre="Direccion">East 109 St - 6J Manhattan NY</campoAdicional>
+    <campoAdicional nombre="Email">javier@saborpos.com</campoAdicional>
+  </infoAdicional>
+</guiaRemision>
