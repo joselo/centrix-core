@@ -6,7 +6,7 @@ defmodule BillingCore.XmlCreditNoteBuilderTest do
   describe "build_credit_note/1" do
     test "build credit_note and starts the sign xml worker" do
       nota_credito_params = get_nota_credito_params()
-      clave_acceso_expected = "0302202001123456789000110010010000000010000000112"
+      clave_acceso_expected = "0302202004123456789000110010010000000010000000111"
 
       assert {:ok, [xml: xml, clave_acceso: clave_acceso]} =
                XmlCreditNoteBuilder.build_credit_note(nota_credito_params)
@@ -35,14 +35,14 @@ defmodule BillingCore.XmlCreditNoteBuilderTest do
       razon_social: "CARRION JUMBO JOSE AUGUSTO",
       nombre_comercial: "INITMAIN",
       ruc: "1103671804001",
-      cod_doc: 1,
+      cod_doc: 4,
       estab: 1,
       pto_emi: 100,
       secuencial: 33,
       dir_matriz: "Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN",
       clave: %{
         fecha_emision: "2020-02-03",
-        tipo_comprobante: 1,
+        tipo_comprobante: 4,
         ruc: "1234567890001",
         ambiente: 1,
         estab: 1,
