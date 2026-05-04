@@ -1,28 +1,31 @@
 # BillingCore
 
-Una librería de Elixir para la generación y firma digital de documentos de facturación electrónica para Ecuador.
+Una librería de Elixir para la generación y firma digital de documentos de facturación electrónica para Ecuador, conforme a los requisitos del SRI (*Servicio de Rentas Internas*).
 
-## Descripción
+## Documentación
 
-BillingCore proporciona una solución completa para generar y firmar documentos XML de facturación electrónica conforme a los requisitos del Servicio de Rentas Internas (SRI) de Ecuador.
+- **[AGENTS.md](./AGENTS.md)** — Guía completa del proyecto para agentes de IA y desarrolladores (arquitectura, dominio, módulos, convenciones).
+- **[docs/facturas.md](./docs/facturas.md)** — Referencia detallada de la implementación de Facturas.
+- **[docs/notas_de_credito.md](./docs/notas_de_credito.md)** — Referencia detallada de la implementación de Notas de Crédito.
+- **[docs/xbes.md](./docs/xbes.md)** — Implementación de la firma digital XAdES-BES.
 
-### Características actuales
+## Características actuales
 
-- Generación de facturas electrónicas
-- Firma digital de documentos XML
-- Validación de estructura de documentos
-
-### Próximamente
-
-- Soporte para notas de crédito
-- Soporte para notas de débito
-- Soporte para retenciones
-- Soporte para guías de remisión
-- Soporte para comprobantes de retención
+| Funcionalidad | Estado |
+|---|---|
+| Generación de XML — Facturas (`cod_doc = 01`) | ✅ |
+| Generación de XML — Notas de Crédito (`cod_doc = 04`) | ✅ |
+| Firma digital XAdES-BES (P12/PKCS#12) | ✅ |
+| Envío y autorización SRI (SOAP) | ✅ |
+| Parsing de XML autorizado | ✅ |
+| Generación de PDF (A4) | ✅ |
+| Generación de código de barras Code128 | ✅ |
+| Notas de Débito, Retenciones, Guías de Remisión | 🔜 Planificado |
 
 ## Instalación
 
-La librería aún no está publicada en Hex. Para usarla, agrega lo siguiente a tu lista de dependencias en `mix.exs`:
+La librería no está publicada en Hex. Agrega lo siguiente a `mix.exs`:
+
 ```elixir
 def deps do
   [
@@ -31,42 +34,62 @@ def deps do
 end
 ```
 
-Luego ejecuta:
 ```bash
 mix deps.get
 ```
 
 ## Uso básico
 
-Documentación detallada próximamente.
+```elixir
+# 1. Construir XML
+{:ok, [xml: xml, clave_acceso: key]} =
+  BillingCore.XmlBuilder.build_invoice(invoice_params)
+
+# 2. Firmar
+{:ok, signed_xml} =
+  BillingCore.Signing.sign(xml, "/path/to/cert.p12", "password")
+
+# 3. Enviar al SRI
+{:ok, %{status: "RECIBIDA"}} =
+  BillingCore.SriClient.send_document(signed_xml, 1)
+
+# 4. Verificar autorización
+{:ok, %{status: "AUTORIZADO", response: auth_xml}} =
+  BillingCore.SriClient.is_authorized(key, 1)
+```
+
+Ver [`AGENTS.md § 6`](./AGENTS.md#7-the-full-electronic-invoicing-lifecycle) para el flujo completo.
 
 ## Requisitos
 
-- Elixir 1.12 o superior
-- Certificado digital válido para firma electrónica
-
-## Estado del proyecto
-
-Este proyecto se encuentra en desarrollo activo. La API puede cambiar sin previo aviso hasta la versión 1.0.0.
-
-## Contribuciones
-
-Las contribuciones son bienvenidas. Por favor, abre un issue para discutir cambios mayores antes de enviar un pull request.
-
-## Licencia
-
-Este proyecto está licenciado bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
-
-## Contacto
-
-Para preguntas o soporte, por favor abre un issue en el repositorio de GitHub.
+- Elixir `~> 1.17`
+- OpenSSL instalado en el sistema (para lectura de certificados P12)
+- Certificado digital válido emitido por una CA autorizada en Ecuador (BCE, Security Data, etc.)
 
 ## Sandbox Testing
 
+Pruebas end-to-end contra el entorno de pruebas del SRI:
 
-``` bash
-# Ejecuta todo el proceso de facturacion en el entorno de pruebas del SRI
-mix run sandbox/test_invoice.exs
+```bash
+# Factura
+TEST_P12_FILE_PASSWORD="tu_password" mix run sandbox/test_invoice.exs
 
-# Ejecuta todo el proceso de nota de credito en el entorno de pruebas del SRI
-mix run sandbox/test_credit_note.exs
+# Nota de Crédito
+TEST_P12_FILE_PASSWORD="tu_password" mix run sandbox/test_credit_note.exs
+```
+
+Requiere `test/fixtures/file.p12` con un certificado válido.
+
+## Tests
+
+```bash
+mix test
+```
+
+## Estado del proyecto
+
+Versión `0.1.0` — en desarrollo activo. La API puede cambiar antes de la v1.0.0.
+
+## Licencia
+
+MIT — ver [LICENSE.md](./LICENSE.md).
