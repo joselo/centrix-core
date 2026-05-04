@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notaDebito id="comprobante" version="1.0.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>CARRION JUMBO JOSE AUGUSTO</razonSocial>
+    <nombreComercial>INITMAIN</nombreComercial>
+    <ruc>1103671804001</ruc>
+    <claveAcceso>0302202005110367180400110011000000000330000000110</claveAcceso>
+    <codDoc>05</codDoc>
+    <estab>001</estab>
+    <ptoEmi>100</ptoEmi>
+    <secuencial>000000033</secuencial>
+    <dirMatriz>Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN</dirMatriz>
+  </infoTributaria>
+  <infoNotaDebito>
+    <fechaEmision>03/02/2020</fechaEmision>
+    <dirEstablecimiento>Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN</dirEstablecimiento>
+    <tipoIdentificacionComprador>04</tipoIdentificacionComprador>
+    <razonSocialComprador>Novaux Inc.</razonSocialComprador>
+    <identificacionComprador>465219513</identificacionComprador>
+    <codDocModificado>01</codDocModificado>
+    <numDocModificado>001-001-112312315</numDocModificado>
+    <fechaEmisionDocSustento>03/02/2020</fechaEmisionDocSustento>
+    <totalSinImpuestos>3000.00</totalSinImpuestos>
+    <impuestos>
+      <impuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>0</codigoPorcentaje>
+        <tarifa>0.00</tarifa>
+        <baseImponible>3000.00</baseImponible>
+        <valor>0.00</valor>
+      </impuesto>
+    </impuestos>
+    <valorTotal>3000.00</valorTotal>
+    <pagos>
+      <pago>
+        <formaPago>01</formaPago>
+        <total>3000.00</total>
+        <plazo>30</plazo>
+        <unidadTiempo>dias</unidadTiempo>
+      </pago>
+    </pagos>
+  </infoNotaDebito>
+  <motivos>
+    <motivo>
+      <razon>Interés por mora</razon>
+      <valor>3000.00</valor>
+    </motivo>
+  </motivos>
+  <infoAdicional>
+    <campoAdicional nombre="Direccion">East 109 St - 6J Manhattan NY</campoAdicional>
+    <campoAdicional nombre="Email">javier@saborpos.com</campoAdicional>
+  </infoAdicional>
+</notaDebito>
