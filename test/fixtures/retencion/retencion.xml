@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<comprobanteRetencion id="comprobante" version="2.0.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>CARRION JUMBO JOSE AUGUSTO</razonSocial>
+    <nombreComercial>INITMAIN</nombreComercial>
+    <ruc>1103671804001</ruc>
+    <claveAcceso>0405202607110367180400110011000000000330000000114</claveAcceso>
+    <codDoc>07</codDoc>
+    <estab>001</estab>
+    <ptoEmi>100</ptoEmi>
+    <secuencial>000000033</secuencial>
+    <dirMatriz>Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN</dirMatriz>
+  </infoTributaria>
+  <infoCompRetencion>
+    <fechaEmision>04/05/2026</fechaEmision>
+    <dirEstablecimiento>Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN</dirEstablecimiento>
+    <obligadoContabilidad>NO</obligadoContabilidad>
+    <tipoIdentificacionSujetoRetenido>04</tipoIdentificacionSujetoRetenido>
+    <parteRel>NO</parteRel>
+    <razonSocialSujetoRetenido>Novaux Inc.</razonSocialSujetoRetenido>
+    <identificacionSujetoRetenido>465219513</identificacionSujetoRetenido>
+    <periodoFiscal>05/2026</periodoFiscal>
+  </infoCompRetencion>
+  <docsSustento>
+    <docSustento>
+      <codSustento>01</codSustento>
+      <codDocSustento>01</codDocSustento>
+      <numDocSustento>001100000000433</numDocSustento>
+      <fechaEmisionDocSustento>04/05/2026</fechaEmisionDocSustento>
+      <numAutDocSustento>0302202001110367180400110011000000000330000000110</numAutDocSustento>
+      <pagoLocExt>01</pagoLocExt>
+      <totalSinImpuestos>100.00</totalSinImpuestos>
+      <importeTotal>112.00</importeTotal>
+      <impuestosDocSustento>
+        <impuestoDocSustento>
+          <codImpuestoDocSustento>2</codImpuestoDocSustento>
+          <codigoPorcentaje>2</codigoPorcentaje>
+          <baseImponible>100.00</baseImponible>
+          <tarifa>12.00</tarifa>
+          <valorImpuesto>12.00</valorImpuesto>
+        </impuestoDocSustento>
+      </impuestosDocSustento>
+      <retenciones>
+        <retencion>
+          <codigo>1</codigo>
+          <codigoRetencion>312</codigoRetencion>
+          <baseImponible>100.00</baseImponible>
+          <porcentajeRetener>1.75</porcentajeRetener>
+          <valorRetenido>1.75</valorRetenido>
+        </retencion>
+      </retenciones>
+      <pagos>
+        <pago>
+          <formaPago>01</formaPago>
+          <total>110.25</total>
+        </pago>
+      </pagos>
+    </docSustento>
+  </docsSustento>
+  <infoAdicional>
+    <campoAdicional nombre="Direccion">East 109 St - 6J Manhattan NY</campoAdicional>
+    <campoAdicional nombre="Email">javier@saborpos.com</campoAdicional>
+  </infoAdicional>
+</comprobanteRetencion>
