@@ -1,0 +1,268 @@
+defmodule BillingCore.DocumentXmlParser do
+  @moduledoc """
+  Generic SRI Document XML Parser.
+  Supports Factura (01), Nota de Crédito (04) and others.
+  """
+
+  @headers [
+    "Código",
+    "Código Aux.",
+    "Descripción",
+    "Detalle Adic.",
+    "Precio Unitario",
+    "Cantidad",
+    "Descuento",
+    "Total"
+  ]
+
+  def parse_xml(nil), do: nil
+
+  def parse_xml(xml) do
+    xml_map = XmlToMap.naive_map(xml)
+    authorization = get_authorization(xml_map)
+
+    if authorization do
+      comprobante_xml = authorization["comprobante"]
+      document = parse(XmlToMap.naive_map(comprobante_xml))
+
+      %{
+        document: document,
+        authorization_date: authorization["fechaAutorizacion"]
+      }
+    end
+  end
+
+  def get_authorization(xml_map) do
+    xml_map["soap:Envelope"]["soap:Body"]["ns2:autorizacionComprobanteResponse"][
+      "RespuestaAutorizacionComprobante"
+    ]["autorizaciones"]["autorizacion"]
+  end
+
+  def parse(nil), do: nil
+
+  def parse(xml_struct) do
+    root_tag = find_root_tag(xml_struct)
+    content = xml_struct[root_tag]["#content"]
+    info_tributaria = content["infoTributaria"]
+    
+    # Detect document type specific block
+    info_block_key = case root_tag do
+      "factura" -> "infoFactura"
+      "notaCredito" -> "infoNotaCredito"
+      "notaDebito" -> "infoNotaDebito"
+      "comprobanteRetencion" -> "infoCompRetencion"
+      "guiaRemision" -> "infoGuiaRemision"
+      "liquidacionCompra" -> "infoLiquidacionCompra"
+      _ -> nil
+    end
+
+    info_block = content[info_block_key]
+
+    base_data = %{
+      root_tag: root_tag,
+      cod_doc: info_tributaria["codDoc"],
+      business_name: info_tributaria["razonSocial"],
+      tradename: info_tributaria["nombreComercial"],
+      business_identification: info_tributaria["ruc"],
+      access_key: info_tributaria["claveAcceso"],
+      environment: decode_environment(info_tributaria["ambiente"]),
+      emssion_type: decode_emission_type(info_tributaria["tipoEmision"]),
+      invoice_number: format_doc_number(info_tributaria),
+      business_main_address: truncate_address(info_tributaria["dirMatriz"]),
+      business_branch_address: truncate_address(info_block["dirEstablecimiento"]),
+      accounting: info_block["obligadoContabilidad"],
+      accounting_number: info_block["contribuyenteEspecial"],
+      currency: info_block["moneda"] || "DOLAR",
+      other_info: get_additional_info(content),
+      items: get_items(content, root_tag)
+    }
+
+    # Merge specific data based on document type
+    Map.merge(base_data, parse_specific_data(root_tag, info_block, content))
+  end
+
+  def find_root_tag(xml_struct) do
+    ["factura", "notaCredito", "notaDebito", "comprobanteRetencion", "guiaRemision", "liquidacionCompra"]
+    |> Enum.find(fn tag -> Map.has_key?(xml_struct, tag) end)
+  end
+
+  def get_info_block_key(root_tag) do
+    case root_tag do
+      "factura" -> "infoFactura"
+      "notaCredito" -> "infoNotaCredito"
+      "notaDebito" -> "infoNotaDebito"
+      "comprobanteRetencion" -> "infoCompRetencion"
+      "guiaRemision" -> "infoGuiaRemision"
+      "liquidacionCompra" -> "infoLiquidacionCompra"
+      _ -> nil
+    end
+  end
+
+  def parse_specific_data("factura", info_factura, _content) do
+    %{
+      client_name: info_factura["razonSocialComprador"],
+      client_identification: info_factura["identificacionComprador"],
+      client_address: info_factura["direccionComprador"],
+      sub_total_without_taxes: info_factura["totalSinImpuestos"],
+      total_discount: info_factura["totalDescuento"],
+      total: info_factura["importeTotal"],
+      taxes: get_taxes(info_factura),
+      payments: get_payments(info_factura)
+    }
+  end
+
+  def parse_specific_data("notaCredito", info_nc, _content) do
+    %{
+      client_name: info_nc["razonSocialComprador"],
+      client_identification: info_nc["identificacionComprador"],
+      client_address: info_nc["direccionComprador"],
+      sub_total_without_taxes: info_nc["totalSinImpuestos"],
+      total_discount: info_nc["totalDescuento"],
+      total: info_nc["valorModificacion"],
+      taxes: get_taxes(info_nc),
+      # NC Specifics
+      modified_doc_type: info_nc["codDocModificado"],
+      modified_doc_number: info_nc["numDocModificado"],
+      modified_doc_date: info_nc["fechaEmisionDocSustento"],
+      reason: info_nc["motivo"]
+    }
+  end
+
+  def parse_specific_data(_, _, _), do: %{}
+
+  def get_items(content, root_tag) do
+    details_node = case root_tag do
+      "guiaRemision" -> content["destinatarios"]
+      _ -> content["detalles"]
+    end
+
+    details = if is_map(details_node), do: details_node["detalle"], else: []
+    
+    items = cond do
+      is_list(details) -> details |> Enum.filter(&is_map/1) |> Enum.map(&format_item/1)
+      is_map(details) -> [format_item(details)]
+      true -> []
+    end
+
+    [@headers | items]
+  end
+
+  def format_item(item) do
+    [
+      item["codigoPrincipal"],
+      item["codigoAuxiliar"],
+      item["descripcion"],
+      get_item_extra_text(item),
+      item["precioUnitario"],
+      item["cantidad"],
+      item["descuento"],
+      item["precioTotalSinImpuesto"]
+    ]
+  end
+
+  def get_item_extra_text(item) do
+    detalles_adicionales = item["detallesAdicionales"]
+    det_adicional_node = if is_map(detalles_adicionales), do: detalles_adicionales["detAdicional"], else: nil
+
+    det_adicionales = cond do
+      is_list(det_adicional_node) -> det_adicional_node
+      is_map(det_adicional_node) -> [det_adicional_node]
+      true -> []
+    end
+
+    det_adicionales
+    |> Enum.filter(&is_map/1)
+    |> Enum.reject(fn det -> det["-nombre"] == "informacionAdicional" end)
+    |> Enum.map(fn det -> det["-valor"] end)
+    |> Enum.reject(&is_nil/1)
+    |> Enum.join("\n")
+  end
+
+  def get_additional_info(content) do
+    info_adicional = content["infoAdicional"]
+    campos = if is_map(info_adicional), do: info_adicional["campoAdicional"], else: nil
+
+    campos_list = cond do
+      is_list(campos) -> campos
+      is_map(campos) -> [campos]
+      true -> []
+    end
+
+    campos_list
+    |> Enum.map(fn %{"-nombre" => n, "#content" => v} -> %{name: n, value: to_string(v)} end)
+  end
+
+  def get_taxes(info_block) do
+    total_con_impuestos = info_block["totalConImpuestos"]
+    raw = if is_map(total_con_impuestos), do: total_con_impuestos["totalImpuesto"], else: nil
+
+    taxes = cond do
+      is_list(raw) -> raw
+      is_map(raw) -> [raw]
+      true -> []
+    end
+
+    Enum.map(taxes, fn %{"codigoPorcentaje" => code, "baseImponible" => total, "valor" => value} ->
+      %{
+        tax_value: total,
+        tax_total: value,
+        tax_code: code,
+        tax_label: get_tax_label(code)
+      }
+    end)
+  end
+
+  def get_payments(info_factura) do
+    pagos = if is_map(info_factura), do: info_factura["pagos"], else: nil
+    pago_node = if is_map(pagos), do: pagos["pago"], else: nil
+    
+    pago = cond do
+      is_list(pago_node) -> List.first(pago_node)
+      is_map(pago_node) -> pago_node
+      true -> nil
+    end
+
+    case pago do
+      nil -> %{method: "DESCONOCIDO", total: 0, due_date: ""}
+      %{"formaPago" => method, "plazo" => term, "total" => total, "unidadTiempo" => time} ->
+        %{
+          method: decode_payment_method(method),
+          total: total,
+          due_date: "#{term} #{time}"
+        }
+    end
+  end
+
+  def decode_environment("1"), do: "PRUEBAS"
+  def decode_environment("2"), do: "PRODUCCION"
+  def decode_environment(v), do: v
+
+  def decode_emission_type("1"), do: "NORMAL"
+  def decode_emission_type(v), do: v
+
+  def format_doc_number(info) do
+    "#{info["estab"]}-#{info["ptoEmi"]}-#{info["secuencial"]}"
+  end
+
+  def truncate_address(nil), do: ""
+  def truncate_address(address), do: String.slice(address, 0..110)
+
+  def get_tax_label("0"), do: "IVA 0%"
+  def get_tax_label("2"), do: "IVA 12%"
+  def get_tax_label("3"), do: "IVA 14%"
+  def get_tax_label("4"), do: "IVA 15%"
+  def get_tax_label("10"), do: "IVA 13%"
+  def get_tax_label("6"), do: "No objeto de impuesto"
+  def get_tax_label("7"), do: "Exento de IVA"
+  def get_tax_label(code), do: code
+
+  def decode_payment_method("01"), do: "SIN UTILIZACION DEL SISTEMA FINANCIERO"
+  def decode_payment_method("15"), do: "COMPENSACIÓN DE DEUDAS"
+  def decode_payment_method("16"), do: "TARJETA DE DÉBITO"
+  def decode_payment_method("17"), do: "DINERO ELECTRÓNICO"
+  def decode_payment_method("18"), do: "TARJETA PREPAGO"
+  def decode_payment_method("19"), do: "TARJETA DE CRÉDITO"
+  def decode_payment_method("20"), do: "OTROS CON UTILIZACION DEL SISTEMA FINANCIERO"
+  def decode_payment_method("21"), do: "ENDOSO DE TÍTULOS"
+  def decode_payment_method(v), do: v
+end

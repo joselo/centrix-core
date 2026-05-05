@@ -1,0 +1,79 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <ns2:autorizacionComprobanteResponse xmlns:ns2="http://ec.gob.sri.ws.autorizacion">
+      <RespuestaAutorizacionComprobante>
+        <claveAccesoConsultada>0206202104111111111100110010017965080853956024310</claveAccesoConsultada>
+        <autorizaciones>
+          <autorizacion>
+            <estado>AUTORIZADO</estado>
+            <numeroAutorizacion>0206202104111111111100110010017965080853956024310</numeroAutorizacion>
+            <fechaAutorizacion>2021-06-02T15:03:18-05:00</fechaAutorizacion>
+            <ambiente>PRUEBAS</ambiente>
+            <comprobante><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<notaCredito id="comprobante" version="1.0.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>TOMMY VERCETTI</razonSocial>
+    <nombreComercial>INITMAIN</nombreComercial>
+    <ruc>1111111111001</ruc>
+    <claveAcceso>0206202104111111111100110010017965080853956024310</claveAcceso>
+    <codDoc>04</codDoc>
+    <estab>001</estab>
+    <ptoEmi>001</ptoEmi>
+    <secuencial>000000001</secuencial>
+    <dirMatriz>Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN</dirMatriz>
+  </infoTributaria>
+  <infoNotaCredito>
+    <fechaEmision>02/06/2021</fechaEmision>
+    <dirEstablecimiento>Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN</dirEstablecimiento>
+    <tipoIdentificacionComprador>05</tipoIdentificacionComprador>
+    <razonSocialComprador>The Doors</razonSocialComprador>
+    <identificacionComprador>1111111111</identificacionComprador>
+    <obligadoContabilidad>SI</obligadoContabilidad>
+    <codDocModificado>01</codDocModificado>
+    <numDocModificado>001-001-796508085</numDocModificado>
+    <fechaEmisionDocSustento>01/06/2021</fechaEmisionDocSustento>
+    <totalSinImpuestos>10.00</totalSinImpuestos>
+    <valorModificacion>11.20</valorModificacion>
+    <moneda>DOLAR</moneda>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>2</codigoPorcentaje>
+        <baseImponible>10.00</baseImponible>
+        <valor>1.20</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <motivo>Devolución de mercadería</motivo>
+  </infoNotaCredito>
+  <detalles>
+    <detalle>
+      <codigoInternal>P001</codigoInternal>
+      <descripcion>Producto Devuelto</descripcion>
+      <cantidad>1.0</cantidad>
+      <precioUnitario>10.00</precioUnitario>
+      <descuento>0.00</descuento>
+      <precioTotalSinImpuesto>10.00</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>2</codigoPorcentaje>
+          <tarifa>12.00</tarifa>
+          <baseImponible>10.00</baseImponible>
+          <valor>1.20</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
+  <infoAdicional>
+    <campoAdicional nombre="Vendedor">Mick Jagger</campoAdicional>
+  </infoAdicional>
+</notaCredito>]]></comprobante>
+            <mensajes/>
+          </autorizacion>
+        </autorizaciones>
+      </RespuestaAutorizacionComprobante>
+    </ns2:autorizacionComprobanteResponse>
+  </soap:Body>
+</soap:Envelope>
