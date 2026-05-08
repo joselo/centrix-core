@@ -57,8 +57,9 @@ defmodule BillingCore.XmlDebitNoteBuilderTest do
 
     info_nota_debito_params = %{
       fecha_emision: "2020-02-03",
-      dir_establecimiento: "Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN",
-      tipo_identificacion_comprador: "04",
+      dir_establecimiento:
+        "Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN",
+      tipo_identificacion_comprador: 4,
       razon_social_comprador: "Novaux Inc.",
       identificacion_comprador: "465219513",
       cod_doc_modificado: "01",

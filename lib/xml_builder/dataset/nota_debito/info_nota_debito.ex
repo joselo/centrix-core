@@ -11,7 +11,7 @@ defmodule BillingCore.Dataset.NotaDebito.InfoNotaDebito do
   embedded_schema do
     field(:fecha_emision, :date)
     field(:dir_establecimiento, :string)
-    field(:tipo_identificacion_comprador, :string)
+    field(:tipo_identificacion_comprador, :integer)
     field(:razon_social_comprador, :string)
     field(:identificacion_comprador, :string)
     field(:contribuyente_especial, :string)
@@ -61,13 +61,17 @@ defmodule BillingCore.Dataset.NotaDebito.InfoNotaDebito do
     doc =
       [
         {:fechaEmision, nil, format_fecha_emision(info.fecha_emision)},
-        {:tipoIdentificacionComprador, nil, info.tipo_identificacion_comprador},
+        {:tipoIdentificacionComprador, nil,
+         info.tipo_identificacion_comprador
+         |> Integer.to_string()
+         |> String.pad_leading(2, "0")},
         {:razonSocialComprador, nil, info.razon_social_comprador},
         {:identificacionComprador, nil, info.identificacion_comprador},
         {:codDocModificado, nil, info.cod_doc_modificado},
         {:numDocModificado, nil, info.num_doc_modificado},
         {:fechaEmisionDocSustento, nil, format_fecha_emision(info.fecha_emision_doc_sustento)},
-        {:totalSinImpuestos, nil, :erlang.float_to_binary(info.total_sin_impuestos, decimals: decimals)},
+        {:totalSinImpuestos, nil,
+         :erlang.float_to_binary(info.total_sin_impuestos, decimals: decimals)},
         {:impuestos, nil, impuestos_to_doc(info.impuestos)},
         {:valorTotal, nil, :erlang.float_to_binary(info.valor_total, decimals: decimals)},
         {:pagos, nil, pagos_to_doc(info.pagos)}
