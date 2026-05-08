@@ -55,10 +55,11 @@ defmodule BillingCore.XmlRemissionGuideBuilderTest do
     }
 
     info_guia_remision_params = %{
-      dir_establecimiento: "Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN",
+      dir_establecimiento:
+        "Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN",
       dir_partida: "Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN",
       razon_social_transportista: "TRANSPORTE RAPIDO SA",
-      tipo_identificacion_transportista: "04",
+      tipo_identificacion_transportista: 4,
       ruc_transportista: "1792049504001",
       obligado_contabilidad: "NO",
       fecha_ini_transporte: "2026-05-04",

@@ -8,7 +8,7 @@ defmodule BillingCore.Dataset.GuiaRemision.InfoGuiaRemision do
     field(:dir_establecimiento, :string)
     field(:dir_partida, :string)
     field(:razon_social_transportista, :string)
-    field(:tipo_identificacion_transportista, :string)
+    field(:tipo_identificacion_transportista, :integer)
     field(:ruc_transportista, :string)
     field(:rise, :string)
     field(:obligado_contabilidad, :string)
@@ -49,7 +49,10 @@ defmodule BillingCore.Dataset.GuiaRemision.InfoGuiaRemision do
       [
         {:dirPartida, nil, info.dir_partida},
         {:razonSocialTransportista, nil, info.razon_social_transportista},
-        {:tipoIdentificacionTransportista, nil, info.tipo_identificacion_transportista},
+        {:tipoIdentificacionTransportista, nil,
+         info.tipo_identificacion_transportista
+         |> Integer.to_string()
+         |> String.pad_leading(2, "0")},
         {:rucTransportista, nil, info.ruc_transportista},
         {:fechaIniTransporte, nil, format_fecha_emision(info.fecha_ini_transporte)},
         {:fechaFinTransporte, nil, format_fecha_emision(info.fecha_fin_transporte)},
@@ -111,7 +114,9 @@ defmodule BillingCore.Dataset.GuiaRemision.InfoGuiaRemision do
             nil -> Enum.find_index(doc, fn {tag, _, _} -> tag == :rucTransportista end)
             i -> i
           end
-        i -> i
+
+        i ->
+          i
       end
 
     List.insert_at(doc, index + 1, {:contribuyenteEspecial, nil, contribuyente_especial})
