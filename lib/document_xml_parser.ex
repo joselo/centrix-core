@@ -44,17 +44,18 @@ defmodule BillingCore.DocumentXmlParser do
     root_tag = find_root_tag(xml_struct)
     content = xml_struct[root_tag]["#content"]
     info_tributaria = content["infoTributaria"]
-    
+
     # Detect document type specific block
-    info_block_key = case root_tag do
-      "factura" -> "infoFactura"
-      "notaCredito" -> "infoNotaCredito"
-      "notaDebito" -> "infoNotaDebito"
-      "comprobanteRetencion" -> "infoCompRetencion"
-      "guiaRemision" -> "infoGuiaRemision"
-      "liquidacionCompra" -> "infoLiquidacionCompra"
-      _ -> nil
-    end
+    info_block_key =
+      case root_tag do
+        "factura" -> "infoFactura"
+        "notaCredito" -> "infoNotaCredito"
+        "notaDebito" -> "infoNotaDebito"
+        "comprobanteRetencion" -> "infoCompRetencion"
+        "guiaRemision" -> "infoGuiaRemision"
+        "liquidacionCompra" -> "infoLiquidacionCompra"
+        _ -> nil
+      end
 
     info_block = content[info_block_key]
 
@@ -82,7 +83,14 @@ defmodule BillingCore.DocumentXmlParser do
   end
 
   def find_root_tag(xml_struct) do
-    ["factura", "notaCredito", "notaDebito", "comprobanteRetencion", "guiaRemision", "liquidacionCompra"]
+    [
+      "factura",
+      "notaCredito",
+      "notaDebito",
+      "comprobanteRetencion",
+      "guiaRemision",
+      "liquidacionCompra"
+    ]
     |> Enum.find(fn tag -> Map.has_key?(xml_struct, tag) end)
   end
 
@@ -131,18 +139,20 @@ defmodule BillingCore.DocumentXmlParser do
   def parse_specific_data(_, _, _), do: %{}
 
   def get_items(content, root_tag) do
-    details_node = case root_tag do
-      "guiaRemision" -> content["destinatarios"]
-      _ -> content["detalles"]
-    end
+    details_node =
+      case root_tag do
+        "guiaRemision" -> content["destinatarios"]
+        _ -> content["detalles"]
+      end
 
     details = if is_map(details_node), do: details_node["detalle"], else: []
-    
-    items = cond do
-      is_list(details) -> details |> Enum.filter(&is_map/1) |> Enum.map(&format_item/1)
-      is_map(details) -> [format_item(details)]
-      true -> []
-    end
+
+    items =
+      cond do
+        is_list(details) -> details |> Enum.filter(&is_map/1) |> Enum.map(&format_item/1)
+        is_map(details) -> [format_item(details)]
+        true -> []
+      end
 
     [@headers | items]
   end
@@ -162,13 +172,16 @@ defmodule BillingCore.DocumentXmlParser do
 
   def get_item_extra_text(item) do
     detalles_adicionales = item["detallesAdicionales"]
-    det_adicional_node = if is_map(detalles_adicionales), do: detalles_adicionales["detAdicional"], else: nil
 
-    det_adicionales = cond do
-      is_list(det_adicional_node) -> det_adicional_node
-      is_map(det_adicional_node) -> [det_adicional_node]
-      true -> []
-    end
+    det_adicional_node =
+      if is_map(detalles_adicionales), do: detalles_adicionales["detAdicional"], else: nil
+
+    det_adicionales =
+      cond do
+        is_list(det_adicional_node) -> det_adicional_node
+        is_map(det_adicional_node) -> [det_adicional_node]
+        true -> []
+      end
 
     det_adicionales
     |> Enum.filter(&is_map/1)
@@ -182,11 +195,12 @@ defmodule BillingCore.DocumentXmlParser do
     info_adicional = content["infoAdicional"]
     campos = if is_map(info_adicional), do: info_adicional["campoAdicional"], else: nil
 
-    campos_list = cond do
-      is_list(campos) -> campos
-      is_map(campos) -> [campos]
-      true -> []
-    end
+    campos_list =
+      cond do
+        is_list(campos) -> campos
+        is_map(campos) -> [campos]
+        true -> []
+      end
 
     campos_list
     |> Enum.map(fn %{"-nombre" => n, "#content" => v} -> %{name: n, value: to_string(v)} end)
@@ -196,11 +210,12 @@ defmodule BillingCore.DocumentXmlParser do
     total_con_impuestos = info_block["totalConImpuestos"]
     raw = if is_map(total_con_impuestos), do: total_con_impuestos["totalImpuesto"], else: nil
 
-    taxes = cond do
-      is_list(raw) -> raw
-      is_map(raw) -> [raw]
-      true -> []
-    end
+    taxes =
+      cond do
+        is_list(raw) -> raw
+        is_map(raw) -> [raw]
+        true -> []
+      end
 
     Enum.map(taxes, fn %{"codigoPorcentaje" => code, "baseImponible" => total, "valor" => value} ->
       %{
@@ -215,15 +230,18 @@ defmodule BillingCore.DocumentXmlParser do
   def get_payments(info_factura) do
     pagos = if is_map(info_factura), do: info_factura["pagos"], else: nil
     pago_node = if is_map(pagos), do: pagos["pago"], else: nil
-    
-    pago = cond do
-      is_list(pago_node) -> List.first(pago_node)
-      is_map(pago_node) -> pago_node
-      true -> nil
-    end
+
+    pago =
+      cond do
+        is_list(pago_node) -> List.first(pago_node)
+        is_map(pago_node) -> pago_node
+        true -> nil
+      end
 
     case pago do
-      nil -> %{method: "DESCONOCIDO", total: 0, due_date: ""}
+      nil ->
+        %{method: "DESCONOCIDO", total: 0, due_date: ""}
+
       %{"formaPago" => method, "plazo" => term, "total" => total, "unidadTiempo" => time} ->
         %{
           method: decode_payment_method(method),

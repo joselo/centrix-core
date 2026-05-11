@@ -26,7 +26,10 @@ defmodule BillingCore.Dataset.LiquidacionCompra do
     liquidacion_compra
     |> cast(params, [])
     |> cast_embed(:info_tributaria, required: true, with: &InfoTributaria.changeset/2)
-    |> cast_embed(:info_liquidacion_compra, required: true, with: &InfoLiquidacionCompra.changeset/2)
+    |> cast_embed(:info_liquidacion_compra,
+      required: true,
+      with: &InfoLiquidacionCompra.changeset/2
+    )
     |> cast_embed(:detalles, required: true, with: &Detalle.changeset/2)
     |> cast_embed(:info_adicional, with: &CampoAdicional.changeset/2)
   end

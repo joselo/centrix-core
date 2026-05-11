@@ -98,7 +98,10 @@ defmodule BillingCore.Dataset.LiquidacionCompra.Detalle do
 
   defp add_precio_unitario(doc, %{precio_unitario: precio_unitario}) do
     doc ++
-      [{:precioUnitario, nil, :erlang.float_to_binary(precio_unitario, decimals: @quantity_decimals)}]
+      [
+        {:precioUnitario, nil,
+         :erlang.float_to_binary(precio_unitario, decimals: @quantity_decimals)}
+      ]
   end
 
   defp add_descuento(doc, %{descuento: nil}), do: doc

@@ -7,8 +7,8 @@ defmodule BillingCore.Dataset.LiquidacionCompra.TotalImpuesto do
   import Ecto.Changeset
 
   embedded_schema do
-    field(:codigo, :string)
-    field(:codigo_porcentaje, :string)
+    field(:codigo, :integer)
+    field(:codigo_porcentaje, :integer)
     field(:descuento_adicional, :float)
     field(:base_imponible, :float)
     field(:tarifa, :float)
@@ -59,7 +59,11 @@ defmodule BillingCore.Dataset.LiquidacionCompra.TotalImpuesto do
   defp add_descuento_adicional(doc, %{descuento_adicional: nil}), do: doc
 
   defp add_descuento_adicional(doc, %{descuento_adicional: descuento_adicional}) do
-    doc ++ [{:descuentoAdicional, nil, :erlang.float_to_binary(descuento_adicional, decimals: @decimals)}]
+    doc ++
+      [
+        {:descuentoAdicional, nil,
+         :erlang.float_to_binary(descuento_adicional, decimals: @decimals)}
+      ]
   end
 
   defp add_base_imponible(doc, %{base_imponible: base_imponible}) do

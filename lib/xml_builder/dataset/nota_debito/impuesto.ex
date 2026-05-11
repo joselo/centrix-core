@@ -28,7 +28,8 @@ defmodule BillingCore.Dataset.NotaDebito.Impuesto do
         {:codigo, nil, impuesto.codigo},
         {:codigoPorcentaje, nil, impuesto.codigo_porcentaje},
         {:tarifa, nil, :erlang.float_to_binary(impuesto.tarifa, decimals: decimals)},
-        {:baseImponible, nil, :erlang.float_to_binary(impuesto.base_imponible, decimals: decimals)},
+        {:baseImponible, nil,
+         :erlang.float_to_binary(impuesto.base_imponible, decimals: decimals)},
         {:valor, nil, :erlang.float_to_binary(impuesto.valor, decimals: decimals)}
       ]
     }

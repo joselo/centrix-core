@@ -14,7 +14,7 @@ defmodule BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
     field(:dir_establecimiento, :string)
     field(:obligado_contabilidad, :string)
     field(:contribuyente_especial, :string)
-    field(:tipo_identificacion_proveedor, :string)
+    field(:tipo_identificacion_proveedor, :integer)
     field(:razon_social_proveedor, :string)
     field(:identificacion_proveedor, :string)
     field(:direccion_proveedor, :string)
@@ -123,7 +123,13 @@ defmodule BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
   defp add_tipo_identificacion_proveedor(doc, %{tipo_identificacion_proveedor: nil}), do: doc
 
   defp add_tipo_identificacion_proveedor(doc, %{tipo_identificacion_proveedor: tipo}) do
-    doc ++ [{:tipoIdentificacionProveedor, nil, tipo}]
+    doc ++
+      [
+        {:tipoIdentificacionProveedor, nil,
+         tipo
+         |> Integer.to_string()
+         |> String.pad_leading(2, "0")}
+      ]
   end
 
   defp add_razon_social_proveedor(doc, %{razon_social_proveedor: razon_social}) do
@@ -141,7 +147,11 @@ defmodule BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
   end
 
   defp add_total_sin_impuestos(doc, %{total_sin_impuestos: total_sin_impuestos}) do
-    doc ++ [{:totalSinImpuestos, nil, :erlang.float_to_binary(total_sin_impuestos, decimals: @decimals)}]
+    doc ++
+      [
+        {:totalSinImpuestos, nil,
+         :erlang.float_to_binary(total_sin_impuestos, decimals: @decimals)}
+      ]
   end
 
   defp add_total_descuento(doc, %{total_descuento: nil}), do: doc
@@ -158,20 +168,36 @@ defmodule BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
 
   defp add_total_comprobantes_reembolso(doc, %{total_comprobantes_reembolso: nil}), do: doc
 
-  defp add_total_comprobantes_reembolso(doc, %{total_comprobantes_reembolso: total_comprobantes_reembolso}) do
-    doc ++ [{:totalComprobantesReembolso, nil, :erlang.float_to_binary(total_comprobantes_reembolso, decimals: @decimals)}]
+  defp add_total_comprobantes_reembolso(doc, %{
+         total_comprobantes_reembolso: total_comprobantes_reembolso
+       }) do
+    doc ++
+      [
+        {:totalComprobantesReembolso, nil,
+         :erlang.float_to_binary(total_comprobantes_reembolso, decimals: @decimals)}
+      ]
   end
 
   defp add_total_base_imponible_reembolso(doc, %{total_base_imponible_reembolso: nil}), do: doc
 
-  defp add_total_base_imponible_reembolso(doc, %{total_base_imponible_reembolso: total_base_imponible_reembolso}) do
-    doc ++ [{:totalBaseImponibleReembolso, nil, :erlang.float_to_binary(total_base_imponible_reembolso, decimals: @decimals)}]
+  defp add_total_base_imponible_reembolso(doc, %{
+         total_base_imponible_reembolso: total_base_imponible_reembolso
+       }) do
+    doc ++
+      [
+        {:totalBaseImponibleReembolso, nil,
+         :erlang.float_to_binary(total_base_imponible_reembolso, decimals: @decimals)}
+      ]
   end
 
   defp add_total_impuesto_reembolso(doc, %{total_impuesto_reembolso: nil}), do: doc
 
   defp add_total_impuesto_reembolso(doc, %{total_impuesto_reembolso: total_impuesto_reembolso}) do
-    doc ++ [{:totalImpuestoReembolso, nil, :erlang.float_to_binary(total_impuesto_reembolso, decimals: @decimals)}]
+    doc ++
+      [
+        {:totalImpuestoReembolso, nil,
+         :erlang.float_to_binary(total_impuesto_reembolso, decimals: @decimals)}
+      ]
   end
 
   defp add_total_con_impuestos(doc, %{total_con_impuestos: total_con_impuestos}) do

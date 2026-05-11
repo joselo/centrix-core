@@ -15,7 +15,8 @@ defmodule BillingCore.RideEngineTest do
     assert parsed.document.cod_doc == "01"
     assert parsed.document.client_name == "The Doors"
     assert parsed.document.invoice_number == "001-001-796508085"
-    assert length(parsed.document.items) == 3 # Header + 2 items
+    # Header + 2 items
+    assert length(parsed.document.items) == 3
   end
 
   test "DocumentXmlParser parses an authorized credit note correctly" do
@@ -33,7 +34,7 @@ defmodule BillingCore.RideEngineTest do
   test "RidePdfBuilder builds an invoice PDF" do
     xml = File.read!(@invoice_fixture)
     parsed = DocumentXmlParser.parse_xml(xml)
-    
+
     pdf_binary = RidePdfBuilder.build(parsed)
     assert is_binary(pdf_binary)
     assert String.starts_with?(pdf_binary, "%PDF")
@@ -42,7 +43,7 @@ defmodule BillingCore.RideEngineTest do
   test "RidePdfBuilder builds a credit note PDF" do
     xml = File.read!(@nc_fixture)
     parsed = DocumentXmlParser.parse_xml(xml)
-    
+
     pdf_binary = RidePdfBuilder.build(parsed)
     assert is_binary(pdf_binary)
     assert String.starts_with?(pdf_binary, "%PDF")

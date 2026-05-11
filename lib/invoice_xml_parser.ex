@@ -37,6 +37,7 @@ defmodule BillingCore.InvoiceXmlParser do
 
   def get_totals(xml_invoice) do
     doc = parse(xml_invoice)
+
     %{
       sub_total_without_taxes: doc.sub_total_without_taxes,
       total_discount: doc.total_discount,

@@ -117,8 +117,14 @@ defmodule BillingCore.Dataset.GuiaRemision.Destinatario do
 
   defp add_fecha_emision_doc_sustento(doc, %{fecha_emision_doc_sustento: nil}), do: doc
 
-  defp add_fecha_emision_doc_sustento(doc, %{fecha_emision_doc_sustento: fecha_emision_doc_sustento}) do
-    List.insert_at(doc, -1, {:fechaEmisionDocSustento, nil, format_fecha_emision(fecha_emision_doc_sustento)})
+  defp add_fecha_emision_doc_sustento(doc, %{
+         fecha_emision_doc_sustento: fecha_emision_doc_sustento
+       }) do
+    List.insert_at(
+      doc,
+      -1,
+      {:fechaEmisionDocSustento, nil, format_fecha_emision(fecha_emision_doc_sustento)}
+    )
   end
 
   defp add_detalles(doc, %{detalles: detalles}) do

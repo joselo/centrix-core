@@ -59,7 +59,7 @@ defmodule BillingCore.PurchaseSettlementSandbox do
         fecha_emision: "2026-05-04",
         dir_establecimiento: "Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN",
         obligado_contabilidad: "NO",
-        tipo_identificacion_proveedor: "04",
+        tipo_identificacion_proveedor: 4,
         razon_social_proveedor: "Novaux Inc.",
         identificacion_proveedor: "1103671804001",
         direccion_proveedor: "East 109 St - 6J Manhattan NY",
@@ -67,8 +67,8 @@ defmodule BillingCore.PurchaseSettlementSandbox do
         total_descuento: 0.00,
         total_con_impuestos: [
           %{
-            codigo: "2",
-            codigo_porcentaje: "2",
+            codigo: 2,
+            codigo_porcentaje: 2,
             base_imponible: 100.00,
             tarifa: 12.00,
             valor: 12.00
@@ -96,8 +96,8 @@ defmodule BillingCore.PurchaseSettlementSandbox do
           precio_total_sin_impuesto: 100.0,
           impuestos: [
             %{
-              codigo: "2",
-              codigo_porcentaje: "2",
+              codigo: 2,
+              codigo_porcentaje: 2,
               tarifa: 12.0,
               base_imponible: 100.0,
               valor: 12.0

@@ -20,12 +20,13 @@ defmodule BillingCore.Dataset.NotaDebito.Pago do
   end
 
   def to_doc(%BillingCore.Dataset.NotaDebito.Pago{} = pago, decimals \\ @decimals) do
-    doc = [
-      {:formaPago, nil, Integer.to_string(pago.forma_pago) |> String.pad_leading(2, "0")},
-      {:total, nil, :erlang.float_to_binary(pago.total, decimals: decimals)}
-    ]
-    |> add_plazo(pago)
-    |> add_unidad_tiempo(pago)
+    doc =
+      [
+        {:formaPago, nil, Integer.to_string(pago.forma_pago) |> String.pad_leading(2, "0")},
+        {:total, nil, :erlang.float_to_binary(pago.total, decimals: decimals)}
+      ]
+      |> add_plazo(pago)
+      |> add_unidad_tiempo(pago)
 
     {
       :pago,
