@@ -37,6 +37,7 @@ defmodule BillingCore.RidePdfBuilder do
 
     # Format numeric columns in items table
     [header | item_rows] = document.items
+
     formatted_items = [
       header
       | Enum.map(item_rows, fn row ->
@@ -144,17 +145,24 @@ defmodule BillingCore.RidePdfBuilder do
       ["Dirección:", doc.client_address]
     ]
 
-    specific_table = case doc.root_tag do
-      "notaCredito" ->
-        [
-          ["Comprobante que se modifica:", "#{doc.modified_doc_type} #{doc.modified_doc_number}"],
-          ["Fecha Emisión (Comprobante a modificar):", doc.modified_doc_date],
-          ["Motivo de Modificación:", doc.reason]
-        ]
-      _ -> []
-    end
+    specific_table =
+      case doc.root_tag do
+        "notaCredito" ->
+          [
+            [
+              "Comprobante que se modifica:",
+              "#{doc.modified_doc_type} #{doc.modified_doc_number}"
+            ],
+            ["Fecha Emisión (Comprobante a modificar):", doc.modified_doc_date],
+            ["Motivo de Modificación:", doc.reason]
+          ]
 
-    {pdf, _} = pdf
+        _ ->
+          []
+      end
+
+    {pdf, _} =
+      pdf
       |> Pdf.set_font_size(8)
       |> Pdf.text_at({50, 680}, "Receptor", bold: true)
       |> Pdf.set_font_size(7)
@@ -164,15 +172,16 @@ defmodule BillingCore.RidePdfBuilder do
         cols: [[width: 115, bold: true, font_size: 7], [width: 145, font_size: 7]]
       )
 
-    {pdf, _} = if specific_table != [] do
-       Pdf.table(pdf, {50, 620}, {260, 45}, specific_table,
-        padding: 1,
-        border: 0,
-        cols: [[width: 115, bold: true, font_size: 6], [width: 145, font_size: 6]]
-      )
-    else
-      {pdf, nil}
-    end
+    {pdf, _} =
+      if specific_table != [] do
+        Pdf.table(pdf, {50, 620}, {260, 45}, specific_table,
+          padding: 1,
+          border: 0,
+          cols: [[width: 115, bold: true, font_size: 6], [width: 145, font_size: 6]]
+        )
+      else
+        {pdf, nil}
+      end
 
     # Horizontal divider
     pdf
@@ -195,86 +204,107 @@ defmodule BillingCore.RidePdfBuilder do
     pdf = Pdf.set_font_size(pdf, 7)
 
     # Info Adicional
-    {pdf, next_cursor} = case Map.get(doc, :other_info, []) do
-      [] -> {pdf, text_cursor}
-      other_info ->
-        pdf = pdf
-          |> Pdf.set_font_size(8)
-          |> Pdf.text_at({55, text_cursor}, "Información Adicional", bold: true)
-          |> Pdf.set_line_width(0.1)
-          |> Pdf.line({50, text_cursor + 12}, {390, text_cursor + 12})
-          |> Pdf.line({50, text_cursor - 80}, {390, text_cursor - 80})
-          |> Pdf.line({50, text_cursor + 12}, {50, text_cursor - 80})
-          |> Pdf.line({390, text_cursor + 12}, {390, text_cursor - 80})
-          |> Pdf.stroke()
+    {pdf, next_cursor} =
+      case Map.get(doc, :other_info, []) do
+        [] ->
+          {pdf, text_cursor}
 
-        other_info_table = Enum.map(other_info, fn field -> [field.name <> ":", field.value] end)
-        {pdf, _} = Pdf.table(pdf, {55, text_cursor - 10}, {330, 65}, other_info_table,
-          padding: 2, border: 0,
-          cols: [[width: 90, bold: true, font_size: 7], [width: 240, font_size: 7]]
-        )
-        {pdf, text_cursor - 95}
-    end
+        other_info ->
+          pdf =
+            pdf
+            |> Pdf.set_font_size(8)
+            |> Pdf.text_at({55, text_cursor}, "Información Adicional", bold: true)
+            |> Pdf.set_line_width(0.1)
+            |> Pdf.line({50, text_cursor + 12}, {390, text_cursor + 12})
+            |> Pdf.line({50, text_cursor - 80}, {390, text_cursor - 80})
+            |> Pdf.line({50, text_cursor + 12}, {50, text_cursor - 80})
+            |> Pdf.line({390, text_cursor + 12}, {390, text_cursor - 80})
+            |> Pdf.stroke()
+
+          other_info_table =
+            Enum.map(other_info, fn field -> [field.name <> ":", field.value] end)
+
+          {pdf, _} =
+            Pdf.table(pdf, {55, text_cursor - 10}, {330, 65}, other_info_table,
+              padding: 2,
+              border: 0,
+              cols: [[width: 90, bold: true, font_size: 7], [width: 240, font_size: 7]]
+            )
+
+          {pdf, text_cursor - 95}
+      end
 
     # Payments (Only for Factura)
-    pdf = if doc.root_tag == "factura" and Map.has_key?(doc, :payments) do
-      payment_table = [
-        ["Forma de Pago", ""],
-        ["Método", doc.payments.method],
-        ["Moneda", doc.currency],
-        ["Plazo", doc.payments.due_date],
-        ["Total", format_amount(doc.payments.total, symbol)]
-      ]
+    pdf =
+      if doc.root_tag == "factura" and Map.has_key?(doc, :payments) do
+        payment_table = [
+          ["Forma de Pago", ""],
+          ["Método", doc.payments.method],
+          ["Moneda", doc.currency],
+          ["Plazo", doc.payments.due_date],
+          ["Total", format_amount(doc.payments.total, symbol)]
+        ]
 
-      {pdf, _} = Pdf.table(pdf, {50, next_cursor}, {220, 70}, payment_table,
-        padding: 2, border: 0.1,
-        cols: [[width: 80, bold: true, font_size: 7], [width: 140, font_size: 7]],
-        rows: %{0 => [bold: true, background: :gainsboro, font_size: 8]}
-      )
-      pdf
-    else
-      pdf
-    end
+        {pdf, _} =
+          Pdf.table(pdf, {50, next_cursor}, {220, 70}, payment_table,
+            padding: 2,
+            border: 0.1,
+            cols: [[width: 80, bold: true, font_size: 7], [width: 140, font_size: 7]],
+            rows: %{0 => [bold: true, background: :gainsboro, font_size: 8]}
+          )
+
+        pdf
+      else
+        pdf
+      end
 
     # Totals
     row_count = Map.get(doc, :totals_row_count, 5)
     totals_height = max(row_count * 14, 60)
-    {pdf, _} = Pdf.table(pdf, {400, items_bottom}, {150, totals_height}, doc.totals_table,
-      padding: 2, border: 0.1,
-      cols: [[width: 220, bold: true], [width: 220, align: :right]],
-      rows: %{row_count => [bold: true, background: :gainsboro]}
-    )
+
+    {pdf, _} =
+      Pdf.table(pdf, {400, items_bottom}, {150, totals_height}, doc.totals_table,
+        padding: 2,
+        border: 0.1,
+        cols: [[width: 220, bold: true], [width: 220, align: :right]],
+        rows: %{row_count => [bold: true, background: :gainsboro]}
+      )
 
     Pdf.text_wrap!(pdf, {20, 100}, {width - 40, 20}, "Página #{page_number}", align: :center)
   end
 
   defp add_table({pdf, :complete}, _doc, _l, _b), do: pdf
+
   defp add_table({pdf, {:continue, _} = remaining}, doc, logo_path, bar_code_path) do
-    pdf = pdf
+    pdf =
+      pdf
       |> Pdf.add_page(:a4)
       |> add_header(doc, logo_path, bar_code_path)
       |> render_body_top(doc)
 
     {pdf, grid} = Pdf.table(pdf, {50, 560}, {500, 300}, remaining, @table_opts)
-    
+
     pdf = add_footer(pdf, doc)
     add_table({pdf, grid}, doc, logo_path, bar_code_path)
   end
 
   # Helpers
   defp prepare_totals_table(doc, symbol) do
-    subtotals = Enum.map(doc.taxes, fn tax ->
-      [String.replace(tax.tax_label, "IVA", "SUBTOTAL"), format_amount(tax.tax_value, symbol)]
-    end)
-    
-    iva_rates = Enum.map(doc.taxes, fn tax ->
-      [tax.tax_label, format_amount(tax.tax_total, symbol)]
-    end)
+    subtotals =
+      Enum.map(doc.taxes, fn tax ->
+        [String.replace(tax.tax_label, "IVA", "SUBTOTAL"), format_amount(tax.tax_value, symbol)]
+      end)
 
-    subtotals ++ [
-      ["SUBTOTAL S/IMP.", format_amount(doc.sub_total_without_taxes, symbol)],
-      ["DESCUENTO", format_amount(doc.total_discount, symbol)]
-    ] ++ iva_rates ++ [["Total", format_amount(doc.total, symbol)]]
+    iva_rates =
+      Enum.map(doc.taxes, fn tax ->
+        [tax.tax_label, format_amount(tax.tax_total, symbol)]
+      end)
+
+    subtotals ++
+      [
+        ["SUBTOTAL S/IMP.", format_amount(doc.sub_total_without_taxes, symbol)],
+        ["DESCUENTO", format_amount(doc.total_discount, symbol)]
+      ] ++ iva_rates ++ [["Total", format_amount(doc.total, symbol)]]
   end
 
   defp document_label("factura"), do: "FACTURA"
@@ -292,6 +322,7 @@ defmodule BillingCore.RidePdfBuilder do
     |> Pdf.set_font("Helvetica", 10)
     |> Pdf.set_font_size(7)
   end
+
   defp add_logo(pdf, path, _), do: Pdf.add_image(pdf, {50, 700}, path, height: 100)
 
   defp add_bar_code(pdf, nil), do: pdf
@@ -303,18 +334,31 @@ defmodule BillingCore.RidePdfBuilder do
   defp currency_symbol(c), do: c
 
   defp format_amount(nil), do: "0.00"
+
   defp format_amount(v) when is_binary(v) do
     case String.split(v, ".") do
       [i, d] -> "#{format_integer(i)}.#{d}"
       [i] -> format_integer(i)
     end
   end
+
   defp format_amount(v), do: to_string(v)
   defp format_amount(v, s), do: "#{s} #{format_amount(v)}"
 
   defp format_integer(str) do
-    {sign, digits} = if String.starts_with?(str, "-"), do: {"-", String.slice(str, 1..-1//1)}, else: {"", str}
-    formatted = digits |> String.graphemes() |> Enum.reverse() |> Enum.chunk_every(3) |> Enum.join(",") |> String.graphemes() |> Enum.reverse() |> Enum.join()
+    {sign, digits} =
+      if String.starts_with?(str, "-"), do: {"-", String.slice(str, 1..-1//1)}, else: {"", str}
+
+    formatted =
+      digits
+      |> String.graphemes()
+      |> Enum.reverse()
+      |> Enum.chunk_every(3)
+      |> Enum.join(",")
+      |> String.graphemes()
+      |> Enum.reverse()
+      |> Enum.join()
+
     "#{sign}#{formatted}"
   end
 end
