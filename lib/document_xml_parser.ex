@@ -136,28 +136,106 @@ defmodule BillingCore.DocumentXmlParser do
     }
   end
 
+  def parse_specific_data("notaDebito", info_nd, _content) do
+    %{
+      client_name: info_nd["razonSocialComprador"],
+      client_identification: info_nd["identificacionComprador"],
+      client_address: info_nd["direccionComprador"],
+      sub_total_without_taxes: info_nd["totalSinImpuestos"],
+      total_discount: "0.00",
+      total: info_nd["valorTotal"],
+      taxes: get_nd_taxes(info_nd),
+      payments: get_payments(info_nd),
+      # ND Specifics
+      modified_doc_type: info_nd["codDocModificado"],
+      modified_doc_number: info_nd["numDocModificado"],
+      modified_doc_date: info_nd["fechaEmisionDocSustento"]
+    }
+  end
+
+  def parse_specific_data("guiaRemision", info_gr, _content) do
+    %{
+      client_name: info_gr["razonSocialTransportista"],
+      client_identification: info_gr["rucTransportista"],
+      client_address: info_gr["dirPartida"],
+      sub_total_without_taxes: "0.00",
+      total_discount: "0.00",
+      total: "0.00",
+      taxes: [],
+      payments: %{method: "N/A", total: 0, due_date: ""}
+    }
+  end
+
+  def parse_specific_data("liquidacionCompra", info_lc, _content) do
+    %{
+      client_name: info_lc["razonSocialProveedor"],
+      client_identification: info_lc["identificacionProveedor"],
+      client_address: info_lc["direccionProveedor"],
+      sub_total_without_taxes: info_lc["totalSinImpuestos"],
+      total_discount: info_lc["totalDescuento"],
+      total: info_lc["importeTotal"],
+      taxes: get_taxes(info_lc),
+      payments: get_payments(info_lc)
+    }
+  end
+
   def parse_specific_data(_, _, _), do: %{}
 
   def get_items(content, root_tag) do
-    details_node =
+    details =
       case root_tag do
-        "guiaRemision" -> content["destinatarios"]
-        _ -> content["detalles"]
-      end
+        "guiaRemision" ->
+          destinatarios = content["destinatarios"]
+          dests = if is_map(destinatarios), do: List.wrap(destinatarios["destinatario"]), else: []
+          Enum.flat_map(dests, fn dest ->
+            detalles = dest["detalles"]
+            if is_map(detalles), do: List.wrap(detalles["detalle"]), else: []
+          end)
 
-    details = if is_map(details_node), do: details_node["detalle"], else: []
+        "notaDebito" ->
+          node = content["motivos"]
+          if is_map(node), do: List.wrap(node["motivo"]), else: []
+
+        _ ->
+          node = content["detalles"]
+          if is_map(node), do: List.wrap(node["detalle"]), else: []
+      end
 
     items =
-      cond do
-        is_list(details) -> details |> Enum.filter(&is_map/1) |> Enum.map(&format_item/1)
-        is_map(details) -> [format_item(details)]
-        true -> []
-      end
+      details
+      |> Enum.filter(&is_map/1)
+      |> Enum.map(&format_item(&1, root_tag))
 
     [@headers | items]
   end
 
-  def format_item(item) do
+  def format_item(item, "notaDebito") do
+    [
+      "",
+      "",
+      item["razon"],
+      "",
+      item["valor"],
+      "1",
+      "0.00",
+      item["valor"]
+    ]
+  end
+
+  def format_item(item, "guiaRemision") do
+    [
+      item["codigoInterno"],
+      item["codigoAdicional"],
+      item["descripcion"],
+      get_item_extra_text(item),
+      "",
+      item["cantidad"],
+      "",
+      ""
+    ]
+  end
+
+  def format_item(item, _root_tag) do
     [
       item["codigoPrincipal"],
       item["codigoAuxiliar"],
@@ -209,6 +287,27 @@ defmodule BillingCore.DocumentXmlParser do
   def get_taxes(info_block) do
     total_con_impuestos = info_block["totalConImpuestos"]
     raw = if is_map(total_con_impuestos), do: total_con_impuestos["totalImpuesto"], else: nil
+
+    taxes =
+      cond do
+        is_list(raw) -> raw
+        is_map(raw) -> [raw]
+        true -> []
+      end
+
+    Enum.map(taxes, fn %{"codigoPorcentaje" => code, "baseImponible" => total, "valor" => value} ->
+      %{
+        tax_value: total,
+        tax_total: value,
+        tax_code: code,
+        tax_label: get_tax_label(code)
+      }
+    end)
+  end
+
+  def get_nd_taxes(info_block) do
+    impuestos = info_block["impuestos"]
+    raw = if is_map(impuestos), do: impuestos["impuesto"], else: nil
 
     taxes =
       cond do
