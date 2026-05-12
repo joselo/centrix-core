@@ -31,7 +31,7 @@ defmodule BillingCore.Dataset.LiquidacionCompra do
       with: &InfoLiquidacionCompra.changeset/2
     )
     |> cast_embed(:detalles, required: true, with: &Detalle.changeset/2)
-    |> cast_embed(:info_adicional, with: &CampoAdicional.changeset/2)
+    |> cast_embed(:info_adicional, required: false, with: &CampoAdicional.changeset/2)
   end
 
   def to_doc(%BillingCore.Dataset.LiquidacionCompra{} = liquidacion_compra) do

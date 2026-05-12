@@ -28,7 +28,7 @@ defmodule BillingCore.Dataset.CompRetencion do
     |> cast_embed(:info_tributaria, required: true, with: &InfoTributaria.changeset/2)
     |> cast_embed(:info_comp_retencion, required: true, with: &InfoCompRetencion.changeset/2)
     |> cast_embed(:docs_sustento, required: true, with: &DocSustento.changeset/2)
-    |> cast_embed(:info_adicional, with: &CampoAdicional.changeset/2)
+    |> cast_embed(:info_adicional, required: false, with: &CampoAdicional.changeset/2)
   end
 
   def to_doc(%BillingCore.Dataset.CompRetencion{} = comp_retencion) do

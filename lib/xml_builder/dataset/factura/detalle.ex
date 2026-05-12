@@ -40,7 +40,7 @@ defmodule BillingCore.Dataset.Factura.Detalle do
       :descuento,
       :precio_total_sin_impuesto
     ])
-    |> cast_embed(:detalles_adicionales, required: true, with: &DetAdicional.changeset/2)
+    |> cast_embed(:detalles_adicionales, required: false, with: &DetAdicional.changeset/2)
     |> cast_embed(:impuestos, required: true, with: &Impuesto.changeset/2)
   end
 
@@ -55,7 +55,9 @@ defmodule BillingCore.Dataset.Factura.Detalle do
         {:descuento, nil, :erlang.float_to_binary(detalle.descuento, decimals: decimals)},
         {:precioTotalSinImpuesto, nil,
          :erlang.float_to_binary(detalle.precio_total_sin_impuesto, decimals: decimals)},
-        {:detallesAdicionales, nil, detalles_adicionales_to_doc(detalle.detalles_adicionales)},
+        if(detalle.detalles_adicionales != [] and detalle.detalles_adicionales != nil,
+          do: {:detallesAdicionales, nil, detalles_adicionales_to_doc(detalle.detalles_adicionales)}
+        ),
         {:impuestos, nil, impuestos_to_doc(detalle.impuestos)}
       ]
       |> Enum.reject(&is_nil/1)
