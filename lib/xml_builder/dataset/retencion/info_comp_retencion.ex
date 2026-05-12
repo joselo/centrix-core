@@ -9,12 +9,13 @@ defmodule BillingCore.Dataset.Retencion.InfoCompRetencion do
     field(:dir_establecimiento, :string)
     field(:contribuyente_especial, :string)
     field(:obligado_contabilidad, :string)
-    field(:tipo_identificacion_sujeto_retenido, :string)
+    field(:tipo_identificacion_sujeto_retenido, :integer)
     field(:tipo_sujeto_retenido, :string)
     field(:parte_rel, :string)
     field(:razon_social_sujeto_retenido, :string)
     field(:identificacion_sujeto_retenido, :string)
-    field(:periodo_fiscal, :string) # mm/yyyy
+    # mm/yyyy
+    field(:periodo_fiscal, :string)
   end
 
   def changeset(info_comp_retencion, params \\ %{}) do
@@ -39,7 +40,9 @@ defmodule BillingCore.Dataset.Retencion.InfoCompRetencion do
       :identificacion_sujeto_retenido,
       :periodo_fiscal
     ])
-    |> validate_format(:periodo_fiscal, ~r/^(0[1-9]|1[0-2])\/\d{4}$/, message: "must be in mm/yyyy format")
+    |> validate_format(:periodo_fiscal, ~r/^(0[1-9]|1[0-2])\/\d{4}$/,
+      message: "must be in mm/yyyy format"
+    )
   end
 
   def to_doc(%BillingCore.Dataset.Retencion.InfoCompRetencion{} = info) do
@@ -92,7 +95,13 @@ defmodule BillingCore.Dataset.Retencion.InfoCompRetencion do
   end
 
   defp add_tipo_identificacion(doc, %{tipo_identificacion_sujeto_retenido: tipo}) do
-    doc ++ [{:tipoIdentificacionSujetoRetenido, nil, tipo}]
+    doc ++
+      [
+        {:tipoIdentificacionSujetoRetenido, nil,
+         tipo
+         |> Integer.to_string()
+         |> String.pad_leading(2, "0")}
+      ]
   end
 
   defp add_tipo_sujeto_retenido(doc, %{tipo_sujeto_retenido: nil}), do: doc
