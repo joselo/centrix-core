@@ -100,11 +100,13 @@ defmodule BillingCore.InvoiceXmlParserTest do
 
   test "get_payments/1 returns 'pagos#pago'", %{xml_invoice: xml_invoice} do
     assert InvoiceXmlParser.get_payments(xml_invoice) == %{
-             payments: %{
-               due_date: "5 Dias",
-               method: "TARJETA DE CRÉDITO",
-               total: "3.05"
-             }
+             payments: [
+               %{
+                 due_date: "5 Dias",
+                 method: "TARJETA DE CRÉDITO",
+                 total: "3.05"
+               }
+             ]
            }
   end
 

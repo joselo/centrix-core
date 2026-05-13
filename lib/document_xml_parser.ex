@@ -162,7 +162,7 @@ defmodule BillingCore.DocumentXmlParser do
       total_discount: "0.00",
       total: "0.00",
       taxes: [],
-      payments: %{method: "N/A", total: 0, due_date: ""}
+      payments: []
     }
   end
 
@@ -179,6 +179,36 @@ defmodule BillingCore.DocumentXmlParser do
     }
   end
 
+  def parse_specific_data("comprobanteRetencion", info_ret, content) do
+    docs_sustento = content["docsSustento"]
+    docs_list = if is_map(docs_sustento), do: List.wrap(docs_sustento["docSustento"]), else: []
+
+    payments = Enum.flat_map(docs_list, &get_payments/1)
+
+    total_retained =
+      docs_list
+      |> Enum.flat_map(fn doc ->
+        rets = doc["retenciones"]
+        if is_map(rets), do: List.wrap(rets["retencion"]), else: []
+      end)
+      |> Enum.map(fn ret ->
+        {val, _} = Float.parse(to_string(ret["valorRetenido"] || "0"))
+        val
+      end)
+      |> Enum.sum()
+
+    %{
+      client_name: info_ret["razonSocialSujetoRetenido"],
+      client_identification: info_ret["identificacionSujetoRetenido"],
+      client_address: "",
+      sub_total_without_taxes: "0.00",
+      total_discount: "0.00",
+      total: :erlang.float_to_binary(total_retained, decimals: 2),
+      taxes: [],
+      payments: payments
+    }
+  end
+
   def parse_specific_data(_, _, _), do: %{}
 
   def get_items(content, root_tag) do
@@ -187,6 +217,7 @@ defmodule BillingCore.DocumentXmlParser do
         "guiaRemision" ->
           destinatarios = content["destinatarios"]
           dests = if is_map(destinatarios), do: List.wrap(destinatarios["destinatario"]), else: []
+
           Enum.flat_map(dests, fn dest ->
             detalles = dest["detalles"]
             if is_map(detalles), do: List.wrap(detalles["detalle"]), else: []
@@ -195,6 +226,23 @@ defmodule BillingCore.DocumentXmlParser do
         "notaDebito" ->
           node = content["motivos"]
           if is_map(node), do: List.wrap(node["motivo"]), else: []
+
+        "comprobanteRetencion" ->
+          docs_sustento = content["docsSustento"]
+          docs_list = if is_map(docs_sustento), do: List.wrap(docs_sustento["docSustento"]), else: []
+
+          Enum.flat_map(docs_list, fn doc ->
+            rets = doc["retenciones"]
+            ret_list = if is_map(rets), do: List.wrap(rets["retencion"]), else: []
+
+            Enum.map(ret_list, fn r ->
+              Map.merge(r, %{
+                "numDocSustento" => doc["numDocSustento"],
+                "codDocSustento" => doc["codDocSustento"],
+                "fechaEmisionDocSustento" => doc["fechaEmisionDocSustento"]
+              })
+            end)
+          end)
 
         _ ->
           node = content["detalles"]
@@ -232,6 +280,19 @@ defmodule BillingCore.DocumentXmlParser do
       item["cantidad"],
       "",
       ""
+    ]
+  end
+
+  def format_item(item, "comprobanteRetencion") do
+    [
+      item["numDocSustento"],
+      item["codDocSustento"],
+      item["fechaEmisionDocSustento"],
+      "",
+      item["baseImponible"],
+      "RET #{item["codigo"]}",
+      "#{item["porcentajeRetener"]}%",
+      item["valorRetenido"]
     ]
   end
 
@@ -326,28 +387,22 @@ defmodule BillingCore.DocumentXmlParser do
     end)
   end
 
-  def get_payments(info_factura) do
-    pagos = if is_map(info_factura), do: info_factura["pagos"], else: nil
-    pago_node = if is_map(pagos), do: pagos["pago"], else: nil
+  def get_payments(info_block) do
+    pagos = if is_map(info_block), do: info_block["pagos"], else: nil
+    pago_nodes = if is_map(pagos), do: List.wrap(pagos["pago"]), else: []
 
-    pago =
-      cond do
-        is_list(pago_node) -> List.first(pago_node)
-        is_map(pago_node) -> pago_node
-        true -> nil
-      end
+    Enum.map(pago_nodes, fn p ->
+      method = p["formaPago"] || p["formapago"]
+      term = p["plazo"] || "0"
+      total = p["total"] || "0.00"
+      time = p["unidadTiempo"] || "Dias"
 
-    case pago do
-      nil ->
-        %{method: "DESCONOCIDO", total: 0, due_date: ""}
-
-      %{"formaPago" => method, "plazo" => term, "total" => total, "unidadTiempo" => time} ->
-        %{
-          method: decode_payment_method(method),
-          total: total,
-          due_date: "#{term} #{time}"
-        }
-    end
+      %{
+        method: decode_payment_method(method),
+        total: total,
+        due_date: "#{term} #{time}"
+      }
+    end)
   end
 
   def decode_environment("1"), do: "PRUEBAS"

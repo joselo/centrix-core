@@ -234,23 +234,29 @@ defmodule BillingCore.RidePdfBuilder do
           {pdf, text_cursor - 95}
       end
 
-    # Payments (Only for Factura)
+    # Payments
     pdf =
-      if doc.root_tag == "factura" and Map.has_key?(doc, :payments) do
-        payment_table = [
-          ["Forma de Pago", ""],
-          ["Método", doc.payments.method],
-          ["Moneda", doc.currency],
-          ["Plazo", doc.payments.due_date],
-          ["Total", format_amount(doc.payments.total, symbol)]
-        ]
+      if doc.root_tag in ["factura", "notaDebito", "liquidacionCompra", "comprobanteRetencion"] and
+           is_list(Map.get(doc, :payments)) and not Enum.empty?(doc.payments) do
+        payment_header = [["Forma de Pago", "Valor", "Plazo"]]
+
+        payment_rows =
+          Enum.map(doc.payments, fn p ->
+            [p.method, format_amount(p.total, symbol), p.due_date]
+          end)
+
+        payment_table = payment_header ++ payment_rows
 
         {pdf, _} =
-          Pdf.table(pdf, {50, next_cursor}, {220, 70}, payment_table,
+          Pdf.table(pdf, {50, next_cursor}, {280, 70}, payment_table,
             padding: 2,
             border: 0.1,
-            cols: [[width: 80, bold: true, font_size: 7], [width: 140, font_size: 7]],
-            rows: %{0 => [bold: true, background: :gainsboro, font_size: 8]}
+            cols: [
+              [width: 160, font_size: 7],
+              [width: 60, align: :right, font_size: 7],
+              [width: 60, font_size: 7]
+            ],
+            rows: %{0 => [bold: true, background: :gainsboro, font_size: 7]}
           )
 
         pdf
