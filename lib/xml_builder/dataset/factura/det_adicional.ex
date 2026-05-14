@@ -18,7 +18,7 @@ defmodule BillingCore.Dataset.Factura.DetAdicional do
   def to_doc(%BillingCore.Dataset.Factura.DetAdicional{} = detAdicional) do
     {
       :detAdicional,
-      %{nombre: detAdicional.nombre, valor: detAdicional.valor},
+      [valor: detAdicional.valor, nombre: detAdicional.nombre],
       nil
     }
   end

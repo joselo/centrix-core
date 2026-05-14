@@ -20,7 +20,7 @@ defmodule BillingCore.Dataset.NotaCredito.DetAdicionalTest do
   test "to_doc", %{det_adicional: det_adicional} do
     doc_expected = {
       :detAdicional,
-      %{nombre: det_adicional.nombre, valor: det_adicional.valor},
+      [valor: det_adicional.valor, nombre: det_adicional.nombre],
       nil
     }
 

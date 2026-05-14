@@ -25,21 +25,28 @@ defmodule BillingCore.Dataset.Factura do
     |> cast_embed(:info_tributaria, required: true, with: &InfoTributaria.changeset/2)
     |> cast_embed(:info_factura, required: true, with: &InfoFactura.changeset/2)
     |> cast_embed(:detalles, required: true, with: &Detalle.changeset/2)
-    |> cast_embed(:info_adicional, required: true, with: &CampoAdicional.changeset/2)
+    |> cast_embed(:info_adicional, with: &CampoAdicional.changeset/2)
   end
 
   def to_doc(%BillingCore.Dataset.Factura{} = factura) do
-    {
-      :factura,
-      %{id: "comprobante", version: "1.1.0"},
+    children =
       [
         InfoTributaria.to_doc(factura.info_tributaria),
         InfoFactura.to_doc(factura.info_factura),
         {:detalles, nil, detalles_to_doc(factura.detalles)},
-        {:infoAdicional, nil, info_adicional_to_doc(factura.info_adicional)}
+        if(factura.info_adicional != [] and factura.info_adicional != nil,
+          do: {:infoAdicional, nil, info_adicional_to_doc(factura.info_adicional)}
+        )
       ]
+      |> Enum.reject(&is_nil/1)
+
+    {
+      :factura,
+      %{id: "comprobante", version: "1.1.0"},
+      children
     }
   end
+
 
   def to_xml(%BillingCore.Dataset.Factura{} = factura) do
     XmlBuilder.document(to_doc(factura))

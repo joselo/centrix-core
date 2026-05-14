@@ -18,7 +18,7 @@ defmodule BillingCore.Dataset.NotaCredito.DetAdicional do
   def to_doc(%BillingCore.Dataset.NotaCredito.DetAdicional{} = detAdicional) do
     {
       :detAdicional,
-      %{nombre: detAdicional.nombre, valor: detAdicional.valor},
+      [valor: detAdicional.valor, nombre: detAdicional.nombre],
       nil
     }
   end

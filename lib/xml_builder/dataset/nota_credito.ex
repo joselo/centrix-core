@@ -25,19 +25,25 @@ defmodule BillingCore.Dataset.NotaCredito do
     |> cast_embed(:info_tributaria, required: true, with: &InfoTributaria.changeset/2)
     |> cast_embed(:info_nota_credito, required: true, with: &InfoNotaCredito.changeset/2)
     |> cast_embed(:detalles, required: true, with: &Detalle.changeset/2)
-    |> cast_embed(:info_adicional, required: true, with: &CampoAdicional.changeset/2)
+    |> cast_embed(:info_adicional, with: &CampoAdicional.changeset/2)
   end
 
   def to_doc(%BillingCore.Dataset.NotaCredito{} = nota_credito) do
-    {
-      :notaCredito,
-      %{id: "comprobante", version: "1.1.0"},
+    children =
       [
         InfoTributaria.to_doc(nota_credito.info_tributaria),
         InfoNotaCredito.to_doc(nota_credito.info_nota_credito),
         {:detalles, nil, detalles_to_doc(nota_credito.detalles)},
-        {:infoAdicional, nil, info_adicional_to_doc(nota_credito.info_adicional)}
+        if(nota_credito.info_adicional != [] and nota_credito.info_adicional != nil,
+          do: {:infoAdicional, nil, info_adicional_to_doc(nota_credito.info_adicional)}
+        )
       ]
+      |> Enum.reject(&is_nil/1)
+
+    {
+      :notaCredito,
+      %{id: "comprobante", version: "1.1.0"},
+      children
     }
   end
 
