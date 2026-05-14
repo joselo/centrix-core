@@ -8,7 +8,7 @@ defmodule BillingCore.Dataset.Factura.Pago do
 
   embedded_schema do
     field(:forma_pago, :integer)
-    field(:total, :float)
+    field(:total, :decimal)
     field(:plazo, :integer)
     field(:unidad_tiempo, :string)
   end
@@ -26,7 +26,7 @@ defmodule BillingCore.Dataset.Factura.Pago do
       nil,
       [
         {:formaPago, nil, Integer.to_string(pago.forma_pago) |> String.pad_leading(2, "0")},
-        {:total, nil, :erlang.float_to_binary(pago.total, decimals: decimals)},
+        {:total, nil, Decimal.round(pago.total, decimals) |> Decimal.to_string(:normal)},
         {:plazo, nil, pago.plazo},
         {:unidadTiempo, nil, pago.unidad_tiempo}
       ]

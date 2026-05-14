@@ -31,7 +31,8 @@ defmodule BillingCore.MixProject do
       {:poison, "~> 6.0.0"},
       {:elixir_xml_to_map, "~> 3.1.0"},
       {:pdf, "~> 0.7.1"},
-      {:barlix, "~> 0.6"}
+      {:barlix, "~> 0.6"},
+      {:decimal, "~> 2.0"}
     ]
   end
 end

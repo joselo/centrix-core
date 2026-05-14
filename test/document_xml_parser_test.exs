@@ -82,8 +82,8 @@ defmodule BillingCore.DocumentXmlParserTest do
     
     parsed = DocumentXmlParser.parse_xml(xml)
     assert length(parsed.document.payments) == 2
-    assert Enum.at(parsed.document.payments, 0).total == "5.00"
-    assert Enum.at(parsed.document.payments, 1).total == "6.20"
+    assert Enum.at(parsed.document.payments, 0).total == Decimal.new("5.00")
+    assert Enum.at(parsed.document.payments, 1).total == Decimal.new("6.20")
     assert Enum.at(parsed.document.payments, 1).method == "TARJETA DE CRÉDITO"
   end
 
@@ -118,11 +118,11 @@ defmodule BillingCore.DocumentXmlParserTest do
     assert length(doc.items) == 2 # Header + 1 item
     [_, item] = doc.items
     assert Enum.at(item, 0) == "001100000000433" # numDocSustento
-    assert Enum.at(item, 7) == "1.75" # valorRetenido
+    assert Enum.at(item, 7) == Decimal.new("1.75") # valorRetenido
 
     # Check payments
     assert length(doc.payments) == 1
-    assert Enum.at(doc.payments, 0).total == "110.25"
+    assert Enum.at(doc.payments, 0).total == Decimal.new("110.25")
     assert Enum.at(doc.payments, 0).method == "SIN UTILIZACION DEL SISTEMA FINANCIERO"
   end
 end

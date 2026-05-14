@@ -33,11 +33,11 @@ defmodule BillingCore.Dataset.Factura.DetalleTest do
         {:codigoPrincipal, nil, detalle.codigo_principal},
         {:codigoAuxiliar, nil, detalle.codigo_auxiliar},
         {:descripcion, nil, detalle.descripcion},
-        {:cantidad, nil, :erlang.float_to_binary(detalle.cantidad, decimals: 6)},
-        {:precioUnitario, nil, :erlang.float_to_binary(detalle.precio_unitario, decimals: 6)},
-        {:descuento, nil, :erlang.float_to_binary(detalle.descuento, decimals: 2)},
+        {:cantidad, nil, Decimal.round(detalle.cantidad, 6) |> Decimal.to_string(:normal)},
+        {:precioUnitario, nil, Decimal.round(detalle.precio_unitario, 6) |> Decimal.to_string(:normal)},
+        {:descuento, nil, Decimal.round(detalle.descuento, 2) |> Decimal.to_string(:normal)},
         {:precioTotalSinImpuesto, nil,
-         :erlang.float_to_binary(detalle.precio_total_sin_impuesto, decimals: 2)},
+         Decimal.round(detalle.precio_total_sin_impuesto, 2) |> Decimal.to_string(:normal)},
         {:detallesAdicionales, nil, detalles_adicionales},
         {:impuestos, nil, impuestos}
       ]

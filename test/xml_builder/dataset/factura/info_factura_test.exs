@@ -42,12 +42,12 @@ defmodule BillingCore.Dataset.Factura.InfoFacturaTest do
         {:identificacionComprador, nil, info_factura.identificacion_comprador},
         {:direccionComprador, nil, info_factura.direccion_comprador},
         {:totalSinImpuestos, nil,
-         :erlang.float_to_binary(info_factura.total_sin_impuestos, decimals: 2)},
+         Decimal.round(info_factura.total_sin_impuestos, 2) |> Decimal.to_string(:normal)},
         {:totalDescuento, nil,
-         :erlang.float_to_binary(info_factura.total_descuento, decimals: 2)},
+         Decimal.round(info_factura.total_descuento, 2) |> Decimal.to_string(:normal)},
         {:totalConImpuestos, nil, total_con_impuestos},
-        {:propina, nil, info_factura.propina},
-        {:importeTotal, nil, :erlang.float_to_binary(info_factura.importe_total, decimals: 2)},
+        {:propina, nil, Decimal.round(info_factura.propina, 2) |> Decimal.to_string(:normal)},
+        {:importeTotal, nil, Decimal.round(info_factura.importe_total, 2) |> Decimal.to_string(:normal)},
         {:moneda, nil, info_factura.moneda},
         {:pagos, nil, pagos}
       ]
@@ -86,12 +86,12 @@ defmodule BillingCore.Dataset.Factura.InfoFacturaTest do
         {:identificacionComprador, nil, info_factura.identificacion_comprador},
         {:direccionComprador, nil, info_factura.direccion_comprador},
         {:totalSinImpuestos, nil,
-         :erlang.float_to_binary(info_factura.total_sin_impuestos, decimals: 2)},
+         Decimal.round(info_factura.total_sin_impuestos, 2) |> Decimal.to_string(:normal)},
         {:totalDescuento, nil,
-         :erlang.float_to_binary(info_factura.total_descuento, decimals: 2)},
+         Decimal.round(info_factura.total_descuento, 2) |> Decimal.to_string(:normal)},
         {:totalConImpuestos, nil, total_con_impuestos},
-        {:propina, nil, info_factura.propina},
-        {:importeTotal, nil, :erlang.float_to_binary(info_factura.importe_total, decimals: 2)},
+        {:propina, nil, Decimal.round(info_factura.propina, 2) |> Decimal.to_string(:normal)},
+        {:importeTotal, nil, Decimal.round(info_factura.importe_total, 2) |> Decimal.to_string(:normal)},
         {:moneda, nil, info_factura.moneda},
         {:pagos, nil, pagos}
       ]

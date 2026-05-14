@@ -9,9 +9,9 @@ defmodule BillingCore.Dataset.Factura.Impuesto do
   embedded_schema do
     field(:codigo, :integer)
     field(:codigo_porcentaje, :integer)
-    field(:tarifa, :float)
-    field(:base_imponible, :float)
-    field(:valor, :float)
+    field(:tarifa, :decimal)
+    field(:base_imponible, :decimal)
+    field(:valor, :decimal)
   end
 
   def changeset(impuesto, params) do
@@ -27,10 +27,10 @@ defmodule BillingCore.Dataset.Factura.Impuesto do
       [
         {:codigo, nil, impuesto.codigo},
         {:codigoPorcentaje, nil, impuesto.codigo_porcentaje},
-        {:tarifa, nil, :erlang.float_to_binary(impuesto.tarifa, decimals: decimals)},
+        {:tarifa, nil, Decimal.round(impuesto.tarifa, decimals) |> Decimal.to_string(:normal)},
         {:baseImponible, nil,
-         :erlang.float_to_binary(impuesto.base_imponible, decimals: decimals)},
-        {:valor, nil, :erlang.float_to_binary(impuesto.valor, decimals: decimals)}
+         Decimal.round(impuesto.base_imponible, decimals) |> Decimal.to_string(:normal)},
+        {:valor, nil, Decimal.round(impuesto.valor, decimals) |> Decimal.to_string(:normal)}
       ]
     }
   end

@@ -26,7 +26,7 @@ defmodule BillingCore.RideEngineTest do
     assert parsed.document.root_tag == "notaCredito"
     assert parsed.document.cod_doc == "04"
     assert parsed.document.client_name == "The Doors"
-    assert parsed.document.total == "11.20"
+    assert parsed.document.total == Decimal.new("11.20")
     assert parsed.document.modified_doc_number == "001-001-796508085"
     assert parsed.document.reason == "Devolución de mercadería"
   end

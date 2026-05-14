@@ -19,8 +19,8 @@ defmodule BillingCore.Dataset.NotaDebito.InfoNotaDebito do
     field(:cod_doc_modificado, :string)
     field(:num_doc_modificado, :string)
     field(:fecha_emision_doc_sustento, :date)
-    field(:total_sin_impuestos, :float)
-    field(:valor_total, :float)
+    field(:total_sin_impuestos, :decimal)
+    field(:valor_total, :decimal)
 
     embeds_many(:impuestos, Impuesto)
     embeds_many(:pagos, Pago)
@@ -71,9 +71,9 @@ defmodule BillingCore.Dataset.NotaDebito.InfoNotaDebito do
         {:numDocModificado, nil, info.num_doc_modificado},
         {:fechaEmisionDocSustento, nil, format_fecha_emision(info.fecha_emision_doc_sustento)},
         {:totalSinImpuestos, nil,
-         :erlang.float_to_binary(info.total_sin_impuestos, decimals: decimals)},
+         Decimal.round(info.total_sin_impuestos, decimals) |> Decimal.to_string(:normal)},
         {:impuestos, nil, impuestos_to_doc(info.impuestos)},
-        {:valorTotal, nil, :erlang.float_to_binary(info.valor_total, decimals: decimals)},
+        {:valorTotal, nil, Decimal.round(info.valor_total, decimals) |> Decimal.to_string(:normal)},
         {:pagos, nil, pagos_to_doc(info.pagos)}
       ]
       |> add_dir_establecimiento(info)

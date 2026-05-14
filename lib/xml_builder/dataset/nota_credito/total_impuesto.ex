@@ -9,8 +9,8 @@ defmodule BillingCore.Dataset.NotaCredito.TotalImpuesto do
   embedded_schema do
     field(:codigo, :integer)
     field(:codigo_porcentaje, :integer)
-    field(:base_imponible, :float)
-    field(:valor, :float)
+    field(:base_imponible, :decimal)
+    field(:valor, :decimal)
   end
 
   def changeset(total_impuesto, params) do
@@ -30,8 +30,8 @@ defmodule BillingCore.Dataset.NotaCredito.TotalImpuesto do
         {:codigo, nil, total_impuesto.codigo},
         {:codigoPorcentaje, nil, total_impuesto.codigo_porcentaje},
         {:baseImponible, nil,
-         :erlang.float_to_binary(total_impuesto.base_imponible, decimals: decimals)},
-        {:valor, nil, :erlang.float_to_binary(total_impuesto.valor, decimals: decimals)}
+         Decimal.round(total_impuesto.base_imponible, decimals) |> Decimal.to_string(:normal)},
+        {:valor, nil, Decimal.round(total_impuesto.valor, decimals) |> Decimal.to_string(:normal)}
       ]
     }
   end

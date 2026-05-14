@@ -25,11 +25,11 @@ defmodule BillingCore.Dataset.Retencion.DocSustento do
     field(:aplic_conv_dob_trib, :string)
     field(:pag_ext_suj_ret_nor_leg, :string)
     field(:pago_reg_fis, :string)
-    field(:total_comprobantes_reembolso, :float)
-    field(:total_base_imponible_reembolso, :float)
-    field(:total_impuesto_reembolso, :float)
-    field(:total_sin_impuestos, :float)
-    field(:importe_total, :float)
+    field(:total_comprobantes_reembolso, :decimal)
+    field(:total_base_imponible_reembolso, :decimal)
+    field(:total_impuesto_reembolso, :decimal)
+    field(:total_sin_impuestos, :decimal)
+    field(:importe_total, :decimal)
 
     embeds_many(:impuestos_doc_sustento, ImpuestoDocSustento)
     embeds_many(:retenciones, Retencion)
@@ -173,27 +173,27 @@ defmodule BillingCore.Dataset.Retencion.DocSustento do
   defp add_total_comprobantes_reembolso(doc, %{total_comprobantes_reembolso: nil}), do: doc
 
   defp add_total_comprobantes_reembolso(doc, %{total_comprobantes_reembolso: total_comprobantes_reembolso}) do
-    doc ++ [{:totalComprobantesReembolso, nil, :erlang.float_to_binary(total_comprobantes_reembolso, decimals: @decimals)}]
+    doc ++ [{:totalComprobantesReembolso, nil, Decimal.round(total_comprobantes_reembolso, @decimals) |> Decimal.to_string(:normal)}]
   end
 
   defp add_total_base_imponible_reembolso(doc, %{total_base_imponible_reembolso: nil}), do: doc
 
   defp add_total_base_imponible_reembolso(doc, %{total_base_imponible_reembolso: total_base_imponible_reembolso}) do
-    doc ++ [{:totalBaseImponibleReembolso, nil, :erlang.float_to_binary(total_base_imponible_reembolso, decimals: @decimals)}]
+    doc ++ [{:totalBaseImponibleReembolso, nil, Decimal.round(total_base_imponible_reembolso, @decimals) |> Decimal.to_string(:normal)}]
   end
 
   defp add_total_impuesto_reembolso(doc, %{total_impuesto_reembolso: nil}), do: doc
 
   defp add_total_impuesto_reembolso(doc, %{total_impuesto_reembolso: total_impuesto_reembolso}) do
-    doc ++ [{:totalImpuestoReembolso, nil, :erlang.float_to_binary(total_impuesto_reembolso, decimals: @decimals)}]
+    doc ++ [{:totalImpuestoReembolso, nil, Decimal.round(total_impuesto_reembolso, @decimals) |> Decimal.to_string(:normal)}]
   end
 
   defp add_total_sin_impuestos(doc, %{total_sin_impuestos: total_sin_impuestos}) do
-    doc ++ [{:totalSinImpuestos, nil, :erlang.float_to_binary(total_sin_impuestos, decimals: @decimals)}]
+    doc ++ [{:totalSinImpuestos, nil, Decimal.round(total_sin_impuestos, @decimals) |> Decimal.to_string(:normal)}]
   end
 
   defp add_importe_total(doc, %{importe_total: importe_total}) do
-    doc ++ [{:importeTotal, nil, :erlang.float_to_binary(importe_total, decimals: @decimals)}]
+    doc ++ [{:importeTotal, nil, Decimal.round(importe_total, @decimals) |> Decimal.to_string(:normal)}]
   end
 
   defp add_impuestos_doc_sustento(doc, %{impuestos_doc_sustento: []}), do: doc

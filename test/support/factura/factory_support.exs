@@ -34,15 +34,15 @@ defmodule BillingCore.Dataset.Factura.Test.FactorySupport do
     %TotalImpuesto{
       codigo: 2,
       codigo_porcentaje: 0,
-      base_imponible: 3000.00,
-      valor: 0.00
+      base_imponible: Decimal.new("3000.00"),
+      valor: Decimal.new("0.00")
     }
   end
 
   def pago_factory do
     %Pago{
       forma_pago: 20,
-      total: 3000.00,
+      total: Decimal.new("3000.00"),
       plazo: 15,
       unidad_tiempo: "Dias"
     }
@@ -60,11 +60,11 @@ defmodule BillingCore.Dataset.Factura.Test.FactorySupport do
       razon_social_comprador: "Novaux Inc.",
       identificacion_comprador: 465_219_513,
       direccion_comprador: "Quito",
-      total_sin_impuestos: 3000.00,
-      total_descuento: 0.00,
+      total_sin_impuestos: Decimal.new("3000.00"),
+      total_descuento: Decimal.new("0.00"),
       total_con_impuestos: [total_impuesto_factory()],
-      propina: 0,
-      importe_total: 3000.00,
+      propina: Decimal.new("0.0"),
+      importe_total: Decimal.new("3000.00"),
       moneda: "DOLAR",
       pagos: [pago_factory()]
     }
@@ -91,9 +91,9 @@ defmodule BillingCore.Dataset.Factura.Test.FactorySupport do
     %Impuesto{
       codigo: 2,
       codigo_porcentaje: 0,
-      tarifa: 0.00,
-      base_imponible: 3000.00,
-      valor: 0.00
+      tarifa: Decimal.new("0.00"),
+      base_imponible: Decimal.new("3000.00"),
+      valor: Decimal.new("0.00")
     }
   end
 
@@ -102,10 +102,10 @@ defmodule BillingCore.Dataset.Factura.Test.FactorySupport do
       codigo_principal: 831_410_399,
       codigo_auxiliar: 2,
       descripcion: "SERVICIOS PROFESIONALES NOVAUX INC.",
-      cantidad: 1.0,
-      precio_unitario: 3000.00,
-      descuento: 0.00,
-      precio_total_sin_impuesto: 3000.00,
+      cantidad: Decimal.new("1.0"),
+      precio_unitario: Decimal.new("3000.00"),
+      descuento: Decimal.new("0.00"),
+      precio_total_sin_impuesto: Decimal.new("3000.00"),
       detalles_adicionales: [det_adicional_factory()],
       impuestos: [impuesto_factory()]
     }

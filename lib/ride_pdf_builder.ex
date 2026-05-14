@@ -341,6 +341,10 @@ defmodule BillingCore.RidePdfBuilder do
 
   defp format_amount(nil), do: "0.00"
 
+  defp format_amount(v) when is_struct(v, Decimal) do
+    v |> Decimal.to_string(:normal) |> format_amount()
+  end
+
   defp format_amount(v) when is_binary(v) do
     case String.split(v, ".") do
       [i, d] -> "#{format_integer(i)}.#{d}"

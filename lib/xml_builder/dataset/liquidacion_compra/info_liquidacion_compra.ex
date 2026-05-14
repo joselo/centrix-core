@@ -18,13 +18,13 @@ defmodule BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
     field(:razon_social_proveedor, :string)
     field(:identificacion_proveedor, :string)
     field(:direccion_proveedor, :string)
-    field(:total_sin_impuestos, :float)
-    field(:total_descuento, :float)
+    field(:total_sin_impuestos, :decimal)
+    field(:total_descuento, :decimal)
     field(:cod_doc_reembolso, :string)
-    field(:total_comprobantes_reembolso, :float)
-    field(:total_base_imponible_reembolso, :float)
-    field(:total_impuesto_reembolso, :float)
-    field(:importe_total, :float)
+    field(:total_comprobantes_reembolso, :decimal)
+    field(:total_base_imponible_reembolso, :decimal)
+    field(:total_impuesto_reembolso, :decimal)
+    field(:importe_total, :decimal)
     field(:moneda, :string, default: "DOLAR")
 
     embeds_many(:total_con_impuestos, TotalImpuesto)
@@ -150,14 +150,14 @@ defmodule BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
     doc ++
       [
         {:totalSinImpuestos, nil,
-         :erlang.float_to_binary(total_sin_impuestos, decimals: @decimals)}
+         Decimal.round(total_sin_impuestos, @decimals) |> Decimal.to_string(:normal)}
       ]
   end
 
   defp add_total_descuento(doc, %{total_descuento: nil}), do: doc
 
   defp add_total_descuento(doc, %{total_descuento: total_descuento}) do
-    doc ++ [{:totalDescuento, nil, :erlang.float_to_binary(total_descuento, decimals: @decimals)}]
+    doc ++ [{:totalDescuento, nil, Decimal.round(total_descuento, @decimals) |> Decimal.to_string(:normal)}]
   end
 
   defp add_cod_doc_reembolso(doc, %{cod_doc_reembolso: nil}), do: doc
@@ -174,7 +174,7 @@ defmodule BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
     doc ++
       [
         {:totalComprobantesReembolso, nil,
-         :erlang.float_to_binary(total_comprobantes_reembolso, decimals: @decimals)}
+         Decimal.round(total_comprobantes_reembolso, @decimals) |> Decimal.to_string(:normal)}
       ]
   end
 
@@ -186,7 +186,7 @@ defmodule BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
     doc ++
       [
         {:totalBaseImponibleReembolso, nil,
-         :erlang.float_to_binary(total_base_imponible_reembolso, decimals: @decimals)}
+         Decimal.round(total_base_imponible_reembolso, @decimals) |> Decimal.to_string(:normal)}
       ]
   end
 
@@ -196,7 +196,7 @@ defmodule BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
     doc ++
       [
         {:totalImpuestoReembolso, nil,
-         :erlang.float_to_binary(total_impuesto_reembolso, decimals: @decimals)}
+         Decimal.round(total_impuesto_reembolso, @decimals) |> Decimal.to_string(:normal)}
       ]
   end
 
@@ -206,7 +206,7 @@ defmodule BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
   end
 
   defp add_importe_total(doc, %{importe_total: importe_total}) do
-    doc ++ [{:importeTotal, nil, :erlang.float_to_binary(importe_total, decimals: @decimals)}]
+    doc ++ [{:importeTotal, nil, Decimal.round(importe_total, @decimals) |> Decimal.to_string(:normal)}]
   end
 
   defp add_moneda(doc, %{moneda: moneda}) do

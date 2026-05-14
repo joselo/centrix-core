@@ -34,8 +34,8 @@ defmodule BillingCore.Dataset.NotaCredito.Test.FactorySupport do
     %TotalImpuesto{
       codigo: 2,
       codigo_porcentaje: 0,
-      base_imponible: 0.0,
-      valor: 0.0
+      base_imponible: Decimal.new("0.0"),
+      valor: Decimal.new("0.0")
     }
   end
 
@@ -43,8 +43,8 @@ defmodule BillingCore.Dataset.NotaCredito.Test.FactorySupport do
     %TotalImpuesto{
       codigo: 2,
       codigo_porcentaje: 2,
-      base_imponible: 42.5,
-      valor: 5.1
+      base_imponible: Decimal.new("42.5"),
+      valor: Decimal.new("5.1")
     }
   end
 
@@ -58,13 +58,13 @@ defmodule BillingCore.Dataset.NotaCredito.Test.FactorySupport do
       razon_social_comprador: "CARRION MORA LUIS",
       identificacion_comprador: 1_100_023_652,
       obligado_contabilidad: "NO",
-      total_sin_impuestos: 42.5,
+      total_sin_impuestos: Decimal.new("42.5"),
       total_con_impuestos: [total_without_impuesto_factory(), total_impuesto_factory()],
       moneda: "DOLAR",
       cod_doc_modificado: "01",
       num_doc_modificado: "001-100-000246454",
       fecha_emision_doc_sustento: fecha_emision,
-      valor_modificacion: 47.6,
+      valor_modificacion: Decimal.new("47.6"),
       motivo: "motivo0"
     }
   end
@@ -89,9 +89,9 @@ defmodule BillingCore.Dataset.NotaCredito.Test.FactorySupport do
     %Impuesto{
       codigo: 2,
       codigo_porcentaje: 2,
-      tarifa: 12.0,
-      base_imponible: 42.5,
-      valor: 5.1
+      tarifa: Decimal.new("12.0"),
+      base_imponible: Decimal.new("42.5"),
+      valor: Decimal.new("5.1")
     }
   end
 
@@ -100,10 +100,10 @@ defmodule BillingCore.Dataset.NotaCredito.Test.FactorySupport do
       codigo_interno: "00005158",
       codigo_adicional: "00005158",
       descripcion: "SIKA EMPASTE EXTERIOR 20KG",
-      cantidad: 2.0,
-      precio_unitario: 21.25,
-      descuento: 0.0,
-      precio_total_sin_impuesto: 42.5,
+      cantidad: Decimal.new("2.0"),
+      precio_unitario: Decimal.new("21.25"),
+      descuento: Decimal.new("0.0"),
+      precio_total_sin_impuesto: Decimal.new("42.5"),
       detalles_adicionales: [det_adicional_factory()],
       impuestos: [impuesto_factory()]
     }
