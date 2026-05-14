@@ -41,6 +41,9 @@ defmodule BillingCore.Dataset.NotaCredito.Detalle do
       :descuento,
       :precio_total_sin_impuesto
     ])
+    |> validate_length(:codigo_interno, max: 25)
+    |> validate_length(:codigo_adicional, max: 25)
+    |> validate_length(:descripcion, max: 300)
     |> cast_embed(:detalles_adicionales, with: &DetAdicional.changeset/2)
     |> cast_embed(:impuestos, required: true, with: &Impuesto.changeset/2)
   end

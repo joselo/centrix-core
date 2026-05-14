@@ -42,6 +42,15 @@ defmodule BillingCore.Dataset.GuiaRemision.InfoGuiaRemision do
       :fecha_fin_transporte,
       :placa
     ])
+    |> validate_length(:dir_establecimiento, max: 300)
+    |> validate_length(:dir_partida, max: 300)
+    |> validate_length(:razon_social_transportista, max: 300)
+    |> validate_number(:tipo_identificacion_transportista, greater_than_or_equal_to: 1, less_than: 100)
+    |> validate_length(:ruc_transportista, max: 13)
+    |> validate_length(:rise, max: 40)
+    |> validate_inclusion(:obligado_contabilidad, ["SI", "NO"])
+    |> validate_length(:contribuyente_especial, min: 3, max: 13)
+    |> validate_length(:placa, max: 20)
   end
 
   def to_doc(%BillingCore.Dataset.GuiaRemision.InfoGuiaRemision{} = info) do

@@ -18,6 +18,8 @@ defmodule BillingCore.Dataset.NotaDebito.Impuesto do
     impuesto
     |> cast(params, [:codigo, :codigo_porcentaje, :tarifa, :base_imponible, :valor])
     |> validate_required([:codigo, :codigo_porcentaje, :tarifa, :base_imponible, :valor])
+    |> validate_number(:codigo, greater_than_or_equal_to: 0, less_than: 10)
+    |> validate_number(:codigo_porcentaje, greater_than_or_equal_to: 0, less_than: 10000)
   end
 
   def to_doc(%BillingCore.Dataset.NotaDebito.Impuesto{} = impuesto, decimals \\ @decimals) do

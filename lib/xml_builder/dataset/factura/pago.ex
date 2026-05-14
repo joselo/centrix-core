@@ -17,6 +17,8 @@ defmodule BillingCore.Dataset.Factura.Pago do
     impuesto
     |> cast(params, [:forma_pago, :total, :plazo, :unidad_tiempo])
     |> validate_required([:forma_pago, :total, :plazo, :unidad_tiempo])
+    |> validate_number(:forma_pago, greater_than_or_equal_to: 1, less_than: 100)
+    |> validate_length(:unidad_tiempo, max: 10)
   end
 
   def to_doc(key, %BillingCore.Dataset.Factura.Pago{} = pago, decimals \\ @decimals)

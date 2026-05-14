@@ -61,6 +61,17 @@ defmodule BillingCore.Dataset.NotaCredito.InfoNotaCredito do
       :moneda,
       :motivo
     ])
+    |> validate_length(:dir_establecimiento, max: 300)
+    |> validate_number(:tipo_identificacion_comprador, greater_than_or_equal_to: 1, less_than: 100)
+    |> validate_length(:razon_social_comprador, max: 300)
+    |> validate_length(:identificacion_comprador, max: 20)
+    |> validate_length(:contribuyente_especial, min: 3, max: 13)
+    |> validate_inclusion(:obligado_contabilidad, ["SI", "NO"])
+    |> validate_length(:rise, max: 40)
+    |> validate_length(:cod_doc_modificado, is: 2)
+    |> validate_length(:num_doc_modificado, max: 17)
+    |> validate_length(:motivo, max: 300)
+    |> validate_length(:moneda, max: 15)
     |> cast_embed(:total_con_impuestos, required: true, with: &TotalImpuesto.changeset/2)
   end
 

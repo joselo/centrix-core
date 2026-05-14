@@ -40,6 +40,9 @@ defmodule BillingCore.Dataset.Factura.Detalle do
       :descuento,
       :precio_total_sin_impuesto
     ])
+    |> validate_length(:codigo_principal, max: 25)
+    |> validate_length(:codigo_auxiliar, max: 25)
+    |> validate_length(:descripcion, max: 300)
     |> cast_embed(:detalles_adicionales, required: false, with: &DetAdicional.changeset/2)
     |> cast_embed(:impuestos, required: true, with: &Impuesto.changeset/2)
   end

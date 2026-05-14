@@ -53,6 +53,14 @@ defmodule BillingCore.Dataset.NotaDebito.InfoNotaDebito do
       :total_sin_impuestos,
       :valor_total
     ])
+    |> validate_length(:dir_establecimiento, max: 300)
+    |> validate_number(:tipo_identificacion_comprador, greater_than_or_equal_to: 1, less_than: 100)
+    |> validate_length(:razon_social_comprador, max: 300)
+    |> validate_length(:identificacion_comprador, max: 20)
+    |> validate_length(:contribuyente_especial, min: 3, max: 13)
+    |> validate_inclusion(:obligado_contabilidad, ["SI", "NO"])
+    |> validate_length(:cod_doc_modificado, is: 2)
+    |> validate_length(:num_doc_modificado, max: 17)
     |> cast_embed(:impuestos, required: true, with: &Impuesto.changeset/2)
     |> cast_embed(:pagos, required: true, with: &Pago.changeset/2)
   end
