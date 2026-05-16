@@ -8,7 +8,7 @@ defmodule BillingCore.Dataset.Retencion.Pago do
 
   embedded_schema do
     field(:forma_pago, :string)
-    field(:total, :float)
+    field(:total, :decimal)
   end
 
   def changeset(pago, params \\ %{}) do
@@ -26,7 +26,7 @@ defmodule BillingCore.Dataset.Retencion.Pago do
   def to_doc(%BillingCore.Dataset.Retencion.Pago{} = pago) do
     doc = [
       {:formaPago, nil, pago.forma_pago},
-      {:total, nil, :erlang.float_to_binary(pago.total, decimals: @decimals)}
+      {:total, nil, Decimal.round(pago.total, @decimals) |> Decimal.to_string(:normal)}
     ]
 
     {

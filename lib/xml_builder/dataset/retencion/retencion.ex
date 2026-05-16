@@ -9,9 +9,9 @@ defmodule BillingCore.Dataset.Retencion.Retencion do
   embedded_schema do
     field(:codigo, :string)
     field(:codigo_retencion, :string)
-    field(:base_imponible, :float)
-    field(:porcentaje_retener, :float)
-    field(:valor_retenido, :float)
+    field(:base_imponible, :decimal)
+    field(:porcentaje_retener, :decimal)
+    field(:valor_retenido, :decimal)
     # dividendos y compraCajBanano son opcionales y pueden agregarse luego si es necesario
   end
 
@@ -37,9 +37,9 @@ defmodule BillingCore.Dataset.Retencion.Retencion do
     doc = [
       {:codigo, nil, retencion.codigo},
       {:codigoRetencion, nil, retencion.codigo_retencion},
-      {:baseImponible, nil, :erlang.float_to_binary(retencion.base_imponible, decimals: @decimals)},
-      {:porcentajeRetener, nil, :erlang.float_to_binary(retencion.porcentaje_retener, decimals: @decimals)},
-      {:valorRetenido, nil, :erlang.float_to_binary(retencion.valor_retenido, decimals: @decimals)}
+      {:baseImponible, nil, Decimal.round(retencion.base_imponible, @decimals) |> Decimal.to_string(:normal)},
+      {:porcentajeRetener, nil, Decimal.round(retencion.porcentaje_retener, @decimals) |> Decimal.to_string(:normal)},
+      {:valorRetenido, nil, Decimal.round(retencion.valor_retenido, @decimals) |> Decimal.to_string(:normal)}
     ]
 
     {

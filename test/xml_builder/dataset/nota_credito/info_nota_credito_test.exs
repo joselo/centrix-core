@@ -46,9 +46,9 @@ defmodule BillingCore.Dataset.NotaCredito.InfoNotaCreditoTest do
         {:numDocModificado, nil, info_nota_credito.num_doc_modificado},
         {:fechaEmisionDocSustento, nil, fecha_emision_doc_sustento},
         {:totalSinImpuestos, nil,
-         :erlang.float_to_binary(info_nota_credito.total_sin_impuestos, decimals: 2)},
+         Decimal.round(info_nota_credito.total_sin_impuestos, 2) |> Decimal.to_string(:normal)},
         {:valorModificacion, nil,
-         :erlang.float_to_binary(info_nota_credito.valor_modificacion, decimals: 2)},
+         Decimal.round(info_nota_credito.valor_modificacion, 2) |> Decimal.to_string(:normal)},
         {:moneda, nil, info_nota_credito.moneda},
         {:totalConImpuestos, nil, total_con_impuestos},
         {:motivo, nil, info_nota_credito.motivo}
@@ -92,9 +92,9 @@ defmodule BillingCore.Dataset.NotaCredito.InfoNotaCreditoTest do
         {:numDocModificado, nil, info_nota_credito.num_doc_modificado},
         {:fechaEmisionDocSustento, nil, fecha_emision_doc_sustento},
         {:totalSinImpuestos, nil,
-         :erlang.float_to_binary(info_nota_credito.total_sin_impuestos, decimals: 2)},
+         Decimal.round(info_nota_credito.total_sin_impuestos, 2) |> Decimal.to_string(:normal)},
         {:valorModificacion, nil,
-         :erlang.float_to_binary(info_nota_credito.valor_modificacion, decimals: 2)},
+         Decimal.round(info_nota_credito.valor_modificacion, 2) |> Decimal.to_string(:normal)},
         {:moneda, nil, info_nota_credito.moneda},
         {:totalConImpuestos, nil, total_con_impuestos},
         {:motivo, nil, info_nota_credito.motivo}

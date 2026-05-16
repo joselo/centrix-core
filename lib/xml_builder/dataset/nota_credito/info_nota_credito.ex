@@ -20,8 +20,8 @@ defmodule BillingCore.Dataset.NotaCredito.InfoNotaCredito do
     field(:cod_doc_modificado, :string)
     field(:num_doc_modificado, :string)
     field(:fecha_emision_doc_sustento, :date)
-    field(:total_sin_impuestos, :float)
-    field(:valor_modificacion, :float)
+    field(:total_sin_impuestos, :decimal)
+    field(:valor_modificacion, :decimal)
     field(:moneda, :string)
     field(:motivo, :string)
 
@@ -61,6 +61,17 @@ defmodule BillingCore.Dataset.NotaCredito.InfoNotaCredito do
       :moneda,
       :motivo
     ])
+    |> validate_length(:dir_establecimiento, max: 300)
+    |> validate_number(:tipo_identificacion_comprador, greater_than_or_equal_to: 1, less_than: 100)
+    |> validate_length(:razon_social_comprador, max: 300)
+    |> validate_length(:identificacion_comprador, max: 20)
+    |> validate_length(:contribuyente_especial, min: 3, max: 13)
+    |> validate_inclusion(:obligado_contabilidad, ["SI", "NO"])
+    |> validate_length(:rise, max: 40)
+    |> validate_length(:cod_doc_modificado, is: 2)
+    |> validate_length(:num_doc_modificado, max: 17)
+    |> validate_length(:motivo, max: 300)
+    |> validate_length(:moneda, max: 15)
     |> cast_embed(:total_con_impuestos, required: true, with: &TotalImpuesto.changeset/2)
   end
 
@@ -83,9 +94,9 @@ defmodule BillingCore.Dataset.NotaCredito.InfoNotaCredito do
         {:fechaEmisionDocSustento, nil,
          format_fecha_emision(info_nota_credito.fecha_emision_doc_sustento)},
         {:totalSinImpuestos, nil,
-         :erlang.float_to_binary(info_nota_credito.total_sin_impuestos, decimals: decimals)},
+         Decimal.round(info_nota_credito.total_sin_impuestos, decimals) |> Decimal.to_string(:normal)},
         {:valorModificacion, nil,
-         :erlang.float_to_binary(info_nota_credito.valor_modificacion, decimals: decimals)},
+         Decimal.round(info_nota_credito.valor_modificacion, decimals) |> Decimal.to_string(:normal)},
         {:moneda, nil, info_nota_credito.moneda},
         {:totalConImpuestos, nil,
          total_con_impuestos_to_doc(info_nota_credito.total_con_impuestos)},

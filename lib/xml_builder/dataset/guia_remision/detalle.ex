@@ -10,7 +10,7 @@ defmodule BillingCore.Dataset.GuiaRemision.Detalle do
     field(:codigo_interno, :string)
     field(:codigo_adicional, :string)
     field(:descripcion, :string)
-    field(:cantidad, :float)
+    field(:cantidad, :decimal)
 
     embeds_many(:detalles_adicionales, DetAdicional)
   end
@@ -35,7 +35,7 @@ defmodule BillingCore.Dataset.GuiaRemision.Detalle do
     doc =
       [
         {:descripcion, nil, detalle.descripcion},
-        {:cantidad, nil, :erlang.float_to_binary(detalle.cantidad, decimals: 6)}
+        {:cantidad, nil, Decimal.round(detalle.cantidad, 6) |> Decimal.to_string(:normal)}
       ]
       |> add_codigo_interno(detalle)
       |> add_codigo_adicional(detalle)

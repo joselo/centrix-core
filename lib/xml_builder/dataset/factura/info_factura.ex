@@ -17,10 +17,10 @@ defmodule BillingCore.Dataset.Factura.InfoFactura do
     field(:razon_social_comprador, :string)
     field(:identificacion_comprador, :string)
     field(:direccion_comprador, :string)
-    field(:total_sin_impuestos, :float)
-    field(:total_descuento, :float)
-    field(:propina, :float)
-    field(:importe_total, :float)
+    field(:total_sin_impuestos, :decimal)
+    field(:total_descuento, :decimal)
+    field(:propina, :decimal)
+    field(:importe_total, :decimal)
     field(:moneda, :string)
 
     embeds_many(:total_con_impuestos, TotalImpuesto)
@@ -57,6 +57,14 @@ defmodule BillingCore.Dataset.Factura.InfoFactura do
       :importe_total,
       :moneda
     ])
+    |> validate_length(:dir_establecimiento, max: 300)
+    |> validate_inclusion(:obligado_contabilidad, ["SI", "NO"])
+    |> validate_length(:contribuyente_especial, min: 3, max: 13)
+    |> validate_number(:tipo_identificacion_comprador, greater_than_or_equal_to: 1, less_than: 100)
+    |> validate_length(:razon_social_comprador, max: 300)
+    |> validate_length(:identificacion_comprador, max: 13)
+    |> validate_length(:direccion_comprador, max: 300)
+    |> validate_length(:moneda, max: 15)
     |> cast_embed(:total_con_impuestos, required: true, with: &TotalImpuesto.changeset/2)
     |> cast_embed(:pagos, required: true, with: &Pago.changeset/2)
   end
@@ -75,13 +83,13 @@ defmodule BillingCore.Dataset.Factura.InfoFactura do
         {:identificacionComprador, nil, info_factura.identificacion_comprador},
         {:direccionComprador, nil, info_factura.direccion_comprador},
         {:totalSinImpuestos, nil,
-         :erlang.float_to_binary(info_factura.total_sin_impuestos, decimals: decimals)},
+         Decimal.round(info_factura.total_sin_impuestos, decimals) |> Decimal.to_string(:normal)},
         {:totalDescuento, nil,
-         :erlang.float_to_binary(info_factura.total_descuento, decimals: decimals)},
+         Decimal.round(info_factura.total_descuento, decimals) |> Decimal.to_string(:normal)},
         {:totalConImpuestos, nil, total_con_impuestos_to_doc(info_factura.total_con_impuestos)},
-        {:propina, nil, info_factura.propina},
+        {:propina, nil, Decimal.round(info_factura.propina, decimals) |> Decimal.to_string(:normal)},
         {:importeTotal, nil,
-         :erlang.float_to_binary(info_factura.importe_total, decimals: decimals)},
+         Decimal.round(info_factura.importe_total, decimals) |> Decimal.to_string(:normal)},
         {:moneda, nil, info_factura.moneda},
         {:pagos, nil, pagos_to_doc(info_factura.pagos)}
       ]

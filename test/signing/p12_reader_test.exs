@@ -31,4 +31,18 @@ defmodule BillingCore.P12ReaderTest do
     assert {:error, _error} = P12Reader.read_rsa(path, "badpass")
     assert {:error, _error} = P12Reader.read_rsa(path, bad_path)
   end
+
+  describe "get_metadata/2" do
+    test "returns metadata with correct password", %{path: path, password: password} do
+      assert {:ok, %{expires_at: %Date{}}} = P12Reader.get_metadata(path, password)
+    end
+
+    test "returns invalid_password with wrong password", %{path: path} do
+      assert {:error, :invalid_password} = P12Reader.get_metadata(path, "wrongpass")
+    end
+
+    test "returns error with non-existent file", %{bad_path: bad_path, password: password} do
+      assert {:error, _error} = P12Reader.get_metadata(bad_path, password)
+    end
+  end
 end

@@ -16,7 +16,7 @@
       <valor>0.00</valor>
     </totalImpuesto>
   </totalConImpuestos>
-  <propina>0</propina>
+  <propina>0.00</propina>
   <importeTotal>3000.00</importeTotal>
   <moneda>DOLAR</moneda>
   <pagos>

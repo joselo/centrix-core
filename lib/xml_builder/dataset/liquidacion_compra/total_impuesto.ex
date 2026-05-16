@@ -9,10 +9,10 @@ defmodule BillingCore.Dataset.LiquidacionCompra.TotalImpuesto do
   embedded_schema do
     field(:codigo, :integer)
     field(:codigo_porcentaje, :integer)
-    field(:descuento_adicional, :float)
-    field(:base_imponible, :float)
-    field(:tarifa, :float)
-    field(:valor, :float)
+    field(:descuento_adicional, :decimal)
+    field(:base_imponible, :decimal)
+    field(:tarifa, :decimal)
+    field(:valor, :decimal)
   end
 
   def changeset(total_impuesto, params \\ %{}) do
@@ -62,21 +62,21 @@ defmodule BillingCore.Dataset.LiquidacionCompra.TotalImpuesto do
     doc ++
       [
         {:descuentoAdicional, nil,
-         :erlang.float_to_binary(descuento_adicional, decimals: @decimals)}
+         Decimal.round(descuento_adicional, @decimals) |> Decimal.to_string(:normal)}
       ]
   end
 
   defp add_base_imponible(doc, %{base_imponible: base_imponible}) do
-    doc ++ [{:baseImponible, nil, :erlang.float_to_binary(base_imponible, decimals: @decimals)}]
+    doc ++ [{:baseImponible, nil, Decimal.round(base_imponible, @decimals) |> Decimal.to_string(:normal)}]
   end
 
   defp add_tarifa(doc, %{tarifa: nil}), do: doc
 
   defp add_tarifa(doc, %{tarifa: tarifa}) do
-    doc ++ [{:tarifa, nil, :erlang.float_to_binary(tarifa, decimals: @decimals)}]
+    doc ++ [{:tarifa, nil, Decimal.round(tarifa, @decimals) |> Decimal.to_string(:normal)}]
   end
 
   defp add_valor(doc, %{valor: valor}) do
-    doc ++ [{:valor, nil, :erlang.float_to_binary(valor, decimals: @decimals)}]
+    doc ++ [{:valor, nil, Decimal.round(valor, @decimals) |> Decimal.to_string(:normal)}]
   end
 end

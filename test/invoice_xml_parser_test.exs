@@ -24,8 +24,8 @@ defmodule BillingCore.InvoiceXmlParserTest do
         "Descuento",
         "Total"
       ],
-      ["1", "1", "Metal Gear Solid V", "", "0.22", "1.0", "0.00", "0.22"],
-      ["1", "1", "Shipping", "", "2.50", "1.0", "0.00", "2.50"]
+      ["1", "1", "Metal Gear Solid V", "", Decimal.new("0.22"), Decimal.new("1.0"), Decimal.new("0.00"), Decimal.new("0.22")],
+      ["1", "1", "Shipping", "", Decimal.new("2.50"), Decimal.new("1.0"), Decimal.new("0.00"), Decimal.new("2.50")]
     ]
 
     assert InvoiceXmlParser.get_items(xml_invoice) == expected
@@ -104,7 +104,7 @@ defmodule BillingCore.InvoiceXmlParserTest do
                %{
                  due_date: "5 Dias",
                  method: "TARJETA DE CRÉDITO",
-                 total: "3.05"
+                 total: Decimal.new("3.05")
                }
              ]
            }
@@ -116,19 +116,19 @@ defmodule BillingCore.InvoiceXmlParserTest do
 
   test "get_totals/1 returns 'totals'", %{xml_invoice: xml_invoice} do
     assert InvoiceXmlParser.get_totals(xml_invoice) == %{
-             sub_total_without_taxes: "2.72",
+             sub_total_without_taxes: Decimal.new("2.72"),
              # total_without_taxes: "0.00",
              # total_with_taxes: "2.72",
              # total_taxes: "0.33",
-             total_discount: "0.00",
-             total: "3.05"
+             total_discount: Decimal.new("0.00"),
+             total: Decimal.new("3.05")
            }
   end
 
   test "get_taxes/1 returns 'taxes'", %{xml_invoice: xml_invoice} do
     assert InvoiceXmlParser.get_taxes(xml_invoice) == [
-             %{tax_value: "2.72", tax_total: "0.33", tax_code: "2", tax_label: "IVA 12%"},
-             %{tax_value: "0.00", tax_total: "0.00", tax_code: "0", tax_label: "IVA 0%"}
+             %{tax_value: Decimal.new("2.72"), tax_total: Decimal.new("0.33"), tax_code: "2", tax_label: "IVA 12%"},
+             %{tax_value: Decimal.new("0.00"), tax_total: Decimal.new("0.00"), tax_code: "0", tax_label: "IVA 0%"}
            ]
   end
 

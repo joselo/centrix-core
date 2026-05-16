@@ -19,9 +19,9 @@ defmodule BillingCore.Dataset.Factura.ImpuestoTest do
       [
         {:codigo, nil, impuesto.codigo},
         {:codigoPorcentaje, nil, impuesto.codigo_porcentaje},
-        {:tarifa, nil, :erlang.float_to_binary(impuesto.tarifa, decimals: 2)},
-        {:baseImponible, nil, :erlang.float_to_binary(impuesto.base_imponible, decimals: 2)},
-        {:valor, nil, :erlang.float_to_binary(impuesto.valor, decimals: 2)}
+        {:tarifa, nil, Decimal.round(impuesto.tarifa, 2) |> Decimal.to_string(:normal)},
+        {:baseImponible, nil, Decimal.round(impuesto.base_imponible, 2) |> Decimal.to_string(:normal)},
+        {:valor, nil, Decimal.round(impuesto.valor, 2) |> Decimal.to_string(:normal)}
       ]
     }
 

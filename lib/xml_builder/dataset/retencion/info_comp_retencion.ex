@@ -43,6 +43,14 @@ defmodule BillingCore.Dataset.Retencion.InfoCompRetencion do
     |> validate_format(:periodo_fiscal, ~r/^(0[1-9]|1[0-2])\/\d{4}$/,
       message: "must be in mm/yyyy format"
     )
+    |> validate_length(:dir_establecimiento, max: 300)
+    |> validate_length(:contribuyente_especial, min: 3, max: 13)
+    |> validate_inclusion(:obligado_contabilidad, ["SI", "NO"])
+    |> validate_number(:tipo_identificacion_sujeto_retenido, greater_than_or_equal_to: 1, less_than: 100)
+    |> validate_inclusion(:parte_rel, ["SI", "NO"])
+    |> validate_length(:razon_social_sujeto_retenido, max: 300)
+    |> validate_length(:identificacion_sujeto_retenido, max: 20)
+    |> validate_length(:periodo_fiscal, is: 7)
   end
 
   def to_doc(%BillingCore.Dataset.Retencion.InfoCompRetencion{} = info) do

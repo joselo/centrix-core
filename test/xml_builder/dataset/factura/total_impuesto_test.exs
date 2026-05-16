@@ -20,8 +20,8 @@ defmodule BillingCore.Dataset.Factura.TotalImpuestoTest do
         {:codigo, nil, total_impuesto.codigo},
         {:codigoPorcentaje, nil, total_impuesto.codigo_porcentaje},
         {:baseImponible, nil,
-         :erlang.float_to_binary(total_impuesto.base_imponible, decimals: 2)},
-        {:valor, nil, :erlang.float_to_binary(total_impuesto.valor, decimals: 2)}
+         Decimal.round(total_impuesto.base_imponible, 2) |> Decimal.to_string(:normal)},
+        {:valor, nil, Decimal.round(total_impuesto.valor, 2) |> Decimal.to_string(:normal)}
       ]
     }
 

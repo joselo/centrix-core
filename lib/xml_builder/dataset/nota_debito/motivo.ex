@@ -6,7 +6,7 @@ defmodule BillingCore.Dataset.NotaDebito.Motivo do
 
   embedded_schema do
     field(:razon, :string)
-    field(:valor, :float)
+    field(:valor, :decimal)
   end
 
   def changeset(motivo, params \\ %{}) do
@@ -23,7 +23,7 @@ defmodule BillingCore.Dataset.NotaDebito.Motivo do
   end
 
   def to_doc(%BillingCore.Dataset.NotaDebito.Motivo{} = motivo) do
-    valor = :erlang.float_to_binary(motivo.valor, decimals: 2)
+    valor = Decimal.round(motivo.valor, 2) |> Decimal.to_string(:normal)
 
     {
       :motivo,

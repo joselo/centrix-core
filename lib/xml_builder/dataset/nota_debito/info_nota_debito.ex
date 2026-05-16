@@ -19,8 +19,8 @@ defmodule BillingCore.Dataset.NotaDebito.InfoNotaDebito do
     field(:cod_doc_modificado, :string)
     field(:num_doc_modificado, :string)
     field(:fecha_emision_doc_sustento, :date)
-    field(:total_sin_impuestos, :float)
-    field(:valor_total, :float)
+    field(:total_sin_impuestos, :decimal)
+    field(:valor_total, :decimal)
 
     embeds_many(:impuestos, Impuesto)
     embeds_many(:pagos, Pago)
@@ -53,6 +53,14 @@ defmodule BillingCore.Dataset.NotaDebito.InfoNotaDebito do
       :total_sin_impuestos,
       :valor_total
     ])
+    |> validate_length(:dir_establecimiento, max: 300)
+    |> validate_number(:tipo_identificacion_comprador, greater_than_or_equal_to: 1, less_than: 100)
+    |> validate_length(:razon_social_comprador, max: 300)
+    |> validate_length(:identificacion_comprador, max: 20)
+    |> validate_length(:contribuyente_especial, min: 3, max: 13)
+    |> validate_inclusion(:obligado_contabilidad, ["SI", "NO"])
+    |> validate_length(:cod_doc_modificado, is: 2)
+    |> validate_length(:num_doc_modificado, max: 17)
     |> cast_embed(:impuestos, required: true, with: &Impuesto.changeset/2)
     |> cast_embed(:pagos, required: true, with: &Pago.changeset/2)
   end
@@ -71,9 +79,9 @@ defmodule BillingCore.Dataset.NotaDebito.InfoNotaDebito do
         {:numDocModificado, nil, info.num_doc_modificado},
         {:fechaEmisionDocSustento, nil, format_fecha_emision(info.fecha_emision_doc_sustento)},
         {:totalSinImpuestos, nil,
-         :erlang.float_to_binary(info.total_sin_impuestos, decimals: decimals)},
+         Decimal.round(info.total_sin_impuestos, decimals) |> Decimal.to_string(:normal)},
         {:impuestos, nil, impuestos_to_doc(info.impuestos)},
-        {:valorTotal, nil, :erlang.float_to_binary(info.valor_total, decimals: decimals)},
+        {:valorTotal, nil, Decimal.round(info.valor_total, decimals) |> Decimal.to_string(:normal)},
         {:pagos, nil, pagos_to_doc(info.pagos)}
       ]
       |> add_dir_establecimiento(info)

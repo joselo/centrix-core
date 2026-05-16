@@ -12,10 +12,10 @@ defmodule BillingCore.Dataset.NotaCredito.Detalle do
     field(:codigo_interno, :string)
     field(:codigo_adicional, :string)
     field(:descripcion, :string)
-    field(:cantidad, :float)
-    field(:precio_unitario, :float)
-    field(:descuento, :float)
-    field(:precio_total_sin_impuesto, :float)
+    field(:cantidad, :decimal)
+    field(:precio_unitario, :decimal)
+    field(:descuento, :decimal)
+    field(:precio_total_sin_impuesto, :decimal)
 
     embeds_many(:detalles_adicionales, DetAdicional)
     embeds_many(:impuestos, Impuesto)
@@ -41,6 +41,9 @@ defmodule BillingCore.Dataset.NotaCredito.Detalle do
       :descuento,
       :precio_total_sin_impuesto
     ])
+    |> validate_length(:codigo_interno, max: 25)
+    |> validate_length(:codigo_adicional, max: 25)
+    |> validate_length(:descripcion, max: 300)
     |> cast_embed(:detalles_adicionales, with: &DetAdicional.changeset/2)
     |> cast_embed(:impuestos, required: true, with: &Impuesto.changeset/2)
   end
@@ -51,11 +54,11 @@ defmodule BillingCore.Dataset.NotaCredito.Detalle do
         {:codigoInterno, nil, detalle.codigo_interno},
         {:codigoAdicional, nil, detalle.codigo_adicional},
         {:descripcion, nil, detalle.descripcion},
-        {:cantidad, nil, :erlang.float_to_binary(detalle.cantidad, decimals: 6)},
-        {:precioUnitario, nil, :erlang.float_to_binary(detalle.precio_unitario, decimals: 6)},
-        {:descuento, nil, :erlang.float_to_binary(detalle.descuento, decimals: decimals)},
+        {:cantidad, nil, Decimal.round(detalle.cantidad, 6) |> Decimal.to_string(:normal)},
+        {:precioUnitario, nil, Decimal.round(detalle.precio_unitario, 6) |> Decimal.to_string(:normal)},
+        {:descuento, nil, Decimal.round(detalle.descuento, decimals) |> Decimal.to_string(:normal)},
         {:precioTotalSinImpuesto, nil,
-         :erlang.float_to_binary(detalle.precio_total_sin_impuesto, decimals: decimals)},
+         Decimal.round(detalle.precio_total_sin_impuesto, decimals) |> Decimal.to_string(:normal)},
         if(detalle.detalles_adicionales != [] and detalle.detalles_adicionales != nil,
           do: {:detallesAdicionales, nil, detalles_adicionales_to_doc(detalle.detalles_adicionales)}
         ),

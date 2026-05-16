@@ -8,7 +8,7 @@ defmodule BillingCore.Dataset.Factura.Pago do
 
   embedded_schema do
     field(:forma_pago, :integer)
-    field(:total, :float)
+    field(:total, :decimal)
     field(:plazo, :integer)
     field(:unidad_tiempo, :string)
   end
@@ -17,6 +17,8 @@ defmodule BillingCore.Dataset.Factura.Pago do
     impuesto
     |> cast(params, [:forma_pago, :total, :plazo, :unidad_tiempo])
     |> validate_required([:forma_pago, :total, :plazo, :unidad_tiempo])
+    |> validate_number(:forma_pago, greater_than_or_equal_to: 1, less_than: 100)
+    |> validate_length(:unidad_tiempo, max: 10)
   end
 
   def to_doc(key, %BillingCore.Dataset.Factura.Pago{} = pago, decimals \\ @decimals)
@@ -26,7 +28,7 @@ defmodule BillingCore.Dataset.Factura.Pago do
       nil,
       [
         {:formaPago, nil, Integer.to_string(pago.forma_pago) |> String.pad_leading(2, "0")},
-        {:total, nil, :erlang.float_to_binary(pago.total, decimals: decimals)},
+        {:total, nil, Decimal.round(pago.total, decimals) |> Decimal.to_string(:normal)},
         {:plazo, nil, pago.plazo},
         {:unidadTiempo, nil, pago.unidad_tiempo}
       ]

@@ -111,9 +111,9 @@ defmodule BillingCore.DocumentXmlParser do
       client_name: info_factura["razonSocialComprador"],
       client_identification: info_factura["identificacionComprador"],
       client_address: info_factura["direccionComprador"],
-      sub_total_without_taxes: info_factura["totalSinImpuestos"],
-      total_discount: info_factura["totalDescuento"],
-      total: info_factura["importeTotal"],
+      sub_total_without_taxes: Decimal.new(info_factura["totalSinImpuestos"] || "0"),
+      total_discount: Decimal.new(info_factura["totalDescuento"] || "0"),
+      total: Decimal.new(info_factura["importeTotal"] || "0"),
       taxes: get_taxes(info_factura),
       payments: get_payments(info_factura)
     }
@@ -124,9 +124,9 @@ defmodule BillingCore.DocumentXmlParser do
       client_name: info_nc["razonSocialComprador"],
       client_identification: info_nc["identificacionComprador"],
       client_address: info_nc["direccionComprador"],
-      sub_total_without_taxes: info_nc["totalSinImpuestos"],
-      total_discount: info_nc["totalDescuento"],
-      total: info_nc["valorModificacion"],
+      sub_total_without_taxes: Decimal.new(info_nc["totalSinImpuestos"] || "0"),
+      total_discount: Decimal.new(info_nc["totalDescuento"] || "0"),
+      total: Decimal.new(info_nc["valorModificacion"] || "0"),
       taxes: get_taxes(info_nc),
       # NC Specifics
       modified_doc_type: info_nc["codDocModificado"],
@@ -141,9 +141,9 @@ defmodule BillingCore.DocumentXmlParser do
       client_name: info_nd["razonSocialComprador"],
       client_identification: info_nd["identificacionComprador"],
       client_address: info_nd["direccionComprador"],
-      sub_total_without_taxes: info_nd["totalSinImpuestos"],
-      total_discount: "0.00",
-      total: info_nd["valorTotal"],
+      sub_total_without_taxes: Decimal.new(info_nd["totalSinImpuestos"] || "0"),
+      total_discount: Decimal.new("0.00"),
+      total: Decimal.new(info_nd["valorTotal"] || "0"),
       taxes: get_nd_taxes(info_nd),
       payments: get_payments(info_nd),
       # ND Specifics
@@ -158,9 +158,9 @@ defmodule BillingCore.DocumentXmlParser do
       client_name: info_gr["razonSocialTransportista"],
       client_identification: info_gr["rucTransportista"],
       client_address: info_gr["dirPartida"],
-      sub_total_without_taxes: "0.00",
-      total_discount: "0.00",
-      total: "0.00",
+      sub_total_without_taxes: Decimal.new("0.00"),
+      total_discount: Decimal.new("0.00"),
+      total: Decimal.new("0.00"),
       taxes: [],
       payments: []
     }
@@ -171,9 +171,9 @@ defmodule BillingCore.DocumentXmlParser do
       client_name: info_lc["razonSocialProveedor"],
       client_identification: info_lc["identificacionProveedor"],
       client_address: info_lc["direccionProveedor"],
-      sub_total_without_taxes: info_lc["totalSinImpuestos"],
-      total_discount: info_lc["totalDescuento"],
-      total: info_lc["importeTotal"],
+      sub_total_without_taxes: Decimal.new(info_lc["totalSinImpuestos"] || "0"),
+      total_discount: Decimal.new(info_lc["totalDescuento"] || "0"),
+      total: Decimal.new(info_lc["importeTotal"] || "0"),
       taxes: get_taxes(info_lc),
       payments: get_payments(info_lc)
     }
@@ -192,18 +192,17 @@ defmodule BillingCore.DocumentXmlParser do
         if is_map(rets), do: List.wrap(rets["retencion"]), else: []
       end)
       |> Enum.map(fn ret ->
-        {val, _} = Float.parse(to_string(ret["valorRetenido"] || "0"))
-        val
+        Decimal.new(to_string(ret["valorRetenido"] || "0"))
       end)
-      |> Enum.sum()
+      |> Enum.reduce(Decimal.new("0"), &Decimal.add/2)
 
     %{
       client_name: info_ret["razonSocialSujetoRetenido"],
       client_identification: info_ret["identificacionSujetoRetenido"],
       client_address: "",
-      sub_total_without_taxes: "0.00",
-      total_discount: "0.00",
-      total: :erlang.float_to_binary(total_retained, decimals: 2),
+      sub_total_without_taxes: Decimal.new("0.00"),
+      total_discount: Decimal.new("0.00"),
+      total: total_retained,
       taxes: [],
       payments: payments
     }
@@ -263,10 +262,10 @@ defmodule BillingCore.DocumentXmlParser do
       "",
       item["razon"],
       "",
-      item["valor"],
+      item["valor"] |> Decimal.new(),
       "1",
-      "0.00",
-      item["valor"]
+      Decimal.new("0.00"),
+      item["valor"] |> Decimal.new()
     ]
   end
 
@@ -289,10 +288,10 @@ defmodule BillingCore.DocumentXmlParser do
       item["codDocSustento"],
       item["fechaEmisionDocSustento"],
       "",
-      item["baseImponible"],
+      item["baseImponible"] |> Decimal.new(),
       "RET #{item["codigo"]}",
       "#{item["porcentajeRetener"]}%",
-      item["valorRetenido"]
+      item["valorRetenido"] |> Decimal.new()
     ]
   end
 
@@ -302,10 +301,10 @@ defmodule BillingCore.DocumentXmlParser do
       item["codigoAuxiliar"],
       item["descripcion"],
       get_item_extra_text(item),
-      item["precioUnitario"],
-      item["cantidad"],
-      item["descuento"],
-      item["precioTotalSinImpuesto"]
+      item["precioUnitario"] |> Decimal.new(),
+      item["cantidad"] |> Decimal.new(),
+      item["descuento"] |> Decimal.new(),
+      item["precioTotalSinImpuesto"] |> Decimal.new()
     ]
   end
 
@@ -358,8 +357,8 @@ defmodule BillingCore.DocumentXmlParser do
 
     Enum.map(taxes, fn %{"codigoPorcentaje" => code, "baseImponible" => total, "valor" => value} ->
       %{
-        tax_value: total,
-        tax_total: value,
+        tax_value: Decimal.new(total || "0"),
+        tax_total: Decimal.new(value || "0"),
         tax_code: code,
         tax_label: get_tax_label(code)
       }
@@ -379,8 +378,8 @@ defmodule BillingCore.DocumentXmlParser do
 
     Enum.map(taxes, fn %{"codigoPorcentaje" => code, "baseImponible" => total, "valor" => value} ->
       %{
-        tax_value: total,
-        tax_total: value,
+        tax_value: Decimal.new(total || "0"),
+        tax_total: Decimal.new(value || "0"),
         tax_code: code,
         tax_label: get_tax_label(code)
       }
@@ -399,7 +398,7 @@ defmodule BillingCore.DocumentXmlParser do
 
       %{
         method: decode_payment_method(method),
-        total: total,
+        total: Decimal.new(total || "0"),
         due_date: "#{term} #{time}"
       }
     end)

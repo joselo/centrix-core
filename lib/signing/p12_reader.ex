@@ -14,6 +14,52 @@ defmodule BillingCore.P12Reader do
     end
   end
 
+  def get_metadata(path, password) do
+    case read_cert(path, password) do
+      {:ok, cert} ->
+        case extract_expiration_date(cert) do
+          {:ok, date} -> {:ok, %{expires_at: date}}
+          {:error, reason} -> {:error, reason}
+        end
+
+      {:error, error} ->
+        cond do
+          String.contains?(error, "invalid password") -> {:error, :invalid_password}
+          true -> {:error, error}
+        end
+    end
+  end
+
+  defp extract_expiration_date(cert_pem) do
+    temp_path = Path.join(System.tmp_dir!(), "cert_#{:erlang.unique_integer([:positive])}.pem")
+    File.write!(temp_path, cert_pem)
+
+    case System.cmd("openssl", ["x509", "-enddate", "-noout", "-in", temp_path]) do
+      {output, 0} ->
+        File.rm(temp_path)
+        parse_expiration_date(output)
+
+      {error, _} ->
+        File.rm(temp_path)
+        {:error, error}
+    end
+  end
+
+  defp parse_expiration_date(output) do
+    case Regex.run(~r/notAfter=(.*)/, output) do
+      [_, date_str] ->
+        normalized_date = String.trim(date_str) |> String.replace(~r/\s+/, " ")
+
+        case Timex.parse(normalized_date, "{Mshort} {D} {h24}:{m}:{s} {YYYY} GMT") do
+          {:ok, datetime} -> {:ok, NaiveDateTime.to_date(datetime)}
+          {:error, _} -> {:error, "Could not parse date: #{normalized_date}"}
+        end
+
+      _ ->
+        {:error, "Could not find expiration date in openssl output"}
+    end
+  end
+
   def read_cert(path, password) do
     options = [
       "pkcs12",

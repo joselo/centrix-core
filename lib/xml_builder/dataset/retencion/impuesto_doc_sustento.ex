@@ -9,9 +9,9 @@ defmodule BillingCore.Dataset.Retencion.ImpuestoDocSustento do
   embedded_schema do
     field(:cod_impuesto_doc_sustento, :string)
     field(:codigo_porcentaje, :string)
-    field(:base_imponible, :float)
-    field(:tarifa, :float)
-    field(:valor_impuesto, :float)
+    field(:base_imponible, :decimal)
+    field(:tarifa, :decimal)
+    field(:valor_impuesto, :decimal)
   end
 
   def changeset(impuesto, params \\ %{}) do
@@ -36,9 +36,9 @@ defmodule BillingCore.Dataset.Retencion.ImpuestoDocSustento do
     doc = [
       {:codImpuestoDocSustento, nil, impuesto.cod_impuesto_doc_sustento},
       {:codigoPorcentaje, nil, impuesto.codigo_porcentaje},
-      {:baseImponible, nil, :erlang.float_to_binary(impuesto.base_imponible, decimals: @decimals)},
-      {:tarifa, nil, :erlang.float_to_binary(impuesto.tarifa, decimals: @decimals)},
-      {:valorImpuesto, nil, :erlang.float_to_binary(impuesto.valor_impuesto, decimals: @decimals)}
+      {:baseImponible, nil, Decimal.round(impuesto.base_imponible, @decimals) |> Decimal.to_string(:normal)},
+      {:tarifa, nil, Decimal.round(impuesto.tarifa, @decimals) |> Decimal.to_string(:normal)},
+      {:valorImpuesto, nil, Decimal.round(impuesto.valor_impuesto, @decimals) |> Decimal.to_string(:normal)}
     ]
 
     {

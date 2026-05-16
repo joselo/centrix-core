@@ -17,10 +17,10 @@ defmodule BillingCore.Dataset.LiquidacionCompra.Detalle do
     field(:codigo_auxiliar, :string)
     field(:descripcion, :string)
     field(:unidad_medida, :string)
-    field(:cantidad, :float)
-    field(:precio_unitario, :float)
-    field(:descuento, :float)
-    field(:precio_total_sin_impuesto, :float)
+    field(:cantidad, :decimal)
+    field(:precio_unitario, :decimal)
+    field(:descuento, :decimal)
+    field(:precio_total_sin_impuesto, :decimal)
 
     embeds_many(:detalles_adicionales, DetAdicional)
     embeds_many(:impuestos, Impuesto)
@@ -93,28 +93,28 @@ defmodule BillingCore.Dataset.LiquidacionCompra.Detalle do
   end
 
   defp add_cantidad(doc, %{cantidad: cantidad}) do
-    doc ++ [{:cantidad, nil, :erlang.float_to_binary(cantidad, decimals: @quantity_decimals)}]
+    doc ++ [{:cantidad, nil, Decimal.round(cantidad, @quantity_decimals) |> Decimal.to_string(:normal)}]
   end
 
   defp add_precio_unitario(doc, %{precio_unitario: precio_unitario}) do
     doc ++
       [
         {:precioUnitario, nil,
-         :erlang.float_to_binary(precio_unitario, decimals: @quantity_decimals)}
+         Decimal.round(precio_unitario, @quantity_decimals) |> Decimal.to_string(:normal)}
       ]
   end
 
   defp add_descuento(doc, %{descuento: nil}), do: doc
 
   defp add_descuento(doc, %{descuento: descuento}) do
-    doc ++ [{:descuento, nil, :erlang.float_to_binary(descuento, decimals: @decimals)}]
+    doc ++ [{:descuento, nil, Decimal.round(descuento, @decimals) |> Decimal.to_string(:normal)}]
   end
 
   defp add_precio_total_sin_impuesto(doc, %{precio_total_sin_impuesto: precio_total_sin_impuesto}) do
     doc ++
       [
         {:precioTotalSinImpuesto, nil,
-         :erlang.float_to_binary(precio_total_sin_impuesto, decimals: @decimals)}
+         Decimal.round(precio_total_sin_impuesto, @decimals) |> Decimal.to_string(:normal)}
       ]
   end
 

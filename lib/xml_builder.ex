@@ -19,7 +19,7 @@ defmodule BillingCore.XmlBuilder do
         {:ok, Ecto.Changeset.apply_changes(changeset)}
 
       changeset ->
-        {:error, changeset}
+        {:error, BillingCore.ChangesetParser.format_errors(changeset)}
     end
   end
 end
