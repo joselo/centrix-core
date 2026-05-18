@@ -57,6 +57,7 @@ defmodule BillingCore.Dataset.Retencion.DocSustento do
       :total_sin_impuestos,
       :importe_total
     ])
+    |> clean_num_doc_sustento()
     |> validate_required([
       :cod_sustento,
       :cod_doc_sustento,
@@ -67,6 +68,16 @@ defmodule BillingCore.Dataset.Retencion.DocSustento do
     |> cast_embed(:impuestos_doc_sustento, with: &ImpuestoDocSustento.changeset/2)
     |> cast_embed(:retenciones, required: true, with: &Retencion.changeset/2)
     |> cast_embed(:pagos, required: true, with: &Pago.changeset/2)
+  end
+
+  defp clean_num_doc_sustento(changeset) do
+    case get_change(changeset, :num_doc_sustento) do
+      nil ->
+        changeset
+
+      number when is_binary(number) ->
+        put_change(changeset, :num_doc_sustento, String.replace(number, "-", ""))
+    end
   end
 
   def to_doc(%BillingCore.Dataset.Retencion.DocSustento{} = sustento) do
