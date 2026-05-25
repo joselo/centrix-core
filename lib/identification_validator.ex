@@ -1,6 +1,6 @@
 defmodule BillingCore.IdentificationValidator do
   @moduledoc """
-  Pure logic for validating Ecuadorian identification numbers (Cédula and RUC).
+  Pure logic for validating Ecuadorian identification numbers (Cédula, RUC, Consumidor Final and Pasaporte).
   Returns `:ok` or `{:error, reason}` where reason is an atom or a tuple.
   """
 
@@ -11,11 +11,16 @@ defmodule BillingCore.IdentificationValidator do
     case type do
       :cedula -> validate_cedula(number)
       :ruc -> validate_ruc(number)
+      :consumidor_final -> validate_consumidor_final(number)
+      :pasaporte -> :ok
       _ -> :ok
     end
   end
 
   def valid_identification?(_, _), do: {:error, :invalid_input}
+
+  defp validate_consumidor_final("9999999999999"), do: :ok
+  defp validate_consumidor_final(_), do: {:error, :invalid_consumidor_final}
 
   # --- Cédula Validation ---
 
