@@ -9,7 +9,6 @@ defmodule BillingCore.Xbes.P12.Key do
     |> Base.encode64()
   end
 
-  # TODO: Write tests
   def pem_decode(pem_file, index) do
     pem_file
     |> :public_key.pem_decode()

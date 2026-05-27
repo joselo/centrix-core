@@ -12,7 +12,9 @@ defmodule BillingCore.Xbes.CertificateTest do
 
   test "issuer_name_from_pem with bank data pem file", %{pem_file: pem_file} do
     # expected_result =
-    #  "L=QUITO, CN=AC BANCO CENTRAL DEL ECUADOR, OU=ENTIDAD DE CERTIFICACION DE INFORMACION-ECIBCE, O=BANCO CENTRAL DEL ECUADOR, C=EC"
+    #   "L=QUITO, CN=AC BANCO CENTRAL DEL ECUADOR, " <>
+    #   "OU=ENTIDAD DE CERTIFICACION DE INFORMACION-ECIBCE, " <>
+    #   "O=BANCO CENTRAL DEL ECUADOR, C=EC"
 
     expected_result =
       "C = EC, O = BANCO CENTRAL DEL ECUADOR, OU = ENTIDAD DE CERTIFICACION DE INFORMACION-ECIBCE, L = QUITO, CN = AC BANCO CENTRAL DEL ECUADOR"
@@ -43,7 +45,9 @@ defmodule BillingCore.Xbes.CertificateTest do
   #   pem_file = File.read!("test/fixtures/security-data.crt.pem")
   #   {pem, _} = Certificate.pem_decode(pem_file)
 
-  #   expected_result = "C=EC, CN=AUTORIDAD DE CERTIFICACION SUBCA-2 SECURITY DATA, O=SECURITY DATA S.A. 2, OU=ENTIDAD DE CERTIFICACION DE INFORMACION"
+  #   expected_result =
+  #     "C=EC, CN=AUTORIDAD DE CERTIFICACION SUBCA-2 SECURITY DATA, " <>
+  #     "O=SECURITY DATA S.A. 2, OU=ENTIDAD DE CERTIFICACION DE INFORMACION"
 
   #   assert Certificate.issuer_name_from_pem(pem) == expected_result
   # end

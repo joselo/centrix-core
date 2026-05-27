@@ -8,10 +8,10 @@ defmodule BillingCore.Ws.AuthorizationSoap do
   defp soap_env(clave_acceso, operation) do
     {
       :"soapenv:Envelope",
-      %{
-        "xmlns:soapenv": "http://schemas.xmlsoap.org/soap/envelope/",
-        "xmlns:ec": "http://ec.gob.sri.ws.autorizacion"
-      },
+      [
+        "xmlns:ec": "http://ec.gob.sri.ws.autorizacion",
+        "xmlns:soapenv": "http://schemas.xmlsoap.org/soap/envelope/"
+      ],
       [
         {:"soapenv:Header", nil, nil},
         {
@@ -19,7 +19,7 @@ defmodule BillingCore.Ws.AuthorizationSoap do
           nil,
           [
             {
-              :"ec:#{operation}",
+              "ec:#{operation}",
               nil,
               [
                 {:claveAccesoComprobante, nil, clave_acceso}

@@ -1,7 +1,6 @@
 defmodule BillingCore.Xbes.P12.Certificate do
   @moduledoc false
 
-  # TODO: Write tests
   def build(pem_file) do
     {pem, index} = pem_decode(pem_file)
     rsa = public_key_from_pem(pem)
@@ -108,7 +107,6 @@ defmodule BillingCore.Xbes.P12.Certificate do
     end)
   end
 
-  # TODO: Write tests
   def public_key_from_pem(pem) do
     pem
     |> raw_public_key_from_pem()

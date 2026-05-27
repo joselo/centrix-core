@@ -8,10 +8,10 @@ defmodule BillingCore.Ws.ReceptionSoap do
   defp soap_env(xml, operation) do
     {
       :"soapenv:Envelope",
-      %{
-        "xmlns:soapenv": "http://schemas.xmlsoap.org/soap/envelope/",
-        "xmlns:ec": "http://ec.gob.sri.ws.recepcion"
-      },
+      [
+        "xmlns:ec": "http://ec.gob.sri.ws.recepcion",
+        "xmlns:soapenv": "http://schemas.xmlsoap.org/soap/envelope/"
+      ],
       [
         {:"soapenv:Header", nil, nil},
         {
@@ -19,7 +19,7 @@ defmodule BillingCore.Ws.ReceptionSoap do
           nil,
           [
             {
-              :"ec:#{operation}",
+              "ec:#{operation}",
               nil,
               [
                 {:xml, nil, xml}

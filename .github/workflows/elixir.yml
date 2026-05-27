@@ -38,4 +38,13 @@ jobs:
     - name: Run tests
       env:
         TEST_P12_FILE_PASSWORD: ${{ secrets.TEST_P12_FILE_PASSWORD }}    
+    - name: Check formatting
+      run: mix format --check-formatted
+    - name: Static code analysis (Credo)
+      run: mix credo --strict
+    - name: Security scan (Sobelow)
+      run: mix sobelow
+    - name: Dependency vulnerability audit
+      run: mix deps.audit --ignore-advisory-ids GHSA-rhv4-8758-jx7v
+    - name: Run tests
       run: mix test

@@ -213,42 +213,7 @@ defmodule BillingCore.DocumentXmlParser do
   def parse_specific_data(_, _, _), do: %{}
 
   def get_items(content, root_tag) do
-    details =
-      case root_tag do
-        "guiaRemision" ->
-          destinatarios = content["destinatarios"]
-          dests = if is_map(destinatarios), do: List.wrap(destinatarios["destinatario"]), else: []
-
-          Enum.flat_map(dests, fn dest ->
-            detalles = dest["detalles"]
-            if is_map(detalles), do: List.wrap(detalles["detalle"]), else: []
-          end)
-
-        "notaDebito" ->
-          node = content["motivos"]
-          if is_map(node), do: List.wrap(node["motivo"]), else: []
-
-        "comprobanteRetencion" ->
-          docs_sustento = content["docsSustento"]
-          docs_list = if is_map(docs_sustento), do: List.wrap(docs_sustento["docSustento"]), else: []
-
-          Enum.flat_map(docs_list, fn doc ->
-            rets = doc["retenciones"]
-            ret_list = if is_map(rets), do: List.wrap(rets["retencion"]), else: []
-
-            Enum.map(ret_list, fn r ->
-              Map.merge(r, %{
-                "numDocSustento" => doc["numDocSustento"],
-                "codDocSustento" => doc["codDocSustento"],
-                "fechaEmisionDocSustento" => doc["fechaEmisionDocSustento"]
-              })
-            end)
-          end)
-
-        _ ->
-          node = content["detalles"]
-          if is_map(node), do: List.wrap(node["detalle"]), else: []
-      end
+    details = get_details_by_doc_type(content, root_tag)
 
     items =
       details
@@ -256,6 +221,48 @@ defmodule BillingCore.DocumentXmlParser do
       |> Enum.map(&format_item(&1, root_tag))
 
     [@headers | items]
+  end
+
+  defp get_details_by_doc_type(content, "guiaRemision") do
+    destinatarios = content["destinatarios"]
+    dests = if is_map(destinatarios), do: List.wrap(destinatarios["destinatario"]), else: []
+
+    Enum.flat_map(dests, &extract_guia_details/1)
+  end
+
+  defp get_details_by_doc_type(content, "notaDebito") do
+    node = content["motivos"]
+    if is_map(node), do: List.wrap(node["motivo"]), else: []
+  end
+
+  defp get_details_by_doc_type(content, "comprobanteRetencion") do
+    docs_sustento = content["docsSustento"]
+    docs_list = if is_map(docs_sustento), do: List.wrap(docs_sustento["docSustento"]), else: []
+
+    Enum.flat_map(docs_list, &extract_retencion_details/1)
+  end
+
+  defp get_details_by_doc_type(content, _) do
+    node = content["detalles"]
+    if is_map(node), do: List.wrap(node["detalle"]), else: []
+  end
+
+  defp extract_guia_details(dest) do
+    detalles = dest["detalles"]
+    if is_map(detalles), do: List.wrap(detalles["detalle"]), else: []
+  end
+
+  defp extract_retencion_details(doc) do
+    rets = doc["retenciones"]
+    ret_list = if is_map(rets), do: List.wrap(rets["retencion"]), else: []
+
+    Enum.map(ret_list, fn r ->
+      Map.merge(r, %{
+        "numDocSustento" => doc["numDocSustento"],
+        "codDocSustento" => doc["codDocSustento"],
+        "fechaEmisionDocSustento" => doc["fechaEmisionDocSustento"]
+      })
+    end)
   end
 
   def format_item(item, "notaDebito") do

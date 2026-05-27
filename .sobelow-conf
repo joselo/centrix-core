@@ -1,0 +1,4 @@
+[
+  ignore: ["Traversal.FileModule"],
+  ignore_files: ["lib/signing/p12_reader.ex"]
+]

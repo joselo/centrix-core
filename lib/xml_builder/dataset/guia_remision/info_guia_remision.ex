@@ -121,16 +121,9 @@ defmodule BillingCore.Dataset.GuiaRemision.InfoGuiaRemision do
 
   defp add_contribuyente_especial(doc, %{contribuyente_especial: contribuyente_especial}) do
     index =
-      case Enum.find_index(doc, fn {tag, _, _} -> tag == :obligadoContabilidad end) do
-        nil ->
-          case Enum.find_index(doc, fn {tag, _, _} -> tag == :rise end) do
-            nil -> Enum.find_index(doc, fn {tag, _, _} -> tag == :rucTransportista end)
-            i -> i
-          end
-
-        i ->
-          i
-      end
+      Enum.find_index(doc, fn {tag, _, _} -> tag == :obligadoContabilidad end) ||
+        Enum.find_index(doc, fn {tag, _, _} -> tag == :rise end) ||
+        Enum.find_index(doc, fn {tag, _, _} -> tag == :rucTransportista end)
 
     List.insert_at(doc, index + 1, {:contribuyenteEspecial, nil, contribuyente_especial})
   end

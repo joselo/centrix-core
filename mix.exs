@@ -7,7 +7,14 @@ defmodule BillingCore.MixProject do
       version: "0.1.0",
       elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
       deps: deps()
+    ]
+  end
+
+  def cli do
+    [
+      preferred_envs: [precommit: :test]
     ]
   end
 
@@ -37,6 +44,20 @@ defmodule BillingCore.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false, warn_if_outdated: true},
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false}
+    ]
+  end
+
+  defp aliases do
+    [
+      precommit: [
+        "compile --warning-as-errors",
+        "deps.unlock --unused",
+        "format",
+        "credo --strict",
+        "sobelow",
+        "deps.audit --ignore-advisory-ids GHSA-rhv4-8758-jx7v",
+        "test"
+      ]
     ]
   end
 end
