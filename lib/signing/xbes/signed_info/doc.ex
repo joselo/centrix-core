@@ -4,7 +4,8 @@ defmodule BillingCore.Xbes.SignedInfo.Doc do
   def digest(xml) do
     canon = canonicalize(xml)
 
-    :crypto.hash(:sha, canon)
+    :sha
+    |> :crypto.hash(canon)
     |> Base.encode64()
   end
 

@@ -49,7 +49,7 @@ defmodule BillingCore.Xbes.CertificateTest do
   # end
 
   test "pem_decode", %{pem_file: pem_file} do
-    [_, _, _, expected_cert] = pem_file |> :public_key.pem_decode()
+    [_, _, _, expected_cert] = :public_key.pem_decode(pem_file)
 
     {cert, index} = Certificate.pem_decode(pem_file)
 

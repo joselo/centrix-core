@@ -7,24 +7,20 @@ defmodule BillingCore.Xbes do
   @moduledoc false
   @behaviour BillingCore.XbesBehaviour
 
+  alias BillingCore.Xbes.Cfg
+  alias BillingCore.Xbes.P12.Certificate
+  alias BillingCore.Xbes.P12.Key
   alias BillingCore.Xbes.Signature
   alias BillingCore.Xbes.SignedInfo
-  alias BillingCore.Xbes.SignedInfo.{Doc, KeyInfo, Properties}
-  alias BillingCore.Xbes.{Cfg, P12.Certificate, P12.Key}
+  alias BillingCore.Xbes.SignedInfo.Doc
+  alias BillingCore.Xbes.SignedInfo.KeyInfo
+  alias BillingCore.Xbes.SignedInfo.Properties
 
-  def sign(
-        xml,
-        crt_pem,
-        key_pem,
-        signing_time,
-        signed_data_description \\ "contenido comprobante"
-      )
+  def sign(xml, crt_pem, key_pem, signing_time, signed_data_description \\ "contenido comprobante")
       when is_bitstring(crt_pem) and is_bitstring(key_pem) and is_bitstring(xml) do
     crt = Certificate.build(crt_pem)
 
-    cfg =
-      crt
-      |> config().get_cfg(signing_time, signed_data_description)
+    cfg = config().get_cfg(crt, signing_time, signed_data_description)
 
     # Properties
     properties = Properties.get(cfg, false)
@@ -46,7 +42,8 @@ defmodule BillingCore.Xbes do
 
     # Signature
     signature =
-      Signature.get(cfg, signed_info, signature_value, key_info, properties)
+      cfg
+      |> Signature.get(signed_info, signature_value, key_info, properties)
       |> XmlBuilder.generate(format: :none)
 
     # Result Merged
@@ -54,8 +51,7 @@ defmodule BillingCore.Xbes do
   end
 
   def merge(doc, signature) do
-    doc
-    |> String.replace(~r/(<[^<]+)$/, "#{signature}\\1")
+    String.replace(doc, ~r/(<[^<]+)$/, "#{signature}\\1")
   end
 
   def get_cfg(crt, signing_time, signed_data_description) do

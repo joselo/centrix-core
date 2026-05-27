@@ -1,6 +1,5 @@
 defmodule BillingCore.SriClientTest do
   use ExUnit.Case
-
   use Mimic
 
   alias BillingCore.SriClient
@@ -41,9 +40,7 @@ defmodule BillingCore.SriClientTest do
     end
 
     test "returns connection closed" do
-      Client
-      |> expect(:post, fn _wsdl_url, _request -> {:error, "closed"} end)
-
+      expect(Client, :post, fn _wsdl_url, _request -> {:error, "closed"} end)
       assert {:error, "closed"} = SriClient.send_document("<xml />", @environment)
     end
   end
@@ -55,9 +52,7 @@ defmodule BillingCore.SriClientTest do
       unauthorized_response = File.read!("test/fixtures/unauthorized_response.xml")
 
       {:ok,
-       success_response: success_response,
-       error_response: error_response,
-       unauthorized_response: unauthorized_response}
+       success_response: success_response, error_response: error_response, unauthorized_response: unauthorized_response}
     end
 
     test "returns success response", %{success_response: success_response} do
@@ -73,8 +68,7 @@ defmodule BillingCore.SriClientTest do
     test "is_authorized/1 with unauthorized response", %{
       unauthorized_response: unauthorized_response
     } do
-      Client
-      |> expect(:post, fn _wsdl_url, _request -> {:ok, unauthorized_response} end)
+      expect(Client, :post, fn _wsdl_url, _request -> {:ok, unauthorized_response} end)
 
       assert {:ok, %{status: "NO AUTORIZADO"}} =
                SriClient.is_authorized("123456789", @environment)

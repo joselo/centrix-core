@@ -1,18 +1,15 @@
 defmodule BillingCore.Dataset.GuiaRemision do
   @moduledoc false
 
-  alias BillingCore.Dataset.Factura.{
-    CampoAdicional,
-    InfoTributaria
-  }
-
-  alias BillingCore.Dataset.GuiaRemision.{
-    Destinatario,
-    InfoGuiaRemision
-  }
-
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias BillingCore.Dataset.Factura.CampoAdicional
+  alias BillingCore.Dataset.Factura.InfoTributaria
+  alias BillingCore.Dataset.GuiaRemision
+  alias BillingCore.Dataset.GuiaRemision.Destinatario
+  alias BillingCore.Dataset.GuiaRemision.InfoGuiaRemision
 
   embedded_schema do
     embeds_one(:info_tributaria, InfoTributaria)
@@ -31,14 +28,16 @@ defmodule BillingCore.Dataset.GuiaRemision do
     |> cast_embed(:info_adicional, required: false, with: &CampoAdicional.changeset/2)
   end
 
-  def to_doc(%BillingCore.Dataset.GuiaRemision{} = guia_remision) do
+  def to_doc(%GuiaRemision{} = guia_remision) do
     doc =
-      [
-        InfoTributaria.to_doc(guia_remision.info_tributaria),
-        InfoGuiaRemision.to_doc(guia_remision.info_guia_remision),
-        {:destinatarios, nil, destinatarios_to_doc(guia_remision.destinatarios)}
-      ]
-      |> add_info_adicional(guia_remision)
+      add_info_adicional(
+        [
+          InfoTributaria.to_doc(guia_remision.info_tributaria),
+          InfoGuiaRemision.to_doc(guia_remision.info_guia_remision),
+          {:destinatarios, nil, destinatarios_to_doc(guia_remision.destinatarios)}
+        ],
+        guia_remision
+      )
 
     {
       :guiaRemision,
@@ -47,14 +46,15 @@ defmodule BillingCore.Dataset.GuiaRemision do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.GuiaRemision{} = guia_remision) do
-    XmlBuilder.document(to_doc(guia_remision))
+  def to_xml(%GuiaRemision{} = guia_remision) do
+    guia_remision
+    |> to_doc()
+    |> XmlBuilder.document()
     |> XmlBuilder.generate()
   end
 
   defp destinatarios_to_doc(destinatarios) do
-    destinatarios
-    |> Enum.map(fn destinatario -> Destinatario.to_doc(destinatario) end)
+    Enum.map(destinatarios, fn destinatario -> Destinatario.to_doc(destinatario) end)
   end
 
   defp add_info_adicional(doc, %{info_adicional: []}), do: doc

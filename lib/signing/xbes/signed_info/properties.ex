@@ -4,7 +4,8 @@ defmodule BillingCore.Xbes.SignedInfo.Properties do
   alias BillingCore.Xbes.Util
 
   def digest(cfg) do
-    get(cfg)
+    cfg
+    |> get()
     |> XmlBuilder.generate(format: :none)
     |> Util.digest()
   end
@@ -24,8 +25,7 @@ defmodule BillingCore.Xbes.SignedInfo.Properties do
               [
                 {:"etsi:CertDigest", nil,
                  [
-                   {:"ds:DigestMethod", %{Algorithm: "http://www.w3.org/2000/09/xmldsig#sha1"},
-                    close_tag},
+                   {:"ds:DigestMethod", %{Algorithm: "http://www.w3.org/2000/09/xmldsig#sha1"}, close_tag},
                    {:"ds:DigestValue", nil, cfg.crt_digest}
                  ]},
                 {:"etsi:IssuerSerial", nil,
@@ -38,8 +38,7 @@ defmodule BillingCore.Xbes.SignedInfo.Properties do
         ]},
        {:"etsi:SignedDataObjectProperties", nil,
         [
-          {:"etsi:DataObjectFormat",
-           %{ObjectReference: "#Reference-ID-#{cfg.reference_id_number}"},
+          {:"etsi:DataObjectFormat", %{ObjectReference: "#Reference-ID-#{cfg.reference_id_number}"},
            [
              {:"etsi:Description", nil, cfg.signed_data_description},
              {:"etsi:MimeType", nil, "text/xml"}

@@ -10,8 +10,7 @@ defmodule BillingCore.Xbes.Signature do
     {:"ds:Signature", attrs,
      [
        signed_info,
-       {:"ds:SignatureValue", %{Id: "SignatureValue#{cfg.signature_value_number}"},
-        signature_value},
+       {:"ds:SignatureValue", %{Id: "SignatureValue#{cfg.signature_value_number}"}, signature_value},
        key_info,
        {:"ds:Object", %{Id: "Signature#{cfg.signature_number}-Object#{cfg.object_number}"},
         [

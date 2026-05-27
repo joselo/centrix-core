@@ -54,32 +54,26 @@ defmodule BillingCore.XmlCreditNoteBuilderTest do
     }
 
     info_nota_credito_params =
-      %{
-        fecha_emision: "2020-02-03",
-        dir_establecimiento:
-          "Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN",
-        tipo_identificacion_comprador: 8,
-        razon_social_comprador: "Novaux Inc.",
-        identificacion_comprador: "465219513",
-        total_sin_impuestos: 3000.00,
-        obligado_contabilidad: "NO",
-        rise: "rise0",
-        cod_doc_modificado: "01",
-        num_doc_modificado: "001001000000001",
-        fecha_emision_doc_sustento: "2020-02-03",
-        valor_modificacion: 3000.00,
-        moneda: "DOLAR",
-        motivo: "motivo0",
-        total_con_impuestos: [
-          %{
-            codigo: 2,
-            codigo_porcentaje: 0,
-            base_imponible: 3000.00,
-            valor: 0.00
-          }
-        ]
-      }
-      |> Map.merge(accounting)
+      Map.merge(
+        %{
+          fecha_emision: "2020-02-03",
+          dir_establecimiento: "Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN",
+          tipo_identificacion_comprador: 8,
+          razon_social_comprador: "Novaux Inc.",
+          identificacion_comprador: "465219513",
+          total_sin_impuestos: 3000.00,
+          obligado_contabilidad: "NO",
+          rise: "rise0",
+          cod_doc_modificado: "01",
+          num_doc_modificado: "001001000000001",
+          fecha_emision_doc_sustento: "2020-02-03",
+          valor_modificacion: 3000.00,
+          moneda: "DOLAR",
+          motivo: "motivo0",
+          total_con_impuestos: [%{codigo: 2, codigo_porcentaje: 0, base_imponible: 3000.00, valor: 0.00}]
+        },
+        accounting
+      )
 
     detalles_params = [
       %{

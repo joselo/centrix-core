@@ -1,17 +1,12 @@
 defmodule BillingCore.Dataset.FacturaTest do
   use ExUnit.Case
 
-  alias BillingCore.Dataset.Factura.Test.FactorySupport
-
   alias BillingCore.Dataset.Factura
-
-  alias BillingCore.Dataset.Factura.{
-    CampoAdicional,
-    Detalle,
-    InfoFactura,
-    InfoTributaria
-  }
-
+  alias BillingCore.Dataset.Factura.CampoAdicional
+  alias BillingCore.Dataset.Factura.Detalle
+  alias BillingCore.Dataset.Factura.InfoFactura
+  alias BillingCore.Dataset.Factura.InfoTributaria
+  alias BillingCore.Dataset.Factura.Test.FactorySupport
   alias BillingCore.Dataset.Test.XmlSupport
 
   setup do
@@ -22,12 +17,10 @@ defmodule BillingCore.Dataset.FacturaTest do
 
   test "to_doc", %{factura: factura} do
     detalles =
-      factura.detalles
-      |> Enum.map(fn detalle -> Detalle.to_doc(detalle) end)
+      Enum.map(factura.detalles, fn detalle -> Detalle.to_doc(detalle) end)
 
     info_adicional =
-      factura.info_adicional
-      |> Enum.map(fn info -> CampoAdicional.to_doc(info) end)
+      Enum.map(factura.info_adicional, fn info -> CampoAdicional.to_doc(info) end)
 
     doc_expected = {
       :factura,
@@ -45,11 +38,13 @@ defmodule BillingCore.Dataset.FacturaTest do
 
   test "to_xml", %{factura: factura} do
     xml_expected =
-      File.read!("test/fixtures/factura.xml")
+      "test/fixtures/factura.xml"
+      |> File.read!()
       |> XmlSupport.format()
 
     xml =
-      Factura.to_xml(factura)
+      factura
+      |> Factura.to_xml()
       |> XmlSupport.format()
 
     assert xml == xml_expected

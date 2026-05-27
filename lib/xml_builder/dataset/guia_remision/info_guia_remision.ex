@@ -2,7 +2,10 @@ defmodule BillingCore.Dataset.GuiaRemision.InfoGuiaRemision do
   @moduledoc false
 
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias BillingCore.Dataset.GuiaRemision.InfoGuiaRemision
 
   embedded_schema do
     field(:dir_establecimiento, :string)
@@ -53,7 +56,7 @@ defmodule BillingCore.Dataset.GuiaRemision.InfoGuiaRemision do
     |> validate_length(:placa, max: 20)
   end
 
-  def to_doc(%BillingCore.Dataset.GuiaRemision.InfoGuiaRemision{} = info) do
+  def to_doc(%InfoGuiaRemision{} = info) do
     doc =
       [
         {:dirPartida, nil, info.dir_partida},
@@ -79,8 +82,9 @@ defmodule BillingCore.Dataset.GuiaRemision.InfoGuiaRemision do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.GuiaRemision.InfoGuiaRemision{} = info) do
-    to_doc(info)
+  def to_xml(%InfoGuiaRemision{} = info) do
+    info
+    |> to_doc()
     |> XmlBuilder.generate()
   end
 

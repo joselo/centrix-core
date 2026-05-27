@@ -1,7 +1,8 @@
 defmodule BillingCore.SriClient do
-  alias BillingCore.Ws
-  alias BillingCore.ReceptionParser
+  @moduledoc false
   alias BillingCore.AuthorizationParser
+  alias BillingCore.ReceptionParser
+  alias BillingCore.Ws
   alias BillingCore.Ws.Client
 
   def send_document(xml, environment) do
@@ -16,8 +17,7 @@ defmodule BillingCore.SriClient do
     end
   end
 
-  def is_authorized(clave_acceso, environment)
-      when is_binary(clave_acceso) and is_integer(environment) do
+  def is_authorized(clave_acceso, environment) when is_binary(clave_acceso) and is_integer(environment) do
     params = Ws.AuthorizationSoap.create_request(clave_acceso, :autorizacionComprobante)
 
     case Client.post(get_authorization_url(environment), params) do

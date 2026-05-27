@@ -1,18 +1,15 @@
 defmodule BillingCore.Dataset.CompRetencion do
   @moduledoc false
 
-  alias BillingCore.Dataset.Factura.{
-    CampoAdicional,
-    InfoTributaria
-  }
-
-  alias BillingCore.Dataset.Retencion.{
-    DocSustento,
-    InfoCompRetencion
-  }
-
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias BillingCore.Dataset.CompRetencion
+  alias BillingCore.Dataset.Factura.CampoAdicional
+  alias BillingCore.Dataset.Factura.InfoTributaria
+  alias BillingCore.Dataset.Retencion.DocSustento
+  alias BillingCore.Dataset.Retencion.InfoCompRetencion
 
   embedded_schema do
     embeds_one(:info_tributaria, InfoTributaria)
@@ -31,14 +28,16 @@ defmodule BillingCore.Dataset.CompRetencion do
     |> cast_embed(:info_adicional, required: false, with: &CampoAdicional.changeset/2)
   end
 
-  def to_doc(%BillingCore.Dataset.CompRetencion{} = comp_retencion) do
+  def to_doc(%CompRetencion{} = comp_retencion) do
     doc =
-      [
-        InfoTributaria.to_doc(comp_retencion.info_tributaria),
-        InfoCompRetencion.to_doc(comp_retencion.info_comp_retencion),
-        {:docsSustento, nil, docs_sustento_to_doc(comp_retencion.docs_sustento)}
-      ]
-      |> add_info_adicional(comp_retencion)
+      add_info_adicional(
+        [
+          InfoTributaria.to_doc(comp_retencion.info_tributaria),
+          InfoCompRetencion.to_doc(comp_retencion.info_comp_retencion),
+          {:docsSustento, nil, docs_sustento_to_doc(comp_retencion.docs_sustento)}
+        ],
+        comp_retencion
+      )
 
     {
       :comprobanteRetencion,
@@ -47,14 +46,15 @@ defmodule BillingCore.Dataset.CompRetencion do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.CompRetencion{} = comp_retencion) do
-    XmlBuilder.document(to_doc(comp_retencion))
+  def to_xml(%CompRetencion{} = comp_retencion) do
+    comp_retencion
+    |> to_doc()
+    |> XmlBuilder.document()
     |> XmlBuilder.generate()
   end
 
   defp docs_sustento_to_doc(docs_sustento) do
-    docs_sustento
-    |> Enum.map(fn doc_sustento -> DocSustento.to_doc(doc_sustento) end)
+    Enum.map(docs_sustento, fn doc_sustento -> DocSustento.to_doc(doc_sustento) end)
   end
 
   defp add_info_adicional(doc, %{info_adicional: []}), do: doc

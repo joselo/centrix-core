@@ -1,9 +1,10 @@
 defmodule BillingCore.Dataset.Factura.InfoFacturaTest do
   use ExUnit.Case
 
-  alias BillingCore.Dataset.Factura.{InfoFactura, Pago, TotalImpuesto}
-
+  alias BillingCore.Dataset.Factura.InfoFactura
+  alias BillingCore.Dataset.Factura.Pago
   alias BillingCore.Dataset.Factura.Test.FactorySupport
+  alias BillingCore.Dataset.Factura.TotalImpuesto
   alias BillingCore.Dataset.Test.XmlSupport
 
   setup do
@@ -17,15 +18,13 @@ defmodule BillingCore.Dataset.Factura.InfoFacturaTest do
     day = info_factura.fecha_emision.day |> Integer.to_string() |> String.pad_leading(2, "0")
     month = info_factura.fecha_emision.month |> Integer.to_string() |> String.pad_leading(2, "0")
 
-    fecha_emision = [day, month, info_factura.fecha_emision.year] |> Enum.join("/")
+    fecha_emision = Enum.join([day, month, info_factura.fecha_emision.year], "/")
 
     total_con_impuestos =
-      info_factura.total_con_impuestos
-      |> Enum.map(fn impuesto -> TotalImpuesto.to_doc(impuesto) end)
+      Enum.map(info_factura.total_con_impuestos, fn impuesto -> TotalImpuesto.to_doc(impuesto) end)
 
     pagos =
-      info_factura.pagos
-      |> Enum.map(fn pago -> Pago.to_doc(:pago, pago) end)
+      Enum.map(info_factura.pagos, fn pago -> Pago.to_doc(:pago, pago) end)
 
     doc_expected = {
       :infoFactura,
@@ -41,13 +40,11 @@ defmodule BillingCore.Dataset.Factura.InfoFacturaTest do
         {:razonSocialComprador, nil, info_factura.razon_social_comprador},
         {:identificacionComprador, nil, info_factura.identificacion_comprador},
         {:direccionComprador, nil, info_factura.direccion_comprador},
-        {:totalSinImpuestos, nil,
-         Decimal.round(info_factura.total_sin_impuestos, 2) |> Decimal.to_string(:normal)},
-        {:totalDescuento, nil,
-         Decimal.round(info_factura.total_descuento, 2) |> Decimal.to_string(:normal)},
+        {:totalSinImpuestos, nil, info_factura.total_sin_impuestos |> Decimal.round(2) |> Decimal.to_string(:normal)},
+        {:totalDescuento, nil, info_factura.total_descuento |> Decimal.round(2) |> Decimal.to_string(:normal)},
         {:totalConImpuestos, nil, total_con_impuestos},
-        {:propina, nil, Decimal.round(info_factura.propina, 2) |> Decimal.to_string(:normal)},
-        {:importeTotal, nil, Decimal.round(info_factura.importe_total, 2) |> Decimal.to_string(:normal)},
+        {:propina, nil, info_factura.propina |> Decimal.round(2) |> Decimal.to_string(:normal)},
+        {:importeTotal, nil, info_factura.importe_total |> Decimal.round(2) |> Decimal.to_string(:normal)},
         {:moneda, nil, info_factura.moneda},
         {:pagos, nil, pagos}
       ]
@@ -60,15 +57,13 @@ defmodule BillingCore.Dataset.Factura.InfoFacturaTest do
     day = info_factura.fecha_emision.day |> Integer.to_string() |> String.pad_leading(2, "0")
     month = info_factura.fecha_emision.month |> Integer.to_string() |> String.pad_leading(2, "0")
 
-    fecha_emision = [day, month, info_factura.fecha_emision.year] |> Enum.join("/")
+    fecha_emision = Enum.join([day, month, info_factura.fecha_emision.year], "/")
 
     total_con_impuestos =
-      info_factura.total_con_impuestos
-      |> Enum.map(fn impuesto -> TotalImpuesto.to_doc(impuesto) end)
+      Enum.map(info_factura.total_con_impuestos, fn impuesto -> TotalImpuesto.to_doc(impuesto) end)
 
     pagos =
-      info_factura.pagos
-      |> Enum.map(fn pago -> Pago.to_doc(:pago, pago) end)
+      Enum.map(info_factura.pagos, fn pago -> Pago.to_doc(:pago, pago) end)
 
     doc_expected = {
       :infoFactura,
@@ -85,13 +80,11 @@ defmodule BillingCore.Dataset.Factura.InfoFacturaTest do
         {:razonSocialComprador, nil, info_factura.razon_social_comprador},
         {:identificacionComprador, nil, info_factura.identificacion_comprador},
         {:direccionComprador, nil, info_factura.direccion_comprador},
-        {:totalSinImpuestos, nil,
-         Decimal.round(info_factura.total_sin_impuestos, 2) |> Decimal.to_string(:normal)},
-        {:totalDescuento, nil,
-         Decimal.round(info_factura.total_descuento, 2) |> Decimal.to_string(:normal)},
+        {:totalSinImpuestos, nil, info_factura.total_sin_impuestos |> Decimal.round(2) |> Decimal.to_string(:normal)},
+        {:totalDescuento, nil, info_factura.total_descuento |> Decimal.round(2) |> Decimal.to_string(:normal)},
         {:totalConImpuestos, nil, total_con_impuestos},
-        {:propina, nil, Decimal.round(info_factura.propina, 2) |> Decimal.to_string(:normal)},
-        {:importeTotal, nil, Decimal.round(info_factura.importe_total, 2) |> Decimal.to_string(:normal)},
+        {:propina, nil, info_factura.propina |> Decimal.round(2) |> Decimal.to_string(:normal)},
+        {:importeTotal, nil, info_factura.importe_total |> Decimal.round(2) |> Decimal.to_string(:normal)},
         {:moneda, nil, info_factura.moneda},
         {:pagos, nil, pagos}
       ]
@@ -102,11 +95,13 @@ defmodule BillingCore.Dataset.Factura.InfoFacturaTest do
 
   test "to_xml without contribuyenteEspecial", %{info_factura: info_factura} do
     xml_expected =
-      File.read!("test/fixtures/info_factura.xml")
+      "test/fixtures/info_factura.xml"
+      |> File.read!()
       |> XmlSupport.format()
 
     xml =
-      InfoFactura.to_xml(info_factura)
+      info_factura
+      |> InfoFactura.to_xml()
       |> XmlSupport.format()
 
     assert xml == xml_expected
@@ -114,11 +109,13 @@ defmodule BillingCore.Dataset.Factura.InfoFacturaTest do
 
   test "to_xml with contribuyenteEspecial", %{info_factura_with_accounting: info_factura} do
     xml_expected =
-      File.read!("test/fixtures/info_factura_with_accounting.xml")
+      "test/fixtures/info_factura_with_accounting.xml"
+      |> File.read!()
       |> XmlSupport.format()
 
     xml =
-      InfoFactura.to_xml(info_factura)
+      info_factura
+      |> InfoFactura.to_xml()
       |> XmlSupport.format()
 
     assert xml == xml_expected

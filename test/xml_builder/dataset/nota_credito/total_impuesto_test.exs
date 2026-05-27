@@ -1,9 +1,8 @@
 defmodule BillingCore.Dataset.NotaCredito.TotalImpuestoTest do
   use ExUnit.Case
 
-  alias BillingCore.Dataset.NotaCredito.TotalImpuesto
-
   alias BillingCore.Dataset.NotaCredito.Test.FactorySupport
+  alias BillingCore.Dataset.NotaCredito.TotalImpuesto
   alias BillingCore.Dataset.Test.XmlSupport
 
   setup do
@@ -19,9 +18,8 @@ defmodule BillingCore.Dataset.NotaCredito.TotalImpuestoTest do
       [
         {:codigo, nil, total_impuesto.codigo},
         {:codigoPorcentaje, nil, total_impuesto.codigo_porcentaje},
-        {:baseImponible, nil,
-         Decimal.round(total_impuesto.base_imponible, 2) |> Decimal.to_string(:normal)},
-        {:valor, nil, Decimal.round(total_impuesto.valor, 2) |> Decimal.to_string(:normal)}
+        {:baseImponible, nil, total_impuesto.base_imponible |> Decimal.round(2) |> Decimal.to_string(:normal)},
+        {:valor, nil, total_impuesto.valor |> Decimal.round(2) |> Decimal.to_string(:normal)}
       ]
     }
 
@@ -30,11 +28,13 @@ defmodule BillingCore.Dataset.NotaCredito.TotalImpuestoTest do
 
   test "to_xml", %{total_impuesto: total_impuesto} do
     xml_expected =
-      File.read!("test/fixtures/nota_credito/total_impuesto.xml")
+      "test/fixtures/nota_credito/total_impuesto.xml"
+      |> File.read!()
       |> XmlSupport.format()
 
     xml =
-      TotalImpuesto.to_xml(total_impuesto)
+      total_impuesto
+      |> TotalImpuesto.to_xml()
       |> XmlSupport.format()
 
     assert xml == xml_expected

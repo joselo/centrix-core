@@ -2,7 +2,6 @@ defmodule BillingCore.Dataset.NotaCredito.DetAdicionalTest do
   use ExUnit.Case
 
   alias BillingCore.Dataset.NotaCredito.DetAdicional
-
   alias BillingCore.Dataset.NotaCredito.Test.FactorySupport
   alias BillingCore.Dataset.Test.XmlSupport
 
@@ -29,11 +28,13 @@ defmodule BillingCore.Dataset.NotaCredito.DetAdicionalTest do
 
   test "to_xml", %{det_adicional: det_adicional} do
     xml_expected =
-      File.read!("test/fixtures/nota_credito/det_adicional.xml")
+      "test/fixtures/nota_credito/det_adicional.xml"
+      |> File.read!()
       |> XmlSupport.format()
 
     xml =
-      DetAdicional.to_xml(det_adicional)
+      det_adicional
+      |> DetAdicional.to_xml()
       |> XmlSupport.format()
 
     assert xml == xml_expected

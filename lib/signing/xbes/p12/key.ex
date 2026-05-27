@@ -4,7 +4,8 @@ defmodule BillingCore.Xbes.P12.Key do
   def sign_with_pem(value, pem_file, index) do
     pem = pem_decode(pem_file, index)
 
-    :public_key.sign(value, :sha, pem)
+    value
+    |> :public_key.sign(:sha, pem)
     |> Base.encode64()
   end
 

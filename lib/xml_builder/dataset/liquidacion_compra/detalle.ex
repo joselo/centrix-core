@@ -1,16 +1,16 @@
 defmodule BillingCore.Dataset.LiquidacionCompra.Detalle do
   @moduledoc false
 
+  use Ecto.Schema
+
+  import Ecto.Changeset
+
+  alias BillingCore.Dataset.Factura.DetAdicional
+  alias BillingCore.Dataset.Factura.Impuesto
+  alias BillingCore.Dataset.LiquidacionCompra.Detalle
+
   @decimals BillingCore.decimals()
   @quantity_decimals 6
-
-  alias BillingCore.Dataset.Factura.{
-    DetAdicional,
-    Impuesto
-  }
-
-  use Ecto.Schema
-  import Ecto.Changeset
 
   embedded_schema do
     field(:codigo_principal, :string)
@@ -49,7 +49,7 @@ defmodule BillingCore.Dataset.LiquidacionCompra.Detalle do
     |> cast_embed(:impuestos, required: true, with: &Impuesto.changeset/2)
   end
 
-  def to_doc(%BillingCore.Dataset.LiquidacionCompra.Detalle{} = detalle) do
+  def to_doc(%Detalle{} = detalle) do
     doc =
       [
         {:codigoPrincipal, nil, detalle.codigo_principal}
@@ -71,8 +71,9 @@ defmodule BillingCore.Dataset.LiquidacionCompra.Detalle do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.LiquidacionCompra.Detalle{} = detalle) do
-    to_doc(detalle)
+  def to_xml(%Detalle{} = detalle) do
+    detalle
+    |> to_doc()
     |> XmlBuilder.generate()
   end
 
@@ -93,28 +94,27 @@ defmodule BillingCore.Dataset.LiquidacionCompra.Detalle do
   end
 
   defp add_cantidad(doc, %{cantidad: cantidad}) do
-    doc ++ [{:cantidad, nil, Decimal.round(cantidad, @quantity_decimals) |> Decimal.to_string(:normal)}]
+    doc ++ [{:cantidad, nil, cantidad |> Decimal.round(@quantity_decimals) |> Decimal.to_string(:normal)}]
   end
 
   defp add_precio_unitario(doc, %{precio_unitario: precio_unitario}) do
     doc ++
       [
-        {:precioUnitario, nil,
-         Decimal.round(precio_unitario, @quantity_decimals) |> Decimal.to_string(:normal)}
+        {:precioUnitario, nil, precio_unitario |> Decimal.round(@quantity_decimals) |> Decimal.to_string(:normal)}
       ]
   end
 
   defp add_descuento(doc, %{descuento: nil}), do: doc
 
   defp add_descuento(doc, %{descuento: descuento}) do
-    doc ++ [{:descuento, nil, Decimal.round(descuento, @decimals) |> Decimal.to_string(:normal)}]
+    doc ++ [{:descuento, nil, descuento |> Decimal.round(@decimals) |> Decimal.to_string(:normal)}]
   end
 
   defp add_precio_total_sin_impuesto(doc, %{precio_total_sin_impuesto: precio_total_sin_impuesto}) do
     doc ++
       [
         {:precioTotalSinImpuesto, nil,
-         Decimal.round(precio_total_sin_impuesto, @decimals) |> Decimal.to_string(:normal)}
+         precio_total_sin_impuesto |> Decimal.round(@decimals) |> Decimal.to_string(:normal)}
       ]
   end
 

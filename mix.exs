@@ -32,7 +32,11 @@ defmodule BillingCore.MixProject do
       {:elixir_xml_to_map, "~> 3.1.0"},
       {:pdf, "~> 0.7.1"},
       {:barlix, "~> 0.6"},
-      {:decimal, "~> 2.0"}
+      {:decimal, "~> 2.0"},
+      {:styler, "~> 1.11", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false, warn_if_outdated: true},
+      {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false}
     ]
   end
 end

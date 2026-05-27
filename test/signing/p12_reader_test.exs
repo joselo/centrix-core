@@ -4,9 +4,7 @@ defmodule BillingCore.P12ReaderTest do
   alias BillingCore.P12Reader
 
   setup do
-    path =
-      "test/fixtures/file.p12"
-      |> Path.absname()
+    path = Path.absname("test/fixtures/file.p12")
 
     bad_path = Path.absname("test/fixtures/badpath.p12")
     password = System.get_env("TEST_P12_FILE_PASSWORD")

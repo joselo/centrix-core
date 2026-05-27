@@ -63,7 +63,7 @@ defmodule BillingCore.IdentificationValidator do
     with :ok <- check_length(number, 13),
          :ok <- check_digits_only(number),
          :ok <- check_province_code(number) do
-      third_digit = String.at(number, 2) |> String.to_integer()
+      third_digit = number |> String.at(2) |> String.to_integer()
 
       case third_digit do
         d when d < 6 -> validate_ruc_natural(number)
@@ -99,7 +99,8 @@ defmodule BillingCore.IdentificationValidator do
       coefficients = [4, 3, 2, 7, 6, 5, 4, 3, 2]
 
       sum =
-        Enum.take(digits, 9)
+        digits
+        |> Enum.take(9)
         |> Enum.zip(coefficients)
         |> Enum.map(fn {d, c} -> d * c end)
         |> Enum.sum()
@@ -125,7 +126,8 @@ defmodule BillingCore.IdentificationValidator do
       coefficients = [3, 2, 7, 6, 5, 4, 3, 2]
 
       sum =
-        Enum.take(digits, 8)
+        digits
+        |> Enum.take(8)
         |> Enum.zip(coefficients)
         |> Enum.map(fn {d, d_coeff} -> d * d_coeff end)
         |> Enum.sum()
@@ -155,7 +157,7 @@ defmodule BillingCore.IdentificationValidator do
   end
 
   defp check_province_code(number) do
-    province = String.slice(number, 0, 2) |> String.to_integer()
+    province = number |> String.slice(0, 2) |> String.to_integer()
 
     if (province >= 1 && province <= 24) || province == 30,
       do: :ok,
@@ -163,7 +165,7 @@ defmodule BillingCore.IdentificationValidator do
   end
 
   defp check_third_digit(number, :cedula) do
-    third = String.at(number, 2) |> String.to_integer()
+    third = number |> String.at(2) |> String.to_integer()
     if third < 6, do: :ok, else: {:error, :invalid_third_digit}
   end
 

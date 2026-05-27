@@ -1,8 +1,8 @@
 defmodule BillingCore.Ws.Client do
-  require Logger
-
   @moduledoc false
   @behaviour BillingCore.Ws.ClientBehaviour
+
+  require Logger
 
   def post(wsdl_url, body) do
     headers = [
@@ -12,7 +12,8 @@ defmodule BillingCore.Ws.Client do
       {"Vary", "Accept-Encoding"}
     ]
 
-    HTTPoison.post(wsdl_url, body, headers,
+    wsdl_url
+    |> HTTPoison.post(body, headers,
       timeout: BillingCore.timeout(),
       recv_timeout: BillingCore.soap_server_recv_timeout()
     )
@@ -26,11 +27,12 @@ defmodule BillingCore.Ws.Client do
 
     body = URI.encode_query(params)
 
-    HTTPoison.put(url, body, headers,
+    url
+    |> HTTPoison.put(body, headers,
       timeout: BillingCore.timeout(),
       recv_timeout: BillingCore.soap_server_recv_timeout()
     )
-    |> handle_response
+    |> handle_response()
   end
 
   defp handle_response({:ok, %HTTPoison.Response{status_code: 200, body: body, headers: headers}}) do
@@ -58,7 +60,7 @@ defmodule BillingCore.Ws.Client do
   end
 
   defp unzip_body(body, headers) do
-    header_map = headers |> Enum.into(%{})
+    header_map = Map.new(headers)
 
     case header_map do
       %{"Content-Encoding" => "gzip"} ->

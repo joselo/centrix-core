@@ -55,8 +55,7 @@ defmodule BillingCore.XmlPurchaseSettlementBuilderTest do
       },
       info_liquidacion_compra: %{
         fecha_emision: "2026-05-04",
-        dir_establecimiento:
-          "Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN",
+        dir_establecimiento: "Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN",
         obligado_contabilidad: "NO",
         tipo_identificacion_proveedor: "04",
         razon_social_proveedor: "Novaux Inc.",

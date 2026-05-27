@@ -1,8 +1,7 @@
 defmodule BillingCore.Ws.ReceptionSoap do
   @moduledoc false
 
-  def create_request(xml, operation)
-      when is_atom(operation) do
+  def create_request(xml, operation) when is_atom(operation) do
     get_xml(xml, operation)
   end
 

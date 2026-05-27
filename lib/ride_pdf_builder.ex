@@ -173,14 +173,14 @@ defmodule BillingCore.RidePdfBuilder do
       )
 
     {pdf, _} =
-      if specific_table != [] do
+      if specific_table == [] do
+        {pdf, nil}
+      else
         Pdf.table(pdf, {50, 620}, {260, 45}, specific_table,
           padding: 1,
           border: 0,
           cols: [[width: 115, bold: true, font_size: 6], [width: 145, font_size: 6]]
         )
-      else
-        {pdf, nil}
       end
 
     # Horizontal divider

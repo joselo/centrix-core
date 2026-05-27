@@ -1,10 +1,13 @@
 defmodule BillingCore.Dataset.NotaDebito.Pago do
   @moduledoc false
 
-  @decimals BillingCore.decimals()
-
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias BillingCore.Dataset.NotaDebito.Pago
+
+  @decimals BillingCore.decimals()
 
   embedded_schema do
     field(:forma_pago, :integer)
@@ -19,11 +22,11 @@ defmodule BillingCore.Dataset.NotaDebito.Pago do
     |> validate_required([:forma_pago, :total])
   end
 
-  def to_doc(%BillingCore.Dataset.NotaDebito.Pago{} = pago, decimals \\ @decimals) do
+  def to_doc(%Pago{} = pago, decimals \\ @decimals) do
     doc =
       [
-        {:formaPago, nil, Integer.to_string(pago.forma_pago) |> String.pad_leading(2, "0")},
-        {:total, nil, Decimal.round(pago.total, decimals) |> Decimal.to_string(:normal)}
+        {:formaPago, nil, pago.forma_pago |> Integer.to_string() |> String.pad_leading(2, "0")},
+        {:total, nil, pago.total |> Decimal.round(decimals) |> Decimal.to_string(:normal)}
       ]
       |> add_plazo(pago)
       |> add_unidad_tiempo(pago)
@@ -35,8 +38,9 @@ defmodule BillingCore.Dataset.NotaDebito.Pago do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.NotaDebito.Pago{} = pago) do
-    to_doc(pago)
+  def to_xml(%Pago{} = pago) do
+    pago
+    |> to_doc()
     |> XmlBuilder.generate()
   end
 

@@ -1,17 +1,14 @@
 defmodule BillingCore.Dataset.NotaCredito.Test.FactorySupport do
-  alias BillingCore.Dataset.NotaCredito
-
-  alias BillingCore.Dataset.NotaCredito.{
-    CampoAdicional,
-    DetAdicional,
-    Detalle,
-    Impuesto,
-    InfoNotaCredito,
-    InfoTributaria,
-    TotalImpuesto
-  }
-
+  @moduledoc false
   alias BillingCore.Dataset.ClaveAcceso
+  alias BillingCore.Dataset.NotaCredito
+  alias BillingCore.Dataset.NotaCredito.CampoAdicional
+  alias BillingCore.Dataset.NotaCredito.DetAdicional
+  alias BillingCore.Dataset.NotaCredito.Detalle
+  alias BillingCore.Dataset.NotaCredito.Impuesto
+  alias BillingCore.Dataset.NotaCredito.InfoNotaCredito
+  alias BillingCore.Dataset.NotaCredito.InfoTributaria
+  alias BillingCore.Dataset.NotaCredito.TotalImpuesto
 
   def info_tributaria_factory do
     %InfoTributaria{

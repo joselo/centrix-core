@@ -1,10 +1,12 @@
 defmodule BillingCore.Dataset.GuiaRemision.Detalle do
   @moduledoc false
 
-  alias BillingCore.Dataset.Factura.DetAdicional
-
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias BillingCore.Dataset.Factura.DetAdicional
+  alias BillingCore.Dataset.GuiaRemision.Detalle
 
   embedded_schema do
     field(:codigo_interno, :string)
@@ -31,11 +33,11 @@ defmodule BillingCore.Dataset.GuiaRemision.Detalle do
     |> cast_embed(:detalles_adicionales, with: &DetAdicional.changeset/2)
   end
 
-  def to_doc(%BillingCore.Dataset.GuiaRemision.Detalle{} = detalle) do
+  def to_doc(%Detalle{} = detalle) do
     doc =
       [
         {:descripcion, nil, detalle.descripcion},
-        {:cantidad, nil, Decimal.round(detalle.cantidad, 6) |> Decimal.to_string(:normal)}
+        {:cantidad, nil, detalle.cantidad |> Decimal.round(6) |> Decimal.to_string(:normal)}
       ]
       |> add_codigo_interno(detalle)
       |> add_codigo_adicional(detalle)
@@ -48,8 +50,9 @@ defmodule BillingCore.Dataset.GuiaRemision.Detalle do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.GuiaRemision.Detalle{} = detalle) do
-    to_doc(detalle)
+  def to_xml(%Detalle{} = detalle) do
+    detalle
+    |> to_doc()
     |> XmlBuilder.generate()
   end
 

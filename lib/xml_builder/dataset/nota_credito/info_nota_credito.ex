@@ -1,12 +1,14 @@
 defmodule BillingCore.Dataset.NotaCredito.InfoNotaCredito do
   @moduledoc false
 
-  @decimals BillingCore.decimals()
+  use Ecto.Schema
 
+  import Ecto.Changeset
+
+  alias BillingCore.Dataset.NotaCredito.InfoNotaCredito
   alias BillingCore.Dataset.NotaCredito.TotalImpuesto
 
-  use Ecto.Schema
-  import Ecto.Changeset
+  @decimals BillingCore.decimals()
 
   embedded_schema do
     field(:fecha_emision, :date)
@@ -75,10 +77,7 @@ defmodule BillingCore.Dataset.NotaCredito.InfoNotaCredito do
     |> cast_embed(:total_con_impuestos, required: true, with: &TotalImpuesto.changeset/2)
   end
 
-  def to_doc(
-        %BillingCore.Dataset.NotaCredito.InfoNotaCredito{} = info_nota_credito,
-        decimals \\ @decimals
-      ) do
+  def to_doc(%InfoNotaCredito{} = info_nota_credito, decimals \\ @decimals) do
     doc =
       [
         {:fechaEmision, nil, format_fecha_emision(info_nota_credito.fecha_emision)},
@@ -91,15 +90,13 @@ defmodule BillingCore.Dataset.NotaCredito.InfoNotaCredito do
         {:identificacionComprador, nil, info_nota_credito.identificacion_comprador},
         {:codDocModificado, nil, info_nota_credito.cod_doc_modificado},
         {:numDocModificado, nil, info_nota_credito.num_doc_modificado},
-        {:fechaEmisionDocSustento, nil,
-         format_fecha_emision(info_nota_credito.fecha_emision_doc_sustento)},
+        {:fechaEmisionDocSustento, nil, format_fecha_emision(info_nota_credito.fecha_emision_doc_sustento)},
         {:totalSinImpuestos, nil,
-         Decimal.round(info_nota_credito.total_sin_impuestos, decimals) |> Decimal.to_string(:normal)},
+         info_nota_credito.total_sin_impuestos |> Decimal.round(decimals) |> Decimal.to_string(:normal)},
         {:valorModificacion, nil,
-         Decimal.round(info_nota_credito.valor_modificacion, decimals) |> Decimal.to_string(:normal)},
+         info_nota_credito.valor_modificacion |> Decimal.round(decimals) |> Decimal.to_string(:normal)},
         {:moneda, nil, info_nota_credito.moneda},
-        {:totalConImpuestos, nil,
-         total_con_impuestos_to_doc(info_nota_credito.total_con_impuestos)},
+        {:totalConImpuestos, nil, total_con_impuestos_to_doc(info_nota_credito.total_con_impuestos)},
         {:motivo, nil, info_nota_credito.motivo}
       ]
       |> add_contribuyente_especial(info_nota_credito)
@@ -112,29 +109,24 @@ defmodule BillingCore.Dataset.NotaCredito.InfoNotaCredito do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.NotaCredito.InfoNotaCredito{} = info_nota_credito) do
-    to_doc(info_nota_credito)
+  def to_xml(%InfoNotaCredito{} = info_nota_credito) do
+    info_nota_credito
+    |> to_doc()
     |> XmlBuilder.generate()
   end
 
   defp total_con_impuestos_to_doc(total_con_impuestos) do
-    total_con_impuestos
-    |> Enum.map(fn impuesto -> TotalImpuesto.to_doc(impuesto) end)
+    Enum.map(total_con_impuestos, fn impuesto -> TotalImpuesto.to_doc(impuesto) end)
   end
 
   defp format_fecha_emision(fecha_emision) do
     day = fecha_emision.day |> Integer.to_string() |> String.pad_leading(2, "0")
     month = fecha_emision.month |> Integer.to_string() |> String.pad_leading(2, "0")
 
-    [day, month, fecha_emision.year] |> Enum.join("/")
+    Enum.join([day, month, fecha_emision.year], "/")
   end
 
-  defp add_contribuyente_especial(
-         doc,
-         %{
-           obligado_contabilidad: "SI"
-         } = info_nota_credito
-       ) do
+  defp add_contribuyente_especial(doc, %{obligado_contabilidad: "SI"} = info_nota_credito) do
     if contribuyente_especial = info_nota_credito.contribuyente_especial do
       List.insert_at(doc, 2, {:contribuyenteEspecial, nil, contribuyente_especial})
     else
@@ -146,9 +138,7 @@ defmodule BillingCore.Dataset.NotaCredito.InfoNotaCredito do
 
   defp add_rise(doc, %{rise: nil}), do: doc
 
-  defp add_rise(doc, %{
-         rise: rise
-       }) do
+  defp add_rise(doc, %{rise: rise}) do
     List.insert_at(doc, 2, {:rise, nil, rise})
   end
 end

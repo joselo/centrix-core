@@ -1,5 +1,6 @@
 defmodule BillingCore.IdentificationValidatorTest do
   use ExUnit.Case, async: true
+
   alias BillingCore.IdentificationValidator
 
   describe "valid_identification?/2" do
@@ -15,7 +16,9 @@ defmodule BillingCore.IdentificationValidatorTest do
 
     test "validates consumidor_final (to be implemented)" do
       assert IdentificationValidator.valid_identification?(:consumidor_final, "9999999999999") == :ok
-      assert {:error, :invalid_consumidor_final} = IdentificationValidator.valid_identification?(:consumidor_final, "1234567890123")
+
+      assert {:error, :invalid_consumidor_final} =
+               IdentificationValidator.valid_identification?(:consumidor_final, "1234567890123")
     end
 
     test "validates pasaporte (to be implemented)" do

@@ -1,8 +1,7 @@
 defmodule BillingCore.Ws.AuthorizationSoap do
   @moduledoc false
 
-  def create_request(clave_acceso, operation)
-      when is_atom(operation) do
+  def create_request(clave_acceso, operation) when is_atom(operation) do
     get_clave_acceso(clave_acceso, operation)
   end
 

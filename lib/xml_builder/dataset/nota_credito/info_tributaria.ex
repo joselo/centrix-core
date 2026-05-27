@@ -2,10 +2,12 @@ defmodule BillingCore.Dataset.NotaCredito.InfoTributaria do
   @moduledoc false
 
   use Ecto.Schema
+
   import Ecto.Changeset
 
   alias BillingCore.Dataset.ClaveAcceso
   alias BillingCore.Dataset.ClaveAcceso.DigitoVerificador
+  alias BillingCore.Dataset.NotaCredito.InfoTributaria
 
   embedded_schema do
     field(:ambiente, :integer)
@@ -55,27 +57,29 @@ defmodule BillingCore.Dataset.NotaCredito.InfoTributaria do
     |> generate_clave_acceso()
   end
 
-  def to_doc(%BillingCore.Dataset.NotaCredito.InfoTributaria{} = info_tributaria) do
+  def to_doc(%InfoTributaria{} = info_tributaria) do
     cod_doc = info_tributaria.cod_doc |> Integer.to_string() |> String.pad_leading(2, "0")
     estab = info_tributaria.estab |> Integer.to_string() |> String.pad_leading(3, "0")
     pto_emi = info_tributaria.pto_emi |> Integer.to_string() |> String.pad_leading(3, "0")
     secuencial = info_tributaria.secuencial |> Integer.to_string() |> String.pad_leading(9, "0")
 
     doc =
-      [
-        {:ambiente, nil, info_tributaria.ambiente},
-        {:tipoEmision, nil, info_tributaria.tipo_emision},
-        {:razonSocial, nil, info_tributaria.razon_social},
-        {:nombreComercial, nil, info_tributaria.nombre_comercial},
-        {:ruc, nil, info_tributaria.ruc},
-        {:claveAcceso, nil, info_tributaria.clave_acceso},
-        {:codDoc, nil, cod_doc},
-        {:estab, nil, estab},
-        {:ptoEmi, nil, pto_emi},
-        {:secuencial, nil, secuencial},
-        {:dirMatriz, nil, info_tributaria.dir_matriz}
-      ]
-      |> add_agente_retencion(info_tributaria)
+      add_agente_retencion(
+        [
+          {:ambiente, nil, info_tributaria.ambiente},
+          {:tipoEmision, nil, info_tributaria.tipo_emision},
+          {:razonSocial, nil, info_tributaria.razon_social},
+          {:nombreComercial, nil, info_tributaria.nombre_comercial},
+          {:ruc, nil, info_tributaria.ruc},
+          {:claveAcceso, nil, info_tributaria.clave_acceso},
+          {:codDoc, nil, cod_doc},
+          {:estab, nil, estab},
+          {:ptoEmi, nil, pto_emi},
+          {:secuencial, nil, secuencial},
+          {:dirMatriz, nil, info_tributaria.dir_matriz}
+        ],
+        info_tributaria
+      )
 
     {
       :infoTributaria,
@@ -84,8 +88,9 @@ defmodule BillingCore.Dataset.NotaCredito.InfoTributaria do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.NotaCredito.InfoTributaria{} = info_tributaria) do
-    to_doc(info_tributaria)
+  def to_xml(%InfoTributaria{} = info_tributaria) do
+    info_tributaria
+    |> to_doc()
     |> XmlBuilder.generate()
   end
 
@@ -102,9 +107,7 @@ defmodule BillingCore.Dataset.NotaCredito.InfoTributaria do
 
   defp add_agente_retencion(doc, %{agente_retencion: nil}), do: doc
 
-  defp add_agente_retencion(doc, %{
-         agente_retencion: agente_retencion
-       }) do
+  defp add_agente_retencion(doc, %{agente_retencion: agente_retencion}) do
     agente_retencion = agente_retencion |> Integer.to_string() |> String.pad_leading(8, "0")
 
     List.insert_at(doc, 2, {:agente_retencion, nil, agente_retencion})

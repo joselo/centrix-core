@@ -2,7 +2,6 @@ defmodule BillingCore.Dataset.Factura.PagoTest do
   use ExUnit.Case
 
   alias BillingCore.Dataset.Factura.Pago
-
   alias BillingCore.Dataset.Factura.Test.FactorySupport
   alias BillingCore.Dataset.Test.XmlSupport
 
@@ -17,8 +16,8 @@ defmodule BillingCore.Dataset.Factura.PagoTest do
       :pago,
       nil,
       [
-        {:formaPago, nil, Integer.to_string(pago.forma_pago) |> String.pad_leading(2, "0")},
-        {:total, nil, Decimal.round(pago.total, 2) |> Decimal.to_string(:normal)},
+        {:formaPago, nil, pago.forma_pago |> Integer.to_string() |> String.pad_leading(2, "0")},
+        {:total, nil, pago.total |> Decimal.round(2) |> Decimal.to_string(:normal)},
         {:plazo, nil, pago.plazo},
         {:unidadTiempo, nil, pago.unidad_tiempo}
       ]
@@ -29,11 +28,13 @@ defmodule BillingCore.Dataset.Factura.PagoTest do
 
   test "to_xml", %{pago: pago} do
     xml_expected =
-      File.read!("test/fixtures/pago.xml")
+      "test/fixtures/pago.xml"
+      |> File.read!()
       |> XmlSupport.format()
 
     xml =
-      Pago.to_xml(:pago, pago)
+      :pago
+      |> Pago.to_xml(pago)
       |> XmlSupport.format()
 
     assert xml == xml_expected

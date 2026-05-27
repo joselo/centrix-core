@@ -1,10 +1,13 @@
 defmodule BillingCore.Dataset.Retencion.Pago do
   @moduledoc false
 
-  @decimals BillingCore.decimals()
-
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias BillingCore.Dataset.Retencion.Pago
+
+  @decimals BillingCore.decimals()
 
   embedded_schema do
     field(:forma_pago, :string)
@@ -23,10 +26,10 @@ defmodule BillingCore.Dataset.Retencion.Pago do
     ])
   end
 
-  def to_doc(%BillingCore.Dataset.Retencion.Pago{} = pago) do
+  def to_doc(%Pago{} = pago) do
     doc = [
       {:formaPago, nil, pago.forma_pago},
-      {:total, nil, Decimal.round(pago.total, @decimals) |> Decimal.to_string(:normal)}
+      {:total, nil, pago.total |> Decimal.round(@decimals) |> Decimal.to_string(:normal)}
     ]
 
     {
@@ -36,8 +39,9 @@ defmodule BillingCore.Dataset.Retencion.Pago do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.Retencion.Pago{} = pago) do
-    to_doc(pago)
+  def to_xml(%Pago{} = pago) do
+    pago
+    |> to_doc()
     |> XmlBuilder.generate()
   end
 end

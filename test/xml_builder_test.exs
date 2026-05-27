@@ -54,36 +54,23 @@ defmodule BillingCore.XmlBuilderTest do
     }
 
     info_factura_params =
-      %{
-        fecha_emision: "2020-02-03",
-        dir_establecimiento:
-          "Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN",
-        tipo_identificacion_comprador: 8,
-        razon_social_comprador: "Novaux Inc.",
-        identificacion_comprador: "465219513",
-        total_sin_impuestos: 3000.00,
-        total_descuento: 0.00,
-        total_con_impuestos: [
-          %{
-            codigo: 2,
-            codigo_porcentaje: 0,
-            base_imponible: 3000.00,
-            valor: 0.00
-          }
-        ],
-        propina: 0,
-        importe_total: 3000.00,
-        moneda: "DOLAR",
-        pagos: [
-          %{
-            forma_pago: 20,
-            total: 3000.00,
-            plazo: 15,
-            unidad_tiempo: "Dias"
-          }
-        ]
-      }
-      |> Map.merge(accounting)
+      Map.merge(
+        %{
+          fecha_emision: "2020-02-03",
+          dir_establecimiento: "Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN",
+          tipo_identificacion_comprador: 8,
+          razon_social_comprador: "Novaux Inc.",
+          identificacion_comprador: "465219513",
+          total_sin_impuestos: 3000.00,
+          total_descuento: 0.00,
+          total_con_impuestos: [%{codigo: 2, codigo_porcentaje: 0, base_imponible: 3000.00, valor: 0.00}],
+          propina: 0,
+          importe_total: 3000.00,
+          moneda: "DOLAR",
+          pagos: [%{forma_pago: 20, total: 3000.00, plazo: 15, unidad_tiempo: "Dias"}]
+        },
+        accounting
+      )
 
     detalles_params = [
       %{

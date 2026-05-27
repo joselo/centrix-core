@@ -29,7 +29,7 @@ defmodule BillingCore.XmlRetentionBuilderTest do
     end
   end
 
-  def get_retencion_params() do
+  def get_retencion_params do
     info_tributaria_params = %{
       ambiente: 1,
       tipo_emision: 1,

@@ -3,7 +3,7 @@ defmodule BillingCore.Xbes.Util do
 
   def digest(value) do
     value
-    |> hash
+    |> hash()
     |> Base.encode64()
   end
 
