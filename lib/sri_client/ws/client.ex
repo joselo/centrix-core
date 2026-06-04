@@ -46,17 +46,22 @@ defmodule BillingCore.Ws.Client do
 
   # Handle connection timeout
   defp handle_response({:error, %HTTPoison.Error{reason: :timeout}}) do
-    {:error, "Request timed out"}
+    {:error, "Tiempo de espera agotado al consultar al SRI"}
   end
 
   # Handle connection refused or DNS issues
   defp handle_response({:error, %HTTPoison.Error{reason: :connect_timeout}}) do
-    {:error, "Connection timed out"}
+    {:error, "No se pudo establecer conexión con los servidores del SRI"}
   end
 
-  # Handle other errors like `:nxdomain`, `:closed`, etc.
+  # Handle connection closed prematurely (typically overload or crash)
+  defp handle_response({:error, %HTTPoison.Error{reason: :closed}}) do
+    {:error, "La conexión fue cerrada inesperadamente por el SRI (posible sobrecarga o caída del servidor)"}
+  end
+
+  # Handle other errors like `:nxdomain`, etc.
   defp handle_response({:error, %HTTPoison.Error{reason: reason}}) do
-    {:error, "Request failed due to: #{inspect(reason)}"}
+    {:error, "Error en la solicitud: #{inspect(reason)}"}
   end
 
   defp unzip_body(body, headers) do
