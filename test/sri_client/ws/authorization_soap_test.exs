@@ -12,11 +12,13 @@ defmodule BillingCore.AuthorizationSoapTest do
 
   test "create_request/2", %{clave_acceso: clave_acceso} do
     xml_expected =
-      File.read!("test/fixtures/verificar_comprobante.xml")
+      "test/fixtures/verificar_comprobante.xml"
+      |> File.read!()
       |> XmlSupport.format()
 
     xml =
-      Ws.AuthorizationSoap.create_request(clave_acceso, :autorizacionComprobante)
+      clave_acceso
+      |> Ws.AuthorizationSoap.create_request(:autorizacionComprobante)
       |> XmlSupport.format()
 
     assert xml == xml_expected

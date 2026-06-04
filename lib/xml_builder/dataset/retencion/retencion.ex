@@ -1,10 +1,13 @@
 defmodule BillingCore.Dataset.Retencion.Retencion do
   @moduledoc false
 
-  @decimals BillingCore.decimals()
-
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias BillingCore.Dataset.Retencion.Retencion
+
+  @decimals BillingCore.decimals()
 
   embedded_schema do
     field(:codigo, :string)
@@ -33,13 +36,13 @@ defmodule BillingCore.Dataset.Retencion.Retencion do
     ])
   end
 
-  def to_doc(%BillingCore.Dataset.Retencion.Retencion{} = retencion) do
+  def to_doc(%Retencion{} = retencion) do
     doc = [
       {:codigo, nil, retencion.codigo},
       {:codigoRetencion, nil, retencion.codigo_retencion},
-      {:baseImponible, nil, Decimal.round(retencion.base_imponible, @decimals) |> Decimal.to_string(:normal)},
-      {:porcentajeRetener, nil, Decimal.round(retencion.porcentaje_retener, @decimals) |> Decimal.to_string(:normal)},
-      {:valorRetenido, nil, Decimal.round(retencion.valor_retenido, @decimals) |> Decimal.to_string(:normal)}
+      {:baseImponible, nil, retencion.base_imponible |> Decimal.round(@decimals) |> Decimal.to_string(:normal)},
+      {:porcentajeRetener, nil, retencion.porcentaje_retener |> Decimal.round(@decimals) |> Decimal.to_string(:normal)},
+      {:valorRetenido, nil, retencion.valor_retenido |> Decimal.round(@decimals) |> Decimal.to_string(:normal)}
     ]
 
     {
@@ -49,8 +52,9 @@ defmodule BillingCore.Dataset.Retencion.Retencion do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.Retencion.Retencion{} = retencion) do
-    to_doc(retencion)
+  def to_xml(%Retencion{} = retencion) do
+    retencion
+    |> to_doc()
     |> XmlBuilder.generate()
   end
 end

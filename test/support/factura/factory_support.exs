@@ -1,18 +1,15 @@
 defmodule BillingCore.Dataset.Factura.Test.FactorySupport do
-  alias BillingCore.Dataset.Factura
-
-  alias BillingCore.Dataset.Factura.{
-    CampoAdicional,
-    DetAdicional,
-    Detalle,
-    Impuesto,
-    InfoFactura,
-    InfoTributaria,
-    Pago,
-    TotalImpuesto
-  }
-
+  @moduledoc false
   alias BillingCore.Dataset.ClaveAcceso
+  alias BillingCore.Dataset.Factura
+  alias BillingCore.Dataset.Factura.CampoAdicional
+  alias BillingCore.Dataset.Factura.DetAdicional
+  alias BillingCore.Dataset.Factura.Detalle
+  alias BillingCore.Dataset.Factura.Impuesto
+  alias BillingCore.Dataset.Factura.InfoFactura
+  alias BillingCore.Dataset.Factura.InfoTributaria
+  alias BillingCore.Dataset.Factura.Pago
+  alias BillingCore.Dataset.Factura.TotalImpuesto
 
   def info_tributaria_factory do
     %InfoTributaria{
@@ -53,8 +50,7 @@ defmodule BillingCore.Dataset.Factura.Test.FactorySupport do
 
     %InfoFactura{
       fecha_emision: fecha_emision,
-      dir_establecimiento:
-        "Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN",
+      dir_establecimiento: "Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN",
       obligado_contabilidad: "NO",
       tipo_identificacion_comprador: 8,
       razon_social_comprador: "Novaux Inc.",

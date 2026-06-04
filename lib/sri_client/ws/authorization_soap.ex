@@ -1,18 +1,17 @@
 defmodule BillingCore.Ws.AuthorizationSoap do
   @moduledoc false
 
-  def create_request(clave_acceso, operation)
-      when is_atom(operation) do
+  def create_request(clave_acceso, operation) when is_atom(operation) do
     get_clave_acceso(clave_acceso, operation)
   end
 
   defp soap_env(clave_acceso, operation) do
     {
       :"soapenv:Envelope",
-      %{
-        "xmlns:soapenv": "http://schemas.xmlsoap.org/soap/envelope/",
-        "xmlns:ec": "http://ec.gob.sri.ws.autorizacion"
-      },
+      [
+        "xmlns:ec": "http://ec.gob.sri.ws.autorizacion",
+        "xmlns:soapenv": "http://schemas.xmlsoap.org/soap/envelope/"
+      ],
       [
         {:"soapenv:Header", nil, nil},
         {
@@ -20,7 +19,7 @@ defmodule BillingCore.Ws.AuthorizationSoap do
           nil,
           [
             {
-              :"ec:#{operation}",
+              "ec:#{operation}",
               nil,
               [
                 {:claveAccesoComprobante, nil, clave_acceso}

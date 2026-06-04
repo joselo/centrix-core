@@ -23,9 +23,10 @@ defmodule BillingCore.P12Reader do
         end
 
       {:error, error} ->
-        cond do
-          String.contains?(error, "invalid password") -> {:error, :invalid_password}
-          true -> {:error, error}
+        if String.contains?(error, "invalid password") do
+          {:error, :invalid_password}
+        else
+          {:error, error}
         end
     end
   end
@@ -48,7 +49,7 @@ defmodule BillingCore.P12Reader do
   defp parse_expiration_date(output) do
     case Regex.run(~r/notAfter=(.*)/, output) do
       [_, date_str] ->
-        normalized_date = String.trim(date_str) |> String.replace(~r/\s+/, " ")
+        normalized_date = date_str |> String.trim() |> String.replace(~r/\s+/, " ")
 
         case Timex.parse(normalized_date, "{Mshort} {D} {h24}:{m}:{s} {YYYY} GMT") do
           {:ok, datetime} -> {:ok, NaiveDateTime.to_date(datetime)}

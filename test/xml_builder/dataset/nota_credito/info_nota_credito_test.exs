@@ -1,18 +1,16 @@
 defmodule BillingCore.Dataset.NotaCredito.InfoNotaCreditoTest do
   use ExUnit.Case
 
-  alias BillingCore.Dataset.NotaCredito.{InfoNotaCredito, TotalImpuesto}
-
+  alias BillingCore.Dataset.NotaCredito.InfoNotaCredito
   alias BillingCore.Dataset.NotaCredito.Test.FactorySupport
+  alias BillingCore.Dataset.NotaCredito.TotalImpuesto
   alias BillingCore.Dataset.Test.XmlSupport
 
   setup do
     info_nota_credito = FactorySupport.info_nota_credito_factory()
     info_nota_credito_with_accounting = FactorySupport.info_nota_credito_with_accounting_factory()
 
-    {:ok,
-     info_nota_credito: info_nota_credito,
-     info_nota_credito_with_accounting: info_nota_credito_with_accounting}
+    {:ok, info_nota_credito: info_nota_credito, info_nota_credito_with_accounting: info_nota_credito_with_accounting}
   end
 
   test "to_doc without contribuyenteEspecial", %{info_nota_credito: info_nota_credito} do
@@ -21,14 +19,12 @@ defmodule BillingCore.Dataset.NotaCredito.InfoNotaCreditoTest do
     month =
       info_nota_credito.fecha_emision.month |> Integer.to_string() |> String.pad_leading(2, "0")
 
-    fecha_emision = [day, month, info_nota_credito.fecha_emision.year] |> Enum.join("/")
+    fecha_emision = Enum.join([day, month, info_nota_credito.fecha_emision.year], "/")
 
-    fecha_emision_doc_sustento =
-      [day, month, info_nota_credito.fecha_emision_doc_sustento.year] |> Enum.join("/")
+    fecha_emision_doc_sustento = Enum.join([day, month, info_nota_credito.fecha_emision_doc_sustento.year], "/")
 
     total_con_impuestos =
-      info_nota_credito.total_con_impuestos
-      |> Enum.map(fn impuesto -> TotalImpuesto.to_doc(impuesto) end)
+      Enum.map(info_nota_credito.total_con_impuestos, fn impuesto -> TotalImpuesto.to_doc(impuesto) end)
 
     doc_expected = {
       :infoNotaCredito,
@@ -46,9 +42,8 @@ defmodule BillingCore.Dataset.NotaCredito.InfoNotaCreditoTest do
         {:numDocModificado, nil, info_nota_credito.num_doc_modificado},
         {:fechaEmisionDocSustento, nil, fecha_emision_doc_sustento},
         {:totalSinImpuestos, nil,
-         Decimal.round(info_nota_credito.total_sin_impuestos, 2) |> Decimal.to_string(:normal)},
-        {:valorModificacion, nil,
-         Decimal.round(info_nota_credito.valor_modificacion, 2) |> Decimal.to_string(:normal)},
+         info_nota_credito.total_sin_impuestos |> Decimal.round(2) |> Decimal.to_string(:normal)},
+        {:valorModificacion, nil, info_nota_credito.valor_modificacion |> Decimal.round(2) |> Decimal.to_string(:normal)},
         {:moneda, nil, info_nota_credito.moneda},
         {:totalConImpuestos, nil, total_con_impuestos},
         {:motivo, nil, info_nota_credito.motivo}
@@ -66,14 +61,12 @@ defmodule BillingCore.Dataset.NotaCredito.InfoNotaCreditoTest do
     month =
       info_nota_credito.fecha_emision.month |> Integer.to_string() |> String.pad_leading(2, "0")
 
-    fecha_emision = [day, month, info_nota_credito.fecha_emision.year] |> Enum.join("/")
+    fecha_emision = Enum.join([day, month, info_nota_credito.fecha_emision.year], "/")
 
-    fecha_emision_doc_sustento =
-      [day, month, info_nota_credito.fecha_emision_doc_sustento.year] |> Enum.join("/")
+    fecha_emision_doc_sustento = Enum.join([day, month, info_nota_credito.fecha_emision_doc_sustento.year], "/")
 
     total_con_impuestos =
-      info_nota_credito.total_con_impuestos
-      |> Enum.map(fn impuesto -> TotalImpuesto.to_doc(impuesto) end)
+      Enum.map(info_nota_credito.total_con_impuestos, fn impuesto -> TotalImpuesto.to_doc(impuesto) end)
 
     doc_expected = {
       :infoNotaCredito,
@@ -92,9 +85,8 @@ defmodule BillingCore.Dataset.NotaCredito.InfoNotaCreditoTest do
         {:numDocModificado, nil, info_nota_credito.num_doc_modificado},
         {:fechaEmisionDocSustento, nil, fecha_emision_doc_sustento},
         {:totalSinImpuestos, nil,
-         Decimal.round(info_nota_credito.total_sin_impuestos, 2) |> Decimal.to_string(:normal)},
-        {:valorModificacion, nil,
-         Decimal.round(info_nota_credito.valor_modificacion, 2) |> Decimal.to_string(:normal)},
+         info_nota_credito.total_sin_impuestos |> Decimal.round(2) |> Decimal.to_string(:normal)},
+        {:valorModificacion, nil, info_nota_credito.valor_modificacion |> Decimal.round(2) |> Decimal.to_string(:normal)},
         {:moneda, nil, info_nota_credito.moneda},
         {:totalConImpuestos, nil, total_con_impuestos},
         {:motivo, nil, info_nota_credito.motivo}
@@ -106,11 +98,13 @@ defmodule BillingCore.Dataset.NotaCredito.InfoNotaCreditoTest do
 
   test "to_xml without contribuyenteEspecial", %{info_nota_credito: info_nota_credito} do
     xml_expected =
-      File.read!("test/fixtures/nota_credito/info_nota_credito.xml")
+      "test/fixtures/nota_credito/info_nota_credito.xml"
+      |> File.read!()
       |> XmlSupport.format()
 
     xml =
-      InfoNotaCredito.to_xml(info_nota_credito)
+      info_nota_credito
+      |> InfoNotaCredito.to_xml()
       |> XmlSupport.format()
 
     assert xml == xml_expected
@@ -120,11 +114,13 @@ defmodule BillingCore.Dataset.NotaCredito.InfoNotaCreditoTest do
     info_nota_credito_with_accounting: info_nota_credito
   } do
     xml_expected =
-      File.read!("test/fixtures/nota_credito/info_nota_credito_with_accounting.xml")
+      "test/fixtures/nota_credito/info_nota_credito_with_accounting.xml"
+      |> File.read!()
       |> XmlSupport.format()
 
     xml =
-      InfoNotaCredito.to_xml(info_nota_credito)
+      info_nota_credito
+      |> InfoNotaCredito.to_xml()
       |> XmlSupport.format()
 
     assert xml == xml_expected

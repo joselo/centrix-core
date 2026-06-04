@@ -1,7 +1,6 @@
 defmodule BillingCore.Xbes.P12.Certificate do
   @moduledoc false
 
-  # TODO: Write tests
   def build(pem_file) do
     {pem, index} = pem_decode(pem_file)
     rsa = public_key_from_pem(pem)
@@ -33,14 +32,13 @@ defmodule BillingCore.Xbes.P12.Certificate do
   end
 
   def digest_from_pem(pem) do
-    ans1_entry =
-      pem
-      |> :public_key.pem_entry_decode()
+    ans1_entry = :public_key.pem_entry_decode(pem)
 
     ans1_type = elem(ans1_entry, 0)
     der = :public_key.der_encode(ans1_type, ans1_entry)
 
-    :crypto.hash(:sha, der)
+    :sha
+    |> :crypto.hash(der)
     |> Base.encode64()
   end
 
@@ -60,7 +58,8 @@ defmodule BillingCore.Xbes.P12.Certificate do
 
   # Reference Codes: https://www.cryptosys.net/pki/manpki/pki_distnames.html
   def issuer_name_from_pem(pem_file) do
-    Regex.run(~r/^issuer=(.+)$/m, pem_file)
+    ~r/^issuer=(.+)$/m
+    |> Regex.run(pem_file)
     |> List.last()
     |> String.replace(~r/[\/]/, ", ")
     |> String.replace(~r/^, /, "")
@@ -108,11 +107,11 @@ defmodule BillingCore.Xbes.P12.Certificate do
     end)
   end
 
-  # TODO: Write tests
   def public_key_from_pem(pem) do
-    raw_public_key_from_pem(pem)
+    pem
+    |> raw_public_key_from_pem()
     |> :public_key.pem_decode()
-    |> hd
+    |> hd()
     |> :public_key.pem_entry_decode()
   end
 
@@ -123,7 +122,8 @@ defmodule BillingCore.Xbes.P12.Certificate do
       |> elem(1)
       |> elem(7)
 
-    :public_key.pem_entry_encode(:SubjectPublicKeyInfo, ans1_entry)
+    :SubjectPublicKeyInfo
+    |> :public_key.pem_entry_encode(ans1_entry)
     |> List.wrap()
     |> :public_key.pem_encode()
   end

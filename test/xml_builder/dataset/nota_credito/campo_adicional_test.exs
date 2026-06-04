@@ -2,7 +2,6 @@ defmodule BillingCore.Dataset.NotaCredito.CampoAdicionalTest do
   use ExUnit.Case
 
   alias BillingCore.Dataset.NotaCredito.CampoAdicional
-
   alias BillingCore.Dataset.NotaCredito.Test.FactorySupport
   alias BillingCore.Dataset.Test.XmlSupport
 
@@ -29,11 +28,13 @@ defmodule BillingCore.Dataset.NotaCredito.CampoAdicionalTest do
 
   test "to_xml", %{campo_adicional: campo_adicional} do
     xml_expected =
-      File.read!("test/fixtures/campo_adicional.xml")
+      "test/fixtures/campo_adicional.xml"
+      |> File.read!()
       |> XmlSupport.format()
 
     xml =
-      CampoAdicional.to_xml(campo_adicional)
+      campo_adicional
+      |> CampoAdicional.to_xml()
       |> XmlSupport.format()
 
     assert xml == xml_expected

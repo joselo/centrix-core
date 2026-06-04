@@ -2,7 +2,10 @@ defmodule BillingCore.Dataset.NotaCredito.CampoAdicional do
   @moduledoc false
 
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias BillingCore.Dataset.NotaCredito.CampoAdicional
 
   embedded_schema do
     field(:nombre, :string)
@@ -15,7 +18,7 @@ defmodule BillingCore.Dataset.NotaCredito.CampoAdicional do
     |> validate_required([:nombre, :valor])
   end
 
-  def to_doc(%BillingCore.Dataset.NotaCredito.CampoAdicional{} = campo_adicional) do
+  def to_doc(%CampoAdicional{} = campo_adicional) do
     {
       :campoAdicional,
       %{nombre: campo_adicional.nombre},
@@ -23,8 +26,9 @@ defmodule BillingCore.Dataset.NotaCredito.CampoAdicional do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.NotaCredito.CampoAdicional{} = campo_adicional) do
-    to_doc(campo_adicional)
+  def to_xml(%CampoAdicional{} = campo_adicional) do
+    campo_adicional
+    |> to_doc()
     |> XmlBuilder.generate()
   end
 end

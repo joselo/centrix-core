@@ -1,10 +1,13 @@
 defmodule BillingCore.Dataset.Factura.Pago do
   @moduledoc false
 
-  @decimals BillingCore.decimals()
-
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias BillingCore.Dataset.Factura.Pago
+
+  @decimals BillingCore.decimals()
 
   embedded_schema do
     field(:forma_pago, :integer)
@@ -21,22 +24,22 @@ defmodule BillingCore.Dataset.Factura.Pago do
     |> validate_length(:unidad_tiempo, max: 10)
   end
 
-  def to_doc(key, %BillingCore.Dataset.Factura.Pago{} = pago, decimals \\ @decimals)
-      when is_atom(key) do
+  def to_doc(key, %Pago{} = pago, decimals \\ @decimals) when is_atom(key) do
     {
       key,
       nil,
       [
-        {:formaPago, nil, Integer.to_string(pago.forma_pago) |> String.pad_leading(2, "0")},
-        {:total, nil, Decimal.round(pago.total, decimals) |> Decimal.to_string(:normal)},
+        {:formaPago, nil, pago.forma_pago |> Integer.to_string() |> String.pad_leading(2, "0")},
+        {:total, nil, pago.total |> Decimal.round(decimals) |> Decimal.to_string(:normal)},
         {:plazo, nil, pago.plazo},
         {:unidadTiempo, nil, pago.unidad_tiempo}
       ]
     }
   end
 
-  def to_xml(key, %BillingCore.Dataset.Factura.Pago{} = pago) when is_atom(key) do
-    to_doc(key, pago)
+  def to_xml(key, %Pago{} = pago) when is_atom(key) do
+    key
+    |> to_doc(pago)
     |> XmlBuilder.generate()
   end
 end

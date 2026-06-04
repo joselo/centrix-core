@@ -4,7 +4,8 @@ defmodule BillingCore.Xbes.SignedInfo.KeyInfo do
   alias BillingCore.Xbes.Util
 
   def digest(cfg) do
-    get(cfg)
+    cfg
+    |> get()
     |> XmlBuilder.generate(format: :none)
     |> Util.digest()
   end

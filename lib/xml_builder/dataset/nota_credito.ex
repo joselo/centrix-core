@@ -1,15 +1,15 @@
 defmodule BillingCore.Dataset.NotaCredito do
   @moduledoc false
 
-  alias BillingCore.Dataset.NotaCredito.{
-    CampoAdicional,
-    Detalle,
-    InfoNotaCredito,
-    InfoTributaria
-  }
-
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias BillingCore.Dataset.NotaCredito
+  alias BillingCore.Dataset.NotaCredito.CampoAdicional
+  alias BillingCore.Dataset.NotaCredito.Detalle
+  alias BillingCore.Dataset.NotaCredito.InfoNotaCredito
+  alias BillingCore.Dataset.NotaCredito.InfoTributaria
 
   embedded_schema do
     embeds_one(:info_tributaria, InfoTributaria)
@@ -28,17 +28,19 @@ defmodule BillingCore.Dataset.NotaCredito do
     |> cast_embed(:info_adicional, with: &CampoAdicional.changeset/2)
   end
 
-  def to_doc(%BillingCore.Dataset.NotaCredito{} = nota_credito) do
+  def to_doc(%NotaCredito{} = nota_credito) do
     children =
-      [
-        InfoTributaria.to_doc(nota_credito.info_tributaria),
-        InfoNotaCredito.to_doc(nota_credito.info_nota_credito),
-        {:detalles, nil, detalles_to_doc(nota_credito.detalles)},
-        if(nota_credito.info_adicional != [] and nota_credito.info_adicional != nil,
-          do: {:infoAdicional, nil, info_adicional_to_doc(nota_credito.info_adicional)}
-        )
-      ]
-      |> Enum.reject(&is_nil/1)
+      Enum.reject(
+        [
+          InfoTributaria.to_doc(nota_credito.info_tributaria),
+          InfoNotaCredito.to_doc(nota_credito.info_nota_credito),
+          {:detalles, nil, detalles_to_doc(nota_credito.detalles)},
+          if(nota_credito.info_adicional != [] and nota_credito.info_adicional != nil,
+            do: {:infoAdicional, nil, info_adicional_to_doc(nota_credito.info_adicional)}
+          )
+        ],
+        &is_nil/1
+      )
 
     {
       :notaCredito,
@@ -47,18 +49,18 @@ defmodule BillingCore.Dataset.NotaCredito do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.NotaCredito{} = nota_credito) do
-    XmlBuilder.document(to_doc(nota_credito))
+  def to_xml(%NotaCredito{} = nota_credito) do
+    nota_credito
+    |> to_doc()
+    |> XmlBuilder.document()
     |> XmlBuilder.generate()
   end
 
   defp detalles_to_doc(detalles) do
-    detalles
-    |> Enum.map(fn detalle -> Detalle.to_doc(detalle) end)
+    Enum.map(detalles, fn detalle -> Detalle.to_doc(detalle) end)
   end
 
   defp info_adicional_to_doc(info_adicional) do
-    info_adicional
-    |> Enum.map(fn info -> CampoAdicional.to_doc(info) end)
+    Enum.map(info_adicional, fn info -> CampoAdicional.to_doc(info) end)
   end
 end

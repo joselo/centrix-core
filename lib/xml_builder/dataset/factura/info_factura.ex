@@ -1,12 +1,15 @@
 defmodule BillingCore.Dataset.Factura.InfoFactura do
   @moduledoc false
 
-  @decimals BillingCore.decimals()
-
-  alias BillingCore.Dataset.Factura.{Pago, TotalImpuesto}
-
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias BillingCore.Dataset.Factura.InfoFactura
+  alias BillingCore.Dataset.Factura.Pago
+  alias BillingCore.Dataset.Factura.TotalImpuesto
+
+  @decimals BillingCore.decimals()
 
   embedded_schema do
     field(:fecha_emision, :date)
@@ -69,31 +72,29 @@ defmodule BillingCore.Dataset.Factura.InfoFactura do
     |> cast_embed(:pagos, required: true, with: &Pago.changeset/2)
   end
 
-  def to_doc(%BillingCore.Dataset.Factura.InfoFactura{} = info_factura, decimals \\ @decimals) do
+  def to_doc(%InfoFactura{} = info_factura, decimals \\ @decimals) do
     doc =
-      [
-        {:fechaEmision, nil, format_fecha_emision(info_factura.fecha_emision)},
-        {:dirEstablecimiento, nil, info_factura.dir_establecimiento},
-        {:obligadoContabilidad, nil, info_factura.obligado_contabilidad},
-        {:tipoIdentificacionComprador, nil,
-         info_factura.tipo_identificacion_comprador
-         |> Integer.to_string()
-         |> String.pad_leading(2, "0")},
-        {:razonSocialComprador, nil, info_factura.razon_social_comprador},
-        {:identificacionComprador, nil, info_factura.identificacion_comprador},
-        {:direccionComprador, nil, info_factura.direccion_comprador},
-        {:totalSinImpuestos, nil,
-         Decimal.round(info_factura.total_sin_impuestos, decimals) |> Decimal.to_string(:normal)},
-        {:totalDescuento, nil,
-         Decimal.round(info_factura.total_descuento, decimals) |> Decimal.to_string(:normal)},
-        {:totalConImpuestos, nil, total_con_impuestos_to_doc(info_factura.total_con_impuestos)},
-        {:propina, nil, Decimal.round(info_factura.propina, decimals) |> Decimal.to_string(:normal)},
-        {:importeTotal, nil,
-         Decimal.round(info_factura.importe_total, decimals) |> Decimal.to_string(:normal)},
-        {:moneda, nil, info_factura.moneda},
-        {:pagos, nil, pagos_to_doc(info_factura.pagos)}
-      ]
-      |> add_contribuyente_especial(info_factura)
+      add_contribuyente_especial(
+        [
+          {:fechaEmision, nil, format_fecha_emision(info_factura.fecha_emision)},
+          {:dirEstablecimiento, nil, info_factura.dir_establecimiento},
+          {:obligadoContabilidad, nil, info_factura.obligado_contabilidad},
+          {:tipoIdentificacionComprador, nil,
+           info_factura.tipo_identificacion_comprador |> Integer.to_string() |> String.pad_leading(2, "0")},
+          {:razonSocialComprador, nil, info_factura.razon_social_comprador},
+          {:identificacionComprador, nil, info_factura.identificacion_comprador},
+          {:direccionComprador, nil, info_factura.direccion_comprador},
+          {:totalSinImpuestos, nil,
+           info_factura.total_sin_impuestos |> Decimal.round(decimals) |> Decimal.to_string(:normal)},
+          {:totalDescuento, nil, info_factura.total_descuento |> Decimal.round(decimals) |> Decimal.to_string(:normal)},
+          {:totalConImpuestos, nil, total_con_impuestos_to_doc(info_factura.total_con_impuestos)},
+          {:propina, nil, info_factura.propina |> Decimal.round(decimals) |> Decimal.to_string(:normal)},
+          {:importeTotal, nil, info_factura.importe_total |> Decimal.round(decimals) |> Decimal.to_string(:normal)},
+          {:moneda, nil, info_factura.moneda},
+          {:pagos, nil, pagos_to_doc(info_factura.pagos)}
+        ],
+        info_factura
+      )
 
     {
       :infoFactura,
@@ -102,32 +103,28 @@ defmodule BillingCore.Dataset.Factura.InfoFactura do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.Factura.InfoFactura{} = info_factura) do
-    to_doc(info_factura)
+  def to_xml(%InfoFactura{} = info_factura) do
+    info_factura
+    |> to_doc()
     |> XmlBuilder.generate()
   end
 
   defp total_con_impuestos_to_doc(total_con_impuestos) do
-    total_con_impuestos
-    |> Enum.map(fn impuesto -> TotalImpuesto.to_doc(impuesto) end)
+    Enum.map(total_con_impuestos, fn impuesto -> TotalImpuesto.to_doc(impuesto) end)
   end
 
   defp pagos_to_doc(pagos) do
-    pagos
-    |> Enum.map(fn pago -> Pago.to_doc(:pago, pago) end)
+    Enum.map(pagos, fn pago -> Pago.to_doc(:pago, pago) end)
   end
 
   defp format_fecha_emision(fecha_emision) do
     day = fecha_emision.day |> Integer.to_string() |> String.pad_leading(2, "0")
     month = fecha_emision.month |> Integer.to_string() |> String.pad_leading(2, "0")
 
-    [day, month, fecha_emision.year] |> Enum.join("/")
+    Enum.join([day, month, fecha_emision.year], "/")
   end
 
-  defp add_contribuyente_especial(doc, %{
-         obligado_contabilidad: "SI",
-         contribuyente_especial: contribuyente_especial
-       }) do
+  defp add_contribuyente_especial(doc, %{obligado_contabilidad: "SI", contribuyente_especial: contribuyente_especial}) do
     List.insert_at(doc, 2, {:contribuyenteEspecial, nil, contribuyente_especial})
   end
 

@@ -1,16 +1,16 @@
 defmodule BillingCore.Dataset.Retencion.DocSustento do
   @moduledoc false
 
-  @decimals BillingCore.decimals()
-
-  alias BillingCore.Dataset.Retencion.{
-    ImpuestoDocSustento,
-    Pago,
-    Retencion
-  }
-
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias BillingCore.Dataset.Retencion.DocSustento
+  alias BillingCore.Dataset.Retencion.ImpuestoDocSustento
+  alias BillingCore.Dataset.Retencion.Pago
+  alias BillingCore.Dataset.Retencion.Retencion
+
+  @decimals BillingCore.decimals()
 
   embedded_schema do
     field(:cod_sustento, :string)
@@ -80,7 +80,7 @@ defmodule BillingCore.Dataset.Retencion.DocSustento do
     end
   end
 
-  def to_doc(%BillingCore.Dataset.Retencion.DocSustento{} = sustento) do
+  def to_doc(%DocSustento{} = sustento) do
     doc =
       [
         {:codSustento, nil, sustento.cod_sustento},
@@ -112,8 +112,9 @@ defmodule BillingCore.Dataset.Retencion.DocSustento do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.Retencion.DocSustento{} = sustento) do
-    to_doc(sustento)
+  def to_xml(%DocSustento{} = sustento) do
+    sustento
+    |> to_doc()
     |> XmlBuilder.generate()
   end
 
@@ -184,27 +185,36 @@ defmodule BillingCore.Dataset.Retencion.DocSustento do
   defp add_total_comprobantes_reembolso(doc, %{total_comprobantes_reembolso: nil}), do: doc
 
   defp add_total_comprobantes_reembolso(doc, %{total_comprobantes_reembolso: total_comprobantes_reembolso}) do
-    doc ++ [{:totalComprobantesReembolso, nil, Decimal.round(total_comprobantes_reembolso, @decimals) |> Decimal.to_string(:normal)}]
+    doc ++
+      [
+        {:totalComprobantesReembolso, nil,
+         total_comprobantes_reembolso |> Decimal.round(@decimals) |> Decimal.to_string(:normal)}
+      ]
   end
 
   defp add_total_base_imponible_reembolso(doc, %{total_base_imponible_reembolso: nil}), do: doc
 
   defp add_total_base_imponible_reembolso(doc, %{total_base_imponible_reembolso: total_base_imponible_reembolso}) do
-    doc ++ [{:totalBaseImponibleReembolso, nil, Decimal.round(total_base_imponible_reembolso, @decimals) |> Decimal.to_string(:normal)}]
+    doc ++
+      [
+        {:totalBaseImponibleReembolso, nil,
+         total_base_imponible_reembolso |> Decimal.round(@decimals) |> Decimal.to_string(:normal)}
+      ]
   end
 
   defp add_total_impuesto_reembolso(doc, %{total_impuesto_reembolso: nil}), do: doc
 
   defp add_total_impuesto_reembolso(doc, %{total_impuesto_reembolso: total_impuesto_reembolso}) do
-    doc ++ [{:totalImpuestoReembolso, nil, Decimal.round(total_impuesto_reembolso, @decimals) |> Decimal.to_string(:normal)}]
+    doc ++
+      [{:totalImpuestoReembolso, nil, total_impuesto_reembolso |> Decimal.round(@decimals) |> Decimal.to_string(:normal)}]
   end
 
   defp add_total_sin_impuestos(doc, %{total_sin_impuestos: total_sin_impuestos}) do
-    doc ++ [{:totalSinImpuestos, nil, Decimal.round(total_sin_impuestos, @decimals) |> Decimal.to_string(:normal)}]
+    doc ++ [{:totalSinImpuestos, nil, total_sin_impuestos |> Decimal.round(@decimals) |> Decimal.to_string(:normal)}]
   end
 
   defp add_importe_total(doc, %{importe_total: importe_total}) do
-    doc ++ [{:importeTotal, nil, Decimal.round(importe_total, @decimals) |> Decimal.to_string(:normal)}]
+    doc ++ [{:importeTotal, nil, importe_total |> Decimal.round(@decimals) |> Decimal.to_string(:normal)}]
   end
 
   defp add_impuestos_doc_sustento(doc, %{impuestos_doc_sustento: []}), do: doc

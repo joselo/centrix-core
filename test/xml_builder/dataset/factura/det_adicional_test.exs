@@ -2,7 +2,6 @@ defmodule BillingCore.Dataset.Factura.DetAdicionalTest do
   use ExUnit.Case
 
   alias BillingCore.Dataset.Factura.DetAdicional
-
   alias BillingCore.Dataset.Factura.Test.FactorySupport
   alias BillingCore.Dataset.Test.XmlSupport
 
@@ -29,11 +28,13 @@ defmodule BillingCore.Dataset.Factura.DetAdicionalTest do
 
   test "to_xml", %{det_adicional: det_adicional} do
     xml_expected =
-      File.read!("test/fixtures/det_adicional.xml")
+      "test/fixtures/det_adicional.xml"
+      |> File.read!()
       |> XmlSupport.format()
 
     xml =
-      DetAdicional.to_xml(det_adicional)
+      det_adicional
+      |> DetAdicional.to_xml()
       |> XmlSupport.format()
 
     assert xml == xml_expected

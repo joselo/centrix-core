@@ -2,7 +2,10 @@ defmodule BillingCore.Dataset.Retencion.InfoCompRetencion do
   @moduledoc false
 
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias BillingCore.Dataset.Retencion.InfoCompRetencion
 
   embedded_schema do
     field(:fecha_emision, :date)
@@ -40,9 +43,7 @@ defmodule BillingCore.Dataset.Retencion.InfoCompRetencion do
       :identificacion_sujeto_retenido,
       :periodo_fiscal
     ])
-    |> validate_format(:periodo_fiscal, ~r/^(0[1-9]|1[0-2])\/\d{4}$/,
-      message: "must be in mm/yyyy format"
-    )
+    |> validate_format(:periodo_fiscal, ~r/^(0[1-9]|1[0-2])\/\d{4}$/, message: "must be in mm/yyyy format")
     |> validate_length(:dir_establecimiento, max: 300)
     |> validate_length(:contribuyente_especial, min: 3, max: 13)
     |> validate_inclusion(:obligado_contabilidad, ["SI", "NO"])
@@ -53,7 +54,7 @@ defmodule BillingCore.Dataset.Retencion.InfoCompRetencion do
     |> validate_length(:periodo_fiscal, is: 7)
   end
 
-  def to_doc(%BillingCore.Dataset.Retencion.InfoCompRetencion{} = info) do
+  def to_doc(%InfoCompRetencion{} = info) do
     doc =
       [
         {:fechaEmision, nil, format_fecha_emision(info.fecha_emision)}
@@ -75,8 +76,9 @@ defmodule BillingCore.Dataset.Retencion.InfoCompRetencion do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.Retencion.InfoCompRetencion{} = info) do
-    to_doc(info)
+  def to_xml(%InfoCompRetencion{} = info) do
+    info
+    |> to_doc()
     |> XmlBuilder.generate()
   end
 

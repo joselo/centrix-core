@@ -2,7 +2,10 @@ defmodule BillingCore.Dataset.NotaDebito.Motivo do
   @moduledoc false
 
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias BillingCore.Dataset.NotaDebito.Motivo
 
   embedded_schema do
     field(:razon, :string)
@@ -22,8 +25,8 @@ defmodule BillingCore.Dataset.NotaDebito.Motivo do
     |> validate_length(:razon, max: 300)
   end
 
-  def to_doc(%BillingCore.Dataset.NotaDebito.Motivo{} = motivo) do
-    valor = Decimal.round(motivo.valor, 2) |> Decimal.to_string(:normal)
+  def to_doc(%Motivo{} = motivo) do
+    valor = motivo.valor |> Decimal.round(2) |> Decimal.to_string(:normal)
 
     {
       :motivo,
@@ -35,8 +38,9 @@ defmodule BillingCore.Dataset.NotaDebito.Motivo do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.NotaDebito.Motivo{} = motivo) do
-    to_doc(motivo)
+  def to_xml(%Motivo{} = motivo) do
+    motivo
+    |> to_doc()
     |> XmlBuilder.generate()
   end
 end

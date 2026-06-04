@@ -2,6 +2,7 @@ defmodule BillingCore.Dataset.ClaveAcceso do
   @moduledoc false
 
   use Ecto.Schema
+
   import Ecto.Changeset
 
   embedded_schema do

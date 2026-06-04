@@ -12,7 +12,8 @@ defmodule BillingCore.BarcodeGenerator do
     path = tmp_path()
 
     try do
-      Barlix.Code128.encode!(value)
+      value
+      |> Barlix.Code128.encode!()
       |> Barlix.PNG.print(file: path, xdim: 1, height: 50)
 
       {:ok, path}
@@ -22,7 +23,6 @@ defmodule BillingCore.BarcodeGenerator do
   end
 
   defp tmp_path do
-    System.tmp_dir!()
-    |> Path.join("barcode_#{:erlang.unique_integer([:positive])}.png")
+    Path.join(System.tmp_dir!(), "barcode_#{:erlang.unique_integer([:positive])}.png")
   end
 end

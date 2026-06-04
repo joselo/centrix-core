@@ -83,15 +83,17 @@ defmodule BillingCore.DocumentXmlParser do
   end
 
   def find_root_tag(xml_struct) do
-    [
-      "factura",
-      "notaCredito",
-      "notaDebito",
-      "comprobanteRetencion",
-      "guiaRemision",
-      "liquidacionCompra"
-    ]
-    |> Enum.find(fn tag -> Map.has_key?(xml_struct, tag) end)
+    Enum.find(
+      [
+        "factura",
+        "notaCredito",
+        "notaDebito",
+        "comprobanteRetencion",
+        "guiaRemision",
+        "liquidacionCompra"
+      ],
+      fn tag -> Map.has_key?(xml_struct, tag) end
+    )
   end
 
   def get_info_block_key(root_tag) do
@@ -211,42 +213,7 @@ defmodule BillingCore.DocumentXmlParser do
   def parse_specific_data(_, _, _), do: %{}
 
   def get_items(content, root_tag) do
-    details =
-      case root_tag do
-        "guiaRemision" ->
-          destinatarios = content["destinatarios"]
-          dests = if is_map(destinatarios), do: List.wrap(destinatarios["destinatario"]), else: []
-
-          Enum.flat_map(dests, fn dest ->
-            detalles = dest["detalles"]
-            if is_map(detalles), do: List.wrap(detalles["detalle"]), else: []
-          end)
-
-        "notaDebito" ->
-          node = content["motivos"]
-          if is_map(node), do: List.wrap(node["motivo"]), else: []
-
-        "comprobanteRetencion" ->
-          docs_sustento = content["docsSustento"]
-          docs_list = if is_map(docs_sustento), do: List.wrap(docs_sustento["docSustento"]), else: []
-
-          Enum.flat_map(docs_list, fn doc ->
-            rets = doc["retenciones"]
-            ret_list = if is_map(rets), do: List.wrap(rets["retencion"]), else: []
-
-            Enum.map(ret_list, fn r ->
-              Map.merge(r, %{
-                "numDocSustento" => doc["numDocSustento"],
-                "codDocSustento" => doc["codDocSustento"],
-                "fechaEmisionDocSustento" => doc["fechaEmisionDocSustento"]
-              })
-            end)
-          end)
-
-        _ ->
-          node = content["detalles"]
-          if is_map(node), do: List.wrap(node["detalle"]), else: []
-      end
+    details = get_details_by_doc_type(content, root_tag)
 
     items =
       details
@@ -256,16 +223,58 @@ defmodule BillingCore.DocumentXmlParser do
     [@headers | items]
   end
 
+  defp get_details_by_doc_type(content, "guiaRemision") do
+    destinatarios = content["destinatarios"]
+    dests = if is_map(destinatarios), do: List.wrap(destinatarios["destinatario"]), else: []
+
+    Enum.flat_map(dests, &extract_guia_details/1)
+  end
+
+  defp get_details_by_doc_type(content, "notaDebito") do
+    node = content["motivos"]
+    if is_map(node), do: List.wrap(node["motivo"]), else: []
+  end
+
+  defp get_details_by_doc_type(content, "comprobanteRetencion") do
+    docs_sustento = content["docsSustento"]
+    docs_list = if is_map(docs_sustento), do: List.wrap(docs_sustento["docSustento"]), else: []
+
+    Enum.flat_map(docs_list, &extract_retencion_details/1)
+  end
+
+  defp get_details_by_doc_type(content, _) do
+    node = content["detalles"]
+    if is_map(node), do: List.wrap(node["detalle"]), else: []
+  end
+
+  defp extract_guia_details(dest) do
+    detalles = dest["detalles"]
+    if is_map(detalles), do: List.wrap(detalles["detalle"]), else: []
+  end
+
+  defp extract_retencion_details(doc) do
+    rets = doc["retenciones"]
+    ret_list = if is_map(rets), do: List.wrap(rets["retencion"]), else: []
+
+    Enum.map(ret_list, fn r ->
+      Map.merge(r, %{
+        "numDocSustento" => doc["numDocSustento"],
+        "codDocSustento" => doc["codDocSustento"],
+        "fechaEmisionDocSustento" => doc["fechaEmisionDocSustento"]
+      })
+    end)
+  end
+
   def format_item(item, "notaDebito") do
     [
       "",
       "",
       item["razon"],
       "",
-      item["valor"] |> Decimal.new(),
+      Decimal.new(item["valor"]),
       "1",
       Decimal.new("0.00"),
-      item["valor"] |> Decimal.new()
+      Decimal.new(item["valor"])
     ]
   end
 
@@ -288,10 +297,10 @@ defmodule BillingCore.DocumentXmlParser do
       item["codDocSustento"],
       item["fechaEmisionDocSustento"],
       "",
-      item["baseImponible"] |> Decimal.new(),
+      Decimal.new(item["baseImponible"]),
       "RET #{item["codigo"]}",
       "#{item["porcentajeRetener"]}%",
-      item["valorRetenido"] |> Decimal.new()
+      Decimal.new(item["valorRetenido"])
     ]
   end
 
@@ -301,10 +310,10 @@ defmodule BillingCore.DocumentXmlParser do
       item["codigoAuxiliar"],
       item["descripcion"],
       get_item_extra_text(item),
-      item["precioUnitario"] |> Decimal.new(),
-      item["cantidad"] |> Decimal.new(),
-      item["descuento"] |> Decimal.new(),
-      item["precioTotalSinImpuesto"] |> Decimal.new()
+      Decimal.new(item["precioUnitario"]),
+      Decimal.new(item["cantidad"]),
+      Decimal.new(item["descuento"]),
+      Decimal.new(item["precioTotalSinImpuesto"])
     ]
   end
 
@@ -312,7 +321,7 @@ defmodule BillingCore.DocumentXmlParser do
     detalles_adicionales = item["detallesAdicionales"]
 
     det_adicional_node =
-      if is_map(detalles_adicionales), do: detalles_adicionales["detAdicional"], else: nil
+      if is_map(detalles_adicionales), do: detalles_adicionales["detAdicional"]
 
     det_adicionales =
       cond do
@@ -331,7 +340,7 @@ defmodule BillingCore.DocumentXmlParser do
 
   def get_additional_info(content) do
     info_adicional = content["infoAdicional"]
-    campos = if is_map(info_adicional), do: info_adicional["campoAdicional"], else: nil
+    campos = if is_map(info_adicional), do: info_adicional["campoAdicional"]
 
     campos_list =
       cond do
@@ -340,13 +349,12 @@ defmodule BillingCore.DocumentXmlParser do
         true -> []
       end
 
-    campos_list
-    |> Enum.map(fn %{"-nombre" => n, "#content" => v} -> %{name: n, value: to_string(v)} end)
+    Enum.map(campos_list, fn %{"-nombre" => n, "#content" => v} -> %{name: n, value: to_string(v)} end)
   end
 
   def get_taxes(info_block) do
     total_con_impuestos = info_block["totalConImpuestos"]
-    raw = if is_map(total_con_impuestos), do: total_con_impuestos["totalImpuesto"], else: nil
+    raw = if is_map(total_con_impuestos), do: total_con_impuestos["totalImpuesto"]
 
     taxes =
       cond do
@@ -367,7 +375,7 @@ defmodule BillingCore.DocumentXmlParser do
 
   def get_nd_taxes(info_block) do
     impuestos = info_block["impuestos"]
-    raw = if is_map(impuestos), do: impuestos["impuesto"], else: nil
+    raw = if is_map(impuestos), do: impuestos["impuesto"]
 
     taxes =
       cond do
@@ -387,7 +395,7 @@ defmodule BillingCore.DocumentXmlParser do
   end
 
   def get_payments(info_block) do
-    pagos = if is_map(info_block), do: info_block["pagos"], else: nil
+    pagos = if is_map(info_block), do: info_block["pagos"]
     pago_nodes = if is_map(pagos), do: List.wrap(pagos["pago"]), else: []
 
     Enum.map(pago_nodes, fn p ->

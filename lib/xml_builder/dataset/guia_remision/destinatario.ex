@@ -1,10 +1,12 @@
 defmodule BillingCore.Dataset.GuiaRemision.Destinatario do
   @moduledoc false
 
-  alias BillingCore.Dataset.GuiaRemision.Detalle
-
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias BillingCore.Dataset.GuiaRemision.Destinatario
+  alias BillingCore.Dataset.GuiaRemision.Detalle
 
   embedded_schema do
     field(:identificacion_destinatario, :string)
@@ -46,7 +48,7 @@ defmodule BillingCore.Dataset.GuiaRemision.Destinatario do
     |> cast_embed(:detalles, required: true, with: &Detalle.changeset/2)
   end
 
-  def to_doc(%BillingCore.Dataset.GuiaRemision.Destinatario{} = destinatario) do
+  def to_doc(%Destinatario{} = destinatario) do
     doc =
       [
         {:identificacionDestinatario, nil, destinatario.identificacion_destinatario},
@@ -70,8 +72,9 @@ defmodule BillingCore.Dataset.GuiaRemision.Destinatario do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.GuiaRemision.Destinatario{} = destinatario) do
-    to_doc(destinatario)
+  def to_xml(%Destinatario{} = destinatario) do
+    destinatario
+    |> to_doc()
     |> XmlBuilder.generate()
   end
 
@@ -117,9 +120,7 @@ defmodule BillingCore.Dataset.GuiaRemision.Destinatario do
 
   defp add_fecha_emision_doc_sustento(doc, %{fecha_emision_doc_sustento: nil}), do: doc
 
-  defp add_fecha_emision_doc_sustento(doc, %{
-         fecha_emision_doc_sustento: fecha_emision_doc_sustento
-       }) do
+  defp add_fecha_emision_doc_sustento(doc, %{fecha_emision_doc_sustento: fecha_emision_doc_sustento}) do
     List.insert_at(
       doc,
       -1,

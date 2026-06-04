@@ -4,7 +4,8 @@ defmodule BillingCore.Xbes.SignedInfo do
   alias BillingCore.Xbes.Util
 
   def digest(cfg, properties_digest, key_info_digest, doc_digest) do
-    get(cfg, properties_digest, key_info_digest, doc_digest)
+    cfg
+    |> get(properties_digest, key_info_digest, doc_digest)
     |> XmlBuilder.generate(format: :none)
   end
 
@@ -14,10 +15,8 @@ defmodule BillingCore.Xbes.SignedInfo do
 
     {:"ds:SignedInfo", attrs,
      [
-       {:"ds:CanonicalizationMethod",
-        %{Algorithm: "http://www.w3.org/TR/2001/REC-xml-c14n-20010315"}, close_tag},
-       {:"ds:SignatureMethod", %{Algorithm: "http://www.w3.org/2000/09/xmldsig#rsa-sha1"},
-        close_tag},
+       {:"ds:CanonicalizationMethod", %{Algorithm: "http://www.w3.org/TR/2001/REC-xml-c14n-20010315"}, close_tag},
+       {:"ds:SignatureMethod", %{Algorithm: "http://www.w3.org/2000/09/xmldsig#rsa-sha1"}, close_tag},
        {:"ds:Reference",
         [
           Id: "SignedPropertiesID#{cfg.signed_properties_id_number}",
@@ -37,8 +36,7 @@ defmodule BillingCore.Xbes.SignedInfo do
         [
           {:"ds:Transforms", nil,
            [
-             {:"ds:Transform",
-              %{Algorithm: "http://www.w3.org/2000/09/xmldsig#enveloped-signature"}, close_tag}
+             {:"ds:Transform", %{Algorithm: "http://www.w3.org/2000/09/xmldsig#enveloped-signature"}, close_tag}
            ]},
           {:"ds:DigestMethod", %{Algorithm: "http://www.w3.org/2000/09/xmldsig#sha1"}, close_tag},
           {:"ds:DigestValue", nil, doc_digest}

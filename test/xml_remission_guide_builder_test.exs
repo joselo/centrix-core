@@ -29,7 +29,7 @@ defmodule BillingCore.XmlRemissionGuideBuilderTest do
     end
   end
 
-  def get_guia_remision_params() do
+  def get_guia_remision_params do
     info_tributaria_params = %{
       ambiente: 1,
       tipo_emision: 1,
@@ -55,8 +55,7 @@ defmodule BillingCore.XmlRemissionGuideBuilderTest do
     }
 
     info_guia_remision_params = %{
-      dir_establecimiento:
-        "Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN",
+      dir_establecimiento: "Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN",
       dir_partida: "Ciudadela: DAMMER II Calle: N49C Número: EC-102 Intersección: EL MORLAN",
       razon_social_transportista: "TRANSPORTE RAPIDO SA",
       tipo_identificacion_transportista: 4,

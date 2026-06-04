@@ -1,5 +1,6 @@
 defmodule BillingCore.DocumentXmlParserTest do
   use ExUnit.Case
+
   alias BillingCore.DocumentXmlParser
 
   test "parse_xml with multiple payments in factura" do
@@ -79,7 +80,7 @@ defmodule BillingCore.DocumentXmlParserTest do
       </soap:Body>
     </soap:Envelope>
     """
-    
+
     parsed = DocumentXmlParser.parse_xml(xml)
     assert length(parsed.document.payments) == 2
     assert Enum.at(parsed.document.payments, 0).total == Decimal.new("5.00")
@@ -112,13 +113,16 @@ defmodule BillingCore.DocumentXmlParserTest do
     assert doc.root_tag == "comprobanteRetencion"
     assert doc.client_name == "Novaux Inc."
     assert doc.client_identification == "465219513"
-    
+
     # Check items (retentions)
     # 1 retention in fixture
-    assert length(doc.items) == 2 # Header + 1 item
+    # Header + 1 item
+    assert length(doc.items) == 2
     [_, item] = doc.items
-    assert Enum.at(item, 0) == "001100000000433" # numDocSustento
-    assert Enum.at(item, 7) == Decimal.new("1.75") # valorRetenido
+    # numDocSustento
+    assert Enum.at(item, 0) == "001100000000433"
+    # valorRetenido
+    assert Enum.at(item, 7) == Decimal.new("1.75")
 
     # Check payments
     assert length(doc.payments) == 1

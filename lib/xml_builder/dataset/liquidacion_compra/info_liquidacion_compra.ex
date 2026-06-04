@@ -1,13 +1,15 @@
 defmodule BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
   @moduledoc false
 
-  @decimals BillingCore.decimals()
+  use Ecto.Schema
+
+  import Ecto.Changeset
 
   alias BillingCore.Dataset.Factura.Pago
+  alias BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra
   alias BillingCore.Dataset.LiquidacionCompra.TotalImpuesto
 
-  use Ecto.Schema
-  import Ecto.Changeset
+  @decimals BillingCore.decimals()
 
   embedded_schema do
     field(:fecha_emision, :date)
@@ -71,7 +73,7 @@ defmodule BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
     |> cast_embed(:pagos, required: true, with: &Pago.changeset/2)
   end
 
-  def to_doc(%BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra{} = info) do
+  def to_doc(%InfoLiquidacionCompra{} = info) do
     doc =
       [
         {:fechaEmision, nil, format_fecha_emision(info.fecha_emision)}
@@ -101,8 +103,9 @@ defmodule BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra{} = info) do
-    to_doc(info)
+  def to_xml(%InfoLiquidacionCompra{} = info) do
+    info
+    |> to_doc()
     |> XmlBuilder.generate()
   end
 
@@ -157,15 +160,14 @@ defmodule BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
   defp add_total_sin_impuestos(doc, %{total_sin_impuestos: total_sin_impuestos}) do
     doc ++
       [
-        {:totalSinImpuestos, nil,
-         Decimal.round(total_sin_impuestos, @decimals) |> Decimal.to_string(:normal)}
+        {:totalSinImpuestos, nil, total_sin_impuestos |> Decimal.round(@decimals) |> Decimal.to_string(:normal)}
       ]
   end
 
   defp add_total_descuento(doc, %{total_descuento: nil}), do: doc
 
   defp add_total_descuento(doc, %{total_descuento: total_descuento}) do
-    doc ++ [{:totalDescuento, nil, Decimal.round(total_descuento, @decimals) |> Decimal.to_string(:normal)}]
+    doc ++ [{:totalDescuento, nil, total_descuento |> Decimal.round(@decimals) |> Decimal.to_string(:normal)}]
   end
 
   defp add_cod_doc_reembolso(doc, %{cod_doc_reembolso: nil}), do: doc
@@ -176,25 +178,21 @@ defmodule BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
 
   defp add_total_comprobantes_reembolso(doc, %{total_comprobantes_reembolso: nil}), do: doc
 
-  defp add_total_comprobantes_reembolso(doc, %{
-         total_comprobantes_reembolso: total_comprobantes_reembolso
-       }) do
+  defp add_total_comprobantes_reembolso(doc, %{total_comprobantes_reembolso: total_comprobantes_reembolso}) do
     doc ++
       [
         {:totalComprobantesReembolso, nil,
-         Decimal.round(total_comprobantes_reembolso, @decimals) |> Decimal.to_string(:normal)}
+         total_comprobantes_reembolso |> Decimal.round(@decimals) |> Decimal.to_string(:normal)}
       ]
   end
 
   defp add_total_base_imponible_reembolso(doc, %{total_base_imponible_reembolso: nil}), do: doc
 
-  defp add_total_base_imponible_reembolso(doc, %{
-         total_base_imponible_reembolso: total_base_imponible_reembolso
-       }) do
+  defp add_total_base_imponible_reembolso(doc, %{total_base_imponible_reembolso: total_base_imponible_reembolso}) do
     doc ++
       [
         {:totalBaseImponibleReembolso, nil,
-         Decimal.round(total_base_imponible_reembolso, @decimals) |> Decimal.to_string(:normal)}
+         total_base_imponible_reembolso |> Decimal.round(@decimals) |> Decimal.to_string(:normal)}
       ]
   end
 
@@ -203,8 +201,7 @@ defmodule BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
   defp add_total_impuesto_reembolso(doc, %{total_impuesto_reembolso: total_impuesto_reembolso}) do
     doc ++
       [
-        {:totalImpuestoReembolso, nil,
-         Decimal.round(total_impuesto_reembolso, @decimals) |> Decimal.to_string(:normal)}
+        {:totalImpuestoReembolso, nil, total_impuesto_reembolso |> Decimal.round(@decimals) |> Decimal.to_string(:normal)}
       ]
   end
 
@@ -214,7 +211,7 @@ defmodule BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
   end
 
   defp add_importe_total(doc, %{importe_total: importe_total}) do
-    doc ++ [{:importeTotal, nil, Decimal.round(importe_total, @decimals) |> Decimal.to_string(:normal)}]
+    doc ++ [{:importeTotal, nil, importe_total |> Decimal.round(@decimals) |> Decimal.to_string(:normal)}]
   end
 
   defp add_moneda(doc, %{moneda: moneda}) do

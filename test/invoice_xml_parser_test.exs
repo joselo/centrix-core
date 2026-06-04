@@ -24,7 +24,16 @@ defmodule BillingCore.InvoiceXmlParserTest do
         "Descuento",
         "Total"
       ],
-      ["1", "1", "Metal Gear Solid V", "", Decimal.new("0.22"), Decimal.new("1.0"), Decimal.new("0.00"), Decimal.new("0.22")],
+      [
+        "1",
+        "1",
+        "Metal Gear Solid V",
+        "",
+        Decimal.new("0.22"),
+        Decimal.new("1.0"),
+        Decimal.new("0.00"),
+        Decimal.new("0.22")
+      ],
       ["1", "1", "Shipping", "", Decimal.new("2.50"), Decimal.new("1.0"), Decimal.new("0.00"), Decimal.new("2.50")]
     ]
 
@@ -135,6 +144,6 @@ defmodule BillingCore.InvoiceXmlParserTest do
   test "returns nil if it cannot parse an xml without authorization" do
     xml = File.read!("test/fixtures/unauthorized_response_without_state.xml")
 
-    assert !InvoiceXmlParser.parse_xml(xml)
+    refute InvoiceXmlParser.parse_xml(xml)
   end
 end

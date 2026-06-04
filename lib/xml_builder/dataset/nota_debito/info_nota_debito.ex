@@ -1,12 +1,15 @@
 defmodule BillingCore.Dataset.NotaDebito.InfoNotaDebito do
   @moduledoc false
 
-  @decimals BillingCore.decimals()
-
   use Ecto.Schema
+
   import Ecto.Changeset
 
-  alias BillingCore.Dataset.NotaDebito.{Impuesto, Pago}
+  alias BillingCore.Dataset.NotaDebito.Impuesto
+  alias BillingCore.Dataset.NotaDebito.InfoNotaDebito
+  alias BillingCore.Dataset.NotaDebito.Pago
+
+  @decimals BillingCore.decimals()
 
   embedded_schema do
     field(:fecha_emision, :date)
@@ -65,7 +68,7 @@ defmodule BillingCore.Dataset.NotaDebito.InfoNotaDebito do
     |> cast_embed(:pagos, required: true, with: &Pago.changeset/2)
   end
 
-  def to_doc(%BillingCore.Dataset.NotaDebito.InfoNotaDebito{} = info, decimals \\ @decimals) do
+  def to_doc(%InfoNotaDebito{} = info, decimals \\ @decimals) do
     doc =
       [
         {:fechaEmision, nil, format_fecha_emision(info.fecha_emision)},
@@ -78,10 +81,9 @@ defmodule BillingCore.Dataset.NotaDebito.InfoNotaDebito do
         {:codDocModificado, nil, info.cod_doc_modificado},
         {:numDocModificado, nil, info.num_doc_modificado},
         {:fechaEmisionDocSustento, nil, format_fecha_emision(info.fecha_emision_doc_sustento)},
-        {:totalSinImpuestos, nil,
-         Decimal.round(info.total_sin_impuestos, decimals) |> Decimal.to_string(:normal)},
+        {:totalSinImpuestos, nil, info.total_sin_impuestos |> Decimal.round(decimals) |> Decimal.to_string(:normal)},
         {:impuestos, nil, impuestos_to_doc(info.impuestos)},
-        {:valorTotal, nil, Decimal.round(info.valor_total, decimals) |> Decimal.to_string(:normal)},
+        {:valorTotal, nil, info.valor_total |> Decimal.round(decimals) |> Decimal.to_string(:normal)},
         {:pagos, nil, pagos_to_doc(info.pagos)}
       ]
       |> add_dir_establecimiento(info)
@@ -95,8 +97,9 @@ defmodule BillingCore.Dataset.NotaDebito.InfoNotaDebito do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.NotaDebito.InfoNotaDebito{} = info) do
-    to_doc(info)
+  def to_xml(%InfoNotaDebito{} = info) do
+    info
+    |> to_doc()
     |> XmlBuilder.generate()
   end
 
@@ -105,13 +108,11 @@ defmodule BillingCore.Dataset.NotaDebito.InfoNotaDebito do
   end
 
   defp impuestos_to_doc(impuestos) do
-    impuestos
-    |> Enum.map(fn impuesto -> Impuesto.to_doc(impuesto) end)
+    Enum.map(impuestos, fn impuesto -> Impuesto.to_doc(impuesto) end)
   end
 
   defp pagos_to_doc(pagos) do
-    pagos
-    |> Enum.map(fn pago -> Pago.to_doc(pago) end)
+    Enum.map(pagos, fn pago -> Pago.to_doc(pago) end)
   end
 
   defp add_dir_establecimiento(doc, %{dir_establecimiento: nil}), do: doc

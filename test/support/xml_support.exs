@@ -1,6 +1,6 @@
 defmodule BillingCore.Dataset.Test.XmlSupport do
+  @moduledoc false
   def format(xml) do
-    xml
-    |> String.replace(~r/\r|\n/, "")
+    String.replace(xml, ~r/\r|\n/, "")
   end
 end

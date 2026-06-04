@@ -1,17 +1,12 @@
 defmodule BillingCore.Dataset.NotaCreditoTest do
   use ExUnit.Case
 
-  alias BillingCore.Dataset.NotaCredito.Test.FactorySupport
-
   alias BillingCore.Dataset.NotaCredito
-
-  alias BillingCore.Dataset.NotaCredito.{
-    CampoAdicional,
-    Detalle,
-    InfoNotaCredito,
-    InfoTributaria
-  }
-
+  alias BillingCore.Dataset.NotaCredito.CampoAdicional
+  alias BillingCore.Dataset.NotaCredito.Detalle
+  alias BillingCore.Dataset.NotaCredito.InfoNotaCredito
+  alias BillingCore.Dataset.NotaCredito.InfoTributaria
+  alias BillingCore.Dataset.NotaCredito.Test.FactorySupport
   alias BillingCore.Dataset.Test.XmlSupport
 
   setup do
@@ -22,12 +17,10 @@ defmodule BillingCore.Dataset.NotaCreditoTest do
 
   test "to_doc", %{nota_credito: nota_credito} do
     detalles =
-      nota_credito.detalles
-      |> Enum.map(fn detalle -> Detalle.to_doc(detalle) end)
+      Enum.map(nota_credito.detalles, fn detalle -> Detalle.to_doc(detalle) end)
 
     info_adicional =
-      nota_credito.info_adicional
-      |> Enum.map(fn info -> CampoAdicional.to_doc(info) end)
+      Enum.map(nota_credito.info_adicional, fn info -> CampoAdicional.to_doc(info) end)
 
     doc_expected = {
       :notaCredito,
@@ -45,11 +38,13 @@ defmodule BillingCore.Dataset.NotaCreditoTest do
 
   test "to_xml", %{nota_credito: nota_credito} do
     xml_expected =
-      File.read!("test/fixtures/nota_credito/nota_credito.xml")
+      "test/fixtures/nota_credito/nota_credito.xml"
+      |> File.read!()
       |> XmlSupport.format()
 
     xml =
-      NotaCredito.to_xml(nota_credito)
+      nota_credito
+      |> NotaCredito.to_xml()
       |> XmlSupport.format()
 
     assert xml == xml_expected

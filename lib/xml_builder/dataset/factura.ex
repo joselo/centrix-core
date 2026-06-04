@@ -1,15 +1,15 @@
 defmodule BillingCore.Dataset.Factura do
   @moduledoc false
 
-  alias BillingCore.Dataset.Factura.{
-    CampoAdicional,
-    Detalle,
-    InfoFactura,
-    InfoTributaria
-  }
-
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias BillingCore.Dataset.Factura
+  alias BillingCore.Dataset.Factura.CampoAdicional
+  alias BillingCore.Dataset.Factura.Detalle
+  alias BillingCore.Dataset.Factura.InfoFactura
+  alias BillingCore.Dataset.Factura.InfoTributaria
 
   embedded_schema do
     embeds_one(:info_tributaria, InfoTributaria)
@@ -28,17 +28,19 @@ defmodule BillingCore.Dataset.Factura do
     |> cast_embed(:info_adicional, with: &CampoAdicional.changeset/2)
   end
 
-  def to_doc(%BillingCore.Dataset.Factura{} = factura) do
+  def to_doc(%Factura{} = factura) do
     children =
-      [
-        InfoTributaria.to_doc(factura.info_tributaria),
-        InfoFactura.to_doc(factura.info_factura),
-        {:detalles, nil, detalles_to_doc(factura.detalles)},
-        if(factura.info_adicional != [] and factura.info_adicional != nil,
-          do: {:infoAdicional, nil, info_adicional_to_doc(factura.info_adicional)}
-        )
-      ]
-      |> Enum.reject(&is_nil/1)
+      Enum.reject(
+        [
+          InfoTributaria.to_doc(factura.info_tributaria),
+          InfoFactura.to_doc(factura.info_factura),
+          {:detalles, nil, detalles_to_doc(factura.detalles)},
+          if(factura.info_adicional != [] and factura.info_adicional != nil,
+            do: {:infoAdicional, nil, info_adicional_to_doc(factura.info_adicional)}
+          )
+        ],
+        &is_nil/1
+      )
 
     {
       :factura,
@@ -47,19 +49,18 @@ defmodule BillingCore.Dataset.Factura do
     }
   end
 
-
-  def to_xml(%BillingCore.Dataset.Factura{} = factura) do
-    XmlBuilder.document(to_doc(factura))
+  def to_xml(%Factura{} = factura) do
+    factura
+    |> to_doc()
+    |> XmlBuilder.document()
     |> XmlBuilder.generate()
   end
 
   defp detalles_to_doc(detalles) do
-    detalles
-    |> Enum.map(fn detalle -> Detalle.to_doc(detalle) end)
+    Enum.map(detalles, fn detalle -> Detalle.to_doc(detalle) end)
   end
 
   defp info_adicional_to_doc(info_adicional) do
-    info_adicional
-    |> Enum.map(fn info -> CampoAdicional.to_doc(info) end)
+    Enum.map(info_adicional, fn info -> CampoAdicional.to_doc(info) end)
   end
 end

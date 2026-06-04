@@ -2,7 +2,10 @@ defmodule BillingCore.Dataset.Factura.DetAdicional do
   @moduledoc false
 
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias BillingCore.Dataset.Factura.DetAdicional
 
   embedded_schema do
     field(:nombre, :string)
@@ -15,7 +18,7 @@ defmodule BillingCore.Dataset.Factura.DetAdicional do
     |> validate_required([:nombre, :valor])
   end
 
-  def to_doc(%BillingCore.Dataset.Factura.DetAdicional{} = detAdicional) do
+  def to_doc(%DetAdicional{} = detAdicional) do
     {
       :detAdicional,
       [valor: detAdicional.valor, nombre: detAdicional.nombre],
@@ -23,8 +26,9 @@ defmodule BillingCore.Dataset.Factura.DetAdicional do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.Factura.DetAdicional{} = detAdicional) do
-    to_doc(detAdicional)
+  def to_xml(%DetAdicional{} = detAdicional) do
+    detAdicional
+    |> to_doc()
     |> XmlBuilder.generate()
   end
 end

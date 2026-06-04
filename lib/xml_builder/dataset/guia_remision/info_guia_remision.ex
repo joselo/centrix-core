@@ -2,7 +2,10 @@ defmodule BillingCore.Dataset.GuiaRemision.InfoGuiaRemision do
   @moduledoc false
 
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias BillingCore.Dataset.GuiaRemision.InfoGuiaRemision
 
   embedded_schema do
     field(:dir_establecimiento, :string)
@@ -53,7 +56,7 @@ defmodule BillingCore.Dataset.GuiaRemision.InfoGuiaRemision do
     |> validate_length(:placa, max: 20)
   end
 
-  def to_doc(%BillingCore.Dataset.GuiaRemision.InfoGuiaRemision{} = info) do
+  def to_doc(%InfoGuiaRemision{} = info) do
     doc =
       [
         {:dirPartida, nil, info.dir_partida},
@@ -79,8 +82,9 @@ defmodule BillingCore.Dataset.GuiaRemision.InfoGuiaRemision do
     }
   end
 
-  def to_xml(%BillingCore.Dataset.GuiaRemision.InfoGuiaRemision{} = info) do
-    to_doc(info)
+  def to_xml(%InfoGuiaRemision{} = info) do
+    info
+    |> to_doc()
     |> XmlBuilder.generate()
   end
 
@@ -117,16 +121,9 @@ defmodule BillingCore.Dataset.GuiaRemision.InfoGuiaRemision do
 
   defp add_contribuyente_especial(doc, %{contribuyente_especial: contribuyente_especial}) do
     index =
-      case Enum.find_index(doc, fn {tag, _, _} -> tag == :obligadoContabilidad end) do
-        nil ->
-          case Enum.find_index(doc, fn {tag, _, _} -> tag == :rise end) do
-            nil -> Enum.find_index(doc, fn {tag, _, _} -> tag == :rucTransportista end)
-            i -> i
-          end
-
-        i ->
-          i
-      end
+      Enum.find_index(doc, fn {tag, _, _} -> tag == :obligadoContabilidad end) ||
+        Enum.find_index(doc, fn {tag, _, _} -> tag == :rise end) ||
+        Enum.find_index(doc, fn {tag, _, _} -> tag == :rucTransportista end)
 
     List.insert_at(doc, index + 1, {:contribuyenteEspecial, nil, contribuyente_especial})
   end

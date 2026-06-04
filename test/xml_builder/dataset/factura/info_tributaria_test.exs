@@ -2,9 +2,7 @@ defmodule BillingCore.Dataset.Factura.InfoTributariaTest do
   use ExUnit.Case
 
   alias BillingCore.Dataset.Factura.InfoTributaria
-
   alias BillingCore.Dataset.Factura.Test.FactorySupport
-
   alias BillingCore.Dataset.Test.XmlSupport
 
   setup do
@@ -45,7 +43,8 @@ defmodule BillingCore.Dataset.Factura.InfoTributariaTest do
     }
 
     info_tributaria =
-      InfoTributaria.changeset(%InfoTributaria{}, params)
+      %InfoTributaria{}
+      |> InfoTributaria.changeset(params)
       |> Ecto.Changeset.apply_changes()
 
     assert info_tributaria.clave_acceso == access_key_expected
@@ -80,11 +79,13 @@ defmodule BillingCore.Dataset.Factura.InfoTributariaTest do
 
   test "to_xml", %{info_tributaria: info_tributaria} do
     xml_expected =
-      File.read!("test/fixtures/info_tributaria.xml")
+      "test/fixtures/info_tributaria.xml"
+      |> File.read!()
       |> XmlSupport.format()
 
     xml =
-      InfoTributaria.to_xml(info_tributaria)
+      info_tributaria
+      |> InfoTributaria.to_xml()
       |> XmlSupport.format()
 
     assert xml == xml_expected

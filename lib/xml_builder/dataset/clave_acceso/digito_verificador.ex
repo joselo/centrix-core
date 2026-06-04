@@ -15,14 +15,14 @@ defmodule BillingCore.Dataset.ClaveAcceso.DigitoVerificador do
         } = changes
       ) do
     string = changes_to_string(changes)
-    mod = string |> mod11
+    mod = mod11(string)
 
     Enum.join([string, mod])
   end
 
   def changes_to_string(%{} = clave_acceso) do
     clave_acceso
-    |> format
+    |> format()
     |> Enum.join()
   end
 
@@ -33,8 +33,9 @@ defmodule BillingCore.Dataset.ClaveAcceso.DigitoVerificador do
       |> Integer.parse()
 
     m =
-      Integer.digits(integer)
-      |> sum_list
+      integer
+      |> Integer.digits()
+      |> sum_list()
       |> rem(11)
 
     case 11 - m do
@@ -67,7 +68,7 @@ defmodule BillingCore.Dataset.ClaveAcceso.DigitoVerificador do
     day = clave_acceso.fecha_emision.day |> Integer.to_string() |> String.pad_leading(2, "0")
     month = clave_acceso.fecha_emision.month |> Integer.to_string() |> String.pad_leading(2, "0")
 
-    fecha_emision = [day, month, clave_acceso.fecha_emision.year] |> Enum.join()
+    fecha_emision = Enum.join([day, month, clave_acceso.fecha_emision.year])
 
     tipo_comprobante =
       clave_acceso.tipo_comprobante
