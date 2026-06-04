@@ -4,7 +4,7 @@ defmodule BillingCore.Ws.Client do
 
   require Logger
 
-  def post(wsdl_url, body) do
+  def post(wsdl_url, body, opts \\ []) do
     headers = [
       {"Content-Encoding", "gzip"},
       {"Content-Type", "text/xml;charset=UTF-8"},
@@ -12,10 +12,13 @@ defmodule BillingCore.Ws.Client do
       {"Vary", "Accept-Encoding"}
     ]
 
+    timeout = Keyword.get(opts, :timeout, BillingCore.timeout())
+    recv_timeout = Keyword.get(opts, :recv_timeout, BillingCore.soap_server_recv_timeout())
+
     wsdl_url
     |> HTTPoison.post(body, headers,
-      timeout: BillingCore.timeout(),
-      recv_timeout: BillingCore.soap_server_recv_timeout()
+      timeout: timeout,
+      recv_timeout: recv_timeout
     )
     |> handle_response()
   end

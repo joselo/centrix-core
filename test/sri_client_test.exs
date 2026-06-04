@@ -98,4 +98,59 @@ defmodule BillingCore.SriClientTest do
       assert {:error, "closed"} = SriClient.is_authorized("123456789", @environment)
     end
   end
+
+  describe "check_health/2" do
+    setup do
+      reception_response = File.read!("test/fixtures/error_reception_response.xml")
+      authorization_response = File.read!("test/fixtures/unauthorized_response.xml")
+
+      {:ok, reception_response: reception_response, authorization_response: authorization_response}
+    end
+
+    test "returns :up for both when they respond with valid SOAP responses", %{
+      reception_response: reception_response,
+      authorization_response: authorization_response
+    } do
+      expect(Client, :post, 2, fn url, _body, _opts ->
+        cond do
+          String.contains?(url, "Recepcion") -> {:ok, reception_response}
+          String.contains?(url, "Autorizacion") -> {:ok, authorization_response}
+        end
+      end)
+
+      assert {:ok, %{reception: :up, authorization: :up}} = SriClient.check_health(@environment)
+    end
+
+    test "returns :down for reception if reception request fails", %{
+      authorization_response: authorization_response
+    } do
+      expect(Client, :post, 2, fn url, _body, _opts ->
+        cond do
+          String.contains?(url, "Recepcion") -> {:error, "timeout"}
+          String.contains?(url, "Autorizacion") -> {:ok, authorization_response}
+        end
+      end)
+
+      assert {:ok, %{reception: :down, authorization: :up}} = SriClient.check_health(@environment)
+    end
+
+    test "returns :down for authorization if authorization request fails", %{
+      reception_response: reception_response
+    } do
+      expect(Client, :post, 2, fn url, _body, _opts ->
+        cond do
+          String.contains?(url, "Recepcion") -> {:ok, reception_response}
+          String.contains?(url, "Autorizacion") -> {:error, "closed"}
+        end
+      end)
+
+      assert {:ok, %{reception: :up, authorization: :down}} = SriClient.check_health(@environment)
+    end
+
+    test "returns :down for both if both fail" do
+      expect(Client, :post, 2, fn _url, _body, _opts -> {:error, "timeout"} end)
+
+      assert {:ok, %{reception: :down, authorization: :down}} = SriClient.check_health(@environment)
+    end
+  end
 end
