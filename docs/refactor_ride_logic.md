@@ -4,7 +4,7 @@ Este documento analiza la necesidad de refactorizar los módulos de procesamient
 
 ## Estado Actual
 
-Actualmente, los módulos `BillingCore.InvoiceXmlParser` y `BillingCore.InvoicePdfBuilder` están acoplados exclusivamente al tipo de documento "Factura" (Código 01).
+Actualmente, los módulos `CentrixCore.InvoiceXmlParser` y `CentrixCore.InvoicePdfBuilder` están acoplados exclusivamente al tipo de documento "Factura" (Código 01).
 
 - **`InvoiceXmlParser`**: Accede directamente a la clave `["factura"]` del mapa generado desde el XML.
 - **`InvoicePdfBuilder`**: Renderiza etiquetas fijas como "FACTURA" y asume una estructura de ítems y pagos propia de una factura comercial.
@@ -32,12 +32,12 @@ Crear un `CreditNotePdfBuilder`, `DebitNotePdfBuilder`, etc., resultaría en una
 
 **Propuesta de Refactorización:**
 
-1.  **Módulo de Parsing Genérico (`BillingCore.DocumentXmlParser`)**:
+1.  **Módulo de Parsing Genérico (`CentrixCore.DocumentXmlParser`)**:
     - Identificar el tipo de documento analizando la raíz del XML (`factura`, `notaCredito`, `notaDebito`, etc.).
     - Extraer la `infoTributaria` de forma común (es idéntica para todos).
     - Delegar la extracción de `detalles` e `infoEspecifica` a submódulos según el código de documento.
 
-2.  **Módulo de PDF Polimórfico (`BillingCore.RidePdfBuilder`)**:
+2.  **Módulo de PDF Polimórfico (`CentrixCore.RidePdfBuilder`)**:
     - **Base Template**: Un motor que renderiza el "marco" del RIDE (cabecera, info tributaria, bloque de autorización y pie de página con info adicional).
     - **Content Blocks**: Definir un comportamiento o protocolo para renderizar el bloque central (la tabla de ítems varía: una Guía de Remisión tiene destinatarios, una Retención tiene impuestos retenidos).
     - **Traducción de Etiquetas**: Usar un mapa de tipos para cambiar el título del documento ("FACTURA", "NOTA DE CRÉDITO", etc.).

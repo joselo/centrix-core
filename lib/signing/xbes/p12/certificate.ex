@@ -1,4 +1,4 @@
-defmodule BillingCore.Xbes.P12.Certificate do
+defmodule CentrixCore.Xbes.P12.Certificate do
   @moduledoc false
 
   def build(pem_file) do

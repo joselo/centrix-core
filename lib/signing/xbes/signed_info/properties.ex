@@ -1,7 +1,7 @@
-defmodule BillingCore.Xbes.SignedInfo.Properties do
+defmodule CentrixCore.Xbes.SignedInfo.Properties do
   @moduledoc false
 
-  alias BillingCore.Xbes.Util
+  alias CentrixCore.Xbes.Util
 
   def digest(cfg) do
     cfg

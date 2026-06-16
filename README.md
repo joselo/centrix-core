@@ -1,4 +1,4 @@
-# BillingCore
+# CentrixCore
 
 Una librería de Elixir para la generación y firma digital de documentos de facturación electrónica para Ecuador, conforme a los requisitos del SRI (*Servicio de Rentas Internas*).
 
@@ -29,7 +29,7 @@ La librería no está publicada en Hex. Agrega lo siguiente a `mix.exs`:
 ```elixir
 def deps do
   [
-    {:billing_core, github: "joselo/billing-core", branch: "master"}
+    {:centrix_core, github: "joselo/centrix-core", branch: "master"}
   ]
 end
 ```
@@ -43,19 +43,19 @@ mix deps.get
 ```elixir
 # 1. Construir XML
 {:ok, [xml: xml, clave_acceso: key]} =
-  BillingCore.XmlBuilder.build_invoice(invoice_params)
+  CentrixCore.XmlBuilder.build_invoice(invoice_params)
 
 # 2. Firmar
 {:ok, signed_xml} =
-  BillingCore.Signing.sign(xml, "/path/to/cert.p12", "password")
+  CentrixCore.Signing.sign(xml, "/path/to/cert.p12", "password")
 
 # 3. Enviar al SRI
 {:ok, %{status: "RECIBIDA"}} =
-  BillingCore.SriClient.send_document(signed_xml, 1)
+  CentrixCore.SriClient.send_document(signed_xml, 1)
 
 # 4. Verificar autorización
 {:ok, %{status: "AUTORIZADO", response: auth_xml}} =
-  BillingCore.SriClient.is_authorized(key, 1)
+  CentrixCore.SriClient.is_authorized(key, 1)
 ```
 
 Ver [`AGENTS.md § 6`](./AGENTS.md#7-the-full-electronic-invoicing-lifecycle) para el flujo completo.

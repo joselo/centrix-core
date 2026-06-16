@@ -1,13 +1,13 @@
-defmodule BillingCore.Dataset.Factura.Impuesto do
+defmodule CentrixCore.Dataset.Factura.Impuesto do
   @moduledoc false
 
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  alias BillingCore.Dataset.Factura.Impuesto
+  alias CentrixCore.Dataset.Factura.Impuesto
 
-  @decimals BillingCore.decimals()
+  @decimals CentrixCore.decimals()
 
   embedded_schema do
     field(:codigo, :integer)

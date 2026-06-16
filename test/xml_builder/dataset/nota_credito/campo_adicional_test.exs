@@ -1,9 +1,9 @@
-defmodule BillingCore.Dataset.NotaCredito.CampoAdicionalTest do
+defmodule CentrixCore.Dataset.NotaCredito.CampoAdicionalTest do
   use ExUnit.Case
 
-  alias BillingCore.Dataset.NotaCredito.CampoAdicional
-  alias BillingCore.Dataset.NotaCredito.Test.FactorySupport
-  alias BillingCore.Dataset.Test.XmlSupport
+  alias CentrixCore.Dataset.NotaCredito.CampoAdicional
+  alias CentrixCore.Dataset.NotaCredito.Test.FactorySupport
+  alias CentrixCore.Dataset.Test.XmlSupport
 
   setup do
     campo_adicional = FactorySupport.campo_adicional_factory()

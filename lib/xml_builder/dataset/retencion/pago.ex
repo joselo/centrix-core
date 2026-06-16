@@ -1,13 +1,13 @@
-defmodule BillingCore.Dataset.Retencion.Pago do
+defmodule CentrixCore.Dataset.Retencion.Pago do
   @moduledoc false
 
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  alias BillingCore.Dataset.Retencion.Pago
+  alias CentrixCore.Dataset.Retencion.Pago
 
-  @decimals BillingCore.decimals()
+  @decimals CentrixCore.decimals()
 
   embedded_schema do
     field(:forma_pago, :string)

@@ -1,7 +1,7 @@
-defmodule BillingCore.XmlDebitNoteBuilderTest do
+defmodule CentrixCore.XmlDebitNoteBuilderTest do
   use ExUnit.Case
 
-  alias BillingCore.XmlDebitNoteBuilder
+  alias CentrixCore.XmlDebitNoteBuilder
 
   describe "build_debit_note/1" do
     test "build debit_note and returns the xml and clave_acceso" do

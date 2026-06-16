@@ -1,4 +1,4 @@
-defmodule BillingCore.RidePdfBuilder do
+defmodule CentrixCore.RidePdfBuilder do
   @moduledoc """
   Generic RIDE PDF Builder.
   Handles layout and dispatching for different SRI documents.
@@ -63,8 +63,8 @@ defmodule BillingCore.RidePdfBuilder do
       pdf
       |> Pdf.set_info(
         title: "RIDE - #{document.invoice_number}",
-        producer: "BillingCore",
-        creator: "BillingCore",
+        producer: "CentrixCore",
+        creator: "CentrixCore",
         created: Date.utc_today(),
         modified: Date.utc_today(),
         author: document.business_name

@@ -1,4 +1,4 @@
-defmodule BillingCore.AuthorizationParser do
+defmodule CentrixCore.AuthorizationParser do
   @moduledoc false
   import SweetXml
 

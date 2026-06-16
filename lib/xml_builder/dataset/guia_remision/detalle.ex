@@ -1,12 +1,12 @@
-defmodule BillingCore.Dataset.GuiaRemision.Detalle do
+defmodule CentrixCore.Dataset.GuiaRemision.Detalle do
   @moduledoc false
 
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  alias BillingCore.Dataset.Factura.DetAdicional
-  alias BillingCore.Dataset.GuiaRemision.Detalle
+  alias CentrixCore.Dataset.Factura.DetAdicional
+  alias CentrixCore.Dataset.GuiaRemision.Detalle
 
   embedded_schema do
     field(:codigo_interno, :string)

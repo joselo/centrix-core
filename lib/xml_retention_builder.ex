@@ -1,7 +1,7 @@
-defmodule BillingCore.XmlRetentionBuilder do
+defmodule CentrixCore.XmlRetentionBuilder do
   @moduledoc false
 
-  alias BillingCore.Dataset.CompRetencion
+  alias CentrixCore.Dataset.CompRetencion
 
   def build_retention(retencion_params) do
     case validate_retention(retencion_params) do
@@ -23,7 +23,7 @@ defmodule BillingCore.XmlRetentionBuilder do
         {:ok, Ecto.Changeset.apply_changes(changeset)}
 
       changeset ->
-        {:error, BillingCore.ChangesetParser.format_errors(changeset)}
+        {:error, CentrixCore.ChangesetParser.format_errors(changeset)}
     end
   end
 end

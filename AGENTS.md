@@ -1,4 +1,4 @@
-# AGENTS.md — BillingCore (`compritas-core`)
+# AGENTS.md — CentrixCore (`compritas-core`)
 
 > **Purpose:** This document is intended for AI agents and developers who need to understand this codebase quickly. It describes the project's purpose, architecture, domain terminology, data models, and conventions.
 >
@@ -11,7 +11,7 @@
 
 ## 1. What Is This Project?
 
-`billing_core` (also referred to as `BillingCore`) is an **Elixir library** that handles the full lifecycle of **electronic invoicing (facturación electrónica)** in **Ecuador** as mandated by the **SRI** (*Servicio de Rentas Internas* — Ecuador's Internal Revenue Service).
+`centrix_core` (also referred to as `CentrixCore`) is an **Elixir library** that handles the full lifecycle of **electronic invoicing (facturación electrónica)** in **Ecuador** as mandated by the **SRI** (*Servicio de Rentas Internas* — Ecuador's Internal Revenue Service).
 
 It is **not a web application**. It is a **pure Elixir library** meant to be consumed by other Elixir/Phoenix applications (e.g., `compritas` or `compritas-saas`) via a `mix.exs` dependency.
 
@@ -130,7 +130,7 @@ The government tax authority of Ecuador. All businesses must submit electronic d
 ```
 compritas-core/
 ├── lib/
-│   ├── billing_core.ex              # Root module: global config (URLs, timeouts, timezone)
+│   ├── centrix_core.ex              # Root module: global config (URLs, timeouts, timezone)
 │   ├── barcode_generator.ex         # Code128 barcode PNG generator
 │   ├── invoice_pdf_builder.ex       # PDF invoice renderer
 │   ├── invoice_xml_parser.ex        # Parses authorized invoice XML → structured map
@@ -200,7 +200,7 @@ compritas-core/
 │   └── invoice.exs              # Example invoice data script
 │
 ├── test/
-│   ├── billing_core_test.exs
+│   ├── centrix_core_test.exs
 │   ├── signing_test.exs
 │   ├── sri_client_test.exs
 │   ├── xml_builder_test.exs
@@ -240,31 +240,31 @@ For detailed, code-level documentation on each implemented SRI document type —
 
 ## 6. Key Modules & Their Roles
 
-### `BillingCore` (`lib/billing_core.ex`)
+### `CentrixCore` (`lib/centrix_core.ex`)
 The root configuration module. Provides global constants:
 - **SRI SOAP URLs** for test (`celcer.sri.gob.ec`) and production (`cel.sri.gob.ec`) environments.
 - Timeout values (all set to 900,000 ms / 15 minutes — SRI can be slow).
 - Timezone: `"America/Guayaquil"` (Ecuador standard time, no DST).
 
-### `BillingCore.XmlBuilder` (`lib/xml_builder.ex`)
+### `CentrixCore.XmlBuilder` (`lib/xml_builder.ex`)
 Public entry point for building a **factura** XML. Accepts a params map, validates it through Ecto changesets, and returns `{:ok, [xml: xml_string, clave_acceso: string]}` or `{:error, changeset}`.
 
-### `BillingCore.XmlCreditNoteBuilder` (`lib/xml_credit_note_builder.ex`)
+### `CentrixCore.XmlCreditNoteBuilder` (`lib/xml_credit_note_builder.ex`)
 Same pattern as `XmlBuilder` but for **notas de crédito**.
 
-### `BillingCore.Signing` (`lib/signing.ex`)
-Public signing entry point. Reads the P12 certificate, extracts PEM cert and RSA key, then delegates to `BillingCore.Xbes.sign/5`. Returns `{:ok, signed_xml_string}` or `{:error, reason}`.
+### `CentrixCore.Signing` (`lib/signing.ex`)
+Public signing entry point. Reads the P12 certificate, extracts PEM cert and RSA key, then delegates to `CentrixCore.Xbes.sign/5`. Returns `{:ok, signed_xml_string}` or `{:error, reason}`.
 
-### `BillingCore.SriClient` (`lib/sri_client.ex`)
+### `CentrixCore.SriClient` (`lib/sri_client.ex`)
 Handles communication with SRI:
 - `send_document(xml, environment)` — submits XML via `validarComprobante` SOAP operation.
 - `is_authorized(clave_acceso, environment)` — polls `autorizacionComprobante` SOAP operation.
 - Environment `1` → test URLs, `2` → production URLs.
 
-### `BillingCore.InvoiceXmlParser` (`lib/invoice_xml_parser.ex`)
+### `CentrixCore.InvoiceXmlParser` (`lib/invoice_xml_parser.ex`)
 Parses the full SOAP authorization response XML into a structured Elixir map. Handles single and multiple line items, optional fields, payment methods, and tax labels. Used as input to the PDF builder.
 
-### `BillingCore.InvoicePdfBuilder` (`lib/invoice_pdf_builder.ex`)
+### `CentrixCore.InvoicePdfBuilder` (`lib/invoice_pdf_builder.ex`)
 Renders a **PDF** invoice (A4) from the parsed XML map. Supports:
 - Company logo image (optional).
 - Code128 barcode image (optional).
@@ -272,13 +272,13 @@ Renders a **PDF** invoice (A4) from the parsed XML map. Supports:
 - Additional info fields (`infoAdicional`).
 - Payment details and totals table.
 
-### `BillingCore.BarcodeGenerator` (`lib/barcode_generator.ex`)
+### `CentrixCore.BarcodeGenerator` (`lib/barcode_generator.ex`)
 Generates a Code128 barcode PNG from any string (typically the `clave_acceso`). Saves to a temp file and returns `{:ok, path}`.
 
-### `BillingCore.P12Reader` (`lib/signing/p12_reader.ex`)
+### `CentrixCore.P12Reader` (`lib/signing/p12_reader.ex`)
 Calls `openssl pkcs12` via `System.cmd/2` to extract PEM certificate and RSA private key. Automatically adds the `-legacy` flag for OpenSSL 3.x compatibility (important: many Ecuadorian P12 certs use legacy encryption algorithms).
 
-### `BillingCore.Xbes` (`lib/signing/xbes/xbes.ex`)
+### `CentrixCore.Xbes` (`lib/signing/xbes/xbes.ex`)
 Implements the **XAdES-BES** digital signature standard:
 1. Builds `Properties` XML block and computes its SHA1 digest.
 2. Builds `KeyInfo` XML block (certificate data) and computes its SHA1 digest.
@@ -295,33 +295,33 @@ This is the end-to-end flow that all host applications must follow:
 
 ```
 1. BUILD XML
-   BillingCore.XmlBuilder.build_invoice(params)
+   CentrixCore.XmlBuilder.build_invoice(params)
    → {:ok, [xml: xml_string, clave_acceso: "49-digit-key"]}
 
 2. SIGN XML
-   BillingCore.Signing.sign(xml_string, p12_path, p12_password)
+   CentrixCore.Signing.sign(xml_string, p12_path, p12_password)
    → {:ok, signed_xml_string}
 
 3. SEND TO SRI (Reception)
-   BillingCore.SriClient.send_document(signed_xml, environment)
+   CentrixCore.SriClient.send_document(signed_xml, environment)
    → {:ok, %{status: "RECIBIDA", response: soap_response}}
    (status "DEVUELTA" = rejected with errors)
 
 4. POLL FOR AUTHORIZATION
-   BillingCore.SriClient.is_authorized(clave_acceso, environment)
+   CentrixCore.SriClient.is_authorized(clave_acceso, environment)
    → {:ok, %{status: "AUTORIZADO", response: full_soap_xml}}
    (status "NO AUTORIZADO" or "NO ENCONTRADO O PENDIENTE")
 
 5. (OPTIONAL) PARSE AUTHORIZED XML
-   BillingCore.InvoiceXmlParser.parse_xml(full_soap_xml)
+   CentrixCore.InvoiceXmlParser.parse_xml(full_soap_xml)
    → structured map with document fields
 
 6. (OPTIONAL) GENERATE BARCODE
-   BillingCore.BarcodeGenerator.generate(clave_acceso)
+   CentrixCore.BarcodeGenerator.generate(clave_acceso)
    → {:ok, "/tmp/barcode_xxx.png"}
 
 7. (OPTIONAL) GENERATE PDF
-   BillingCore.InvoicePdfBuilder.build(parsed_xml_map, logo_path, barcode_path)
+   CentrixCore.InvoicePdfBuilder.build(parsed_xml_map, logo_path, barcode_path)
    → binary PDF content
 ```
 
@@ -408,7 +408,7 @@ The `clave_acceso` is a 49-character string computed as:
 - `serie` = `estab(3) + pto_emi(3)`
 - `digito_verificador` = Módulo 11 of the first 48 digits, with special cases: result 10 → `1`, result 11 → `0`
 
-Implemented in `BillingCore.Dataset.ClaveAcceso.DigitoVerificador`.
+Implemented in `CentrixCore.Dataset.ClaveAcceso.DigitoVerificador`.
 
 ---
 
@@ -438,14 +438,14 @@ Implemented in `BillingCore.Dataset.ClaveAcceso.DigitoVerificador`.
 
 ### HTTP Notes
 - Requests use `Content-Encoding: gzip` and `Accept-Encoding: gzip,deflate`.
-- The response body is decompressed transparently by `BillingCore.Ws.Client`.
+- The response body is decompressed transparently by `CentrixCore.Ws.Client`.
 - Timeouts are set to **900 seconds** to account for SRI latency.
 
 ---
 
 ## 11. XAdES-BES Digital Signing Details
 
-The signing process (`BillingCore.Xbes`) follows the XAdES-BES standard as specified by SRI:
+The signing process (`CentrixCore.Xbes`) follows the XAdES-BES standard as specified by SRI:
 
 1. **Certificate reading:** P12 → PEM cert + RSA key via `openssl pkcs12`. The `-legacy` flag is automatically added for OpenSSL ≥ 3.0.
 2. **Canonicalization:** `http://www.w3.org/TR/2001/REC-xml-c14n-20010315` (C14N exclusive without comments).
@@ -462,7 +462,7 @@ The signing process (`BillingCore.Xbes`) follows the XAdES-BES standard as speci
 # In mix.exs of the host application
 defp deps do
   [
-    {:billing_core, github: "joselo/billing-core", branch: "master"}
+    {:centrix_core, github: "joselo/centrix-core", branch: "master"}
   ]
 end
 ```
@@ -494,7 +494,7 @@ mix test
 ```
 
 Tests use `mimic` for mocking. Key test files:
-- `test/billing_core_test.exs` — integration-style tests for the full invoice flow.
+- `test/centrix_core_test.exs` — integration-style tests for the full invoice flow.
 - `test/xml_builder_test.exs` — validates XML output structure for invoices.
 - `test/xml_credit_note_builder_test.exs` — validates XML output for credit notes.
 - `test/signing_test.exs` — tests the digital signing flow.
@@ -510,7 +510,7 @@ Test fixtures in `test/fixtures/` include sample XML documents, pre-signed XMLs,
 
 1. **No database.** Ecto is used solely for embedded schema validation. There are no migrations, no Repo, no database.
 
-2. **Decimal precision.** Monetary values use **2 decimal places** (defined in `BillingCore.decimals/0`). Quantities and unit prices use **6 decimal places** in XML output.
+2. **Decimal precision.** Monetary values use **2 decimal places** (defined in `CentrixCore.decimals/0`). Quantities and unit prices use **6 decimal places** in XML output.
 
 3. **Dates in XML.** SRI requires dates in `dd/mm/yyyy` format (not ISO 8601). The `format_fecha_emision/1` helper converts `Date` structs accordingly.
 
@@ -518,7 +518,7 @@ Test fixtures in `test/fixtures/` include sample XML documents, pre-signed XMLs,
 
 5. **OpenSSL legacy flag.** Many Ecuadorian P12 certificates use legacy encryption (`RC2-40-CBC`). OpenSSL 3+ requires the `-legacy` flag, which is added automatically by `P12Reader`.
 
-6. **SRI timezone.** All signing timestamps use `America/Guayaquil` (UTC-5, no DST). This is hardcoded in `BillingCore.timezone/0`.
+6. **SRI timezone.** All signing timestamps use `America/Guayaquil` (UTC-5, no DST). This is hardcoded in `CentrixCore.timezone/0`.
 
 7. **`contribuyente_especial` is conditional.** The `<contribuyenteEspecial>` XML element is only inserted when `obligado_contabilidad` is `"SI"`.
 
@@ -537,23 +537,23 @@ Test fixtures in `test/fixtures/` include sample XML documents, pre-signed XMLs,
 ```elixir
 # Step 1: Build invoice XML
 {:ok, [xml: xml, clave_acceso: key]} =
-  BillingCore.XmlBuilder.build_invoice(invoice_params)
+  CentrixCore.XmlBuilder.build_invoice(invoice_params)
 
 # Step 2: Sign the XML
 {:ok, signed_xml} =
-  BillingCore.Signing.sign(xml, "/path/to/cert.p12", "p12_password")
+  CentrixCore.Signing.sign(xml, "/path/to/cert.p12", "p12_password")
 
 # Step 3: Send to SRI
 {:ok, %{status: "RECIBIDA", response: resp}} =
-  BillingCore.SriClient.send_document(signed_xml, 1)
+  CentrixCore.SriClient.send_document(signed_xml, 1)
 
 # Step 4: Check authorization
 {:ok, %{status: "AUTORIZADO", response: auth_resp}} =
-  BillingCore.SriClient.is_authorized(key, 1)
+  CentrixCore.SriClient.is_authorized(key, 1)
 
 # Step 5: Generate PDF
-parsed = BillingCore.InvoiceXmlParser.parse_xml(auth_resp)
-pdf_binary = BillingCore.InvoicePdfBuilder.build(parsed, logo_path, barcode_path)
+parsed = CentrixCore.InvoiceXmlParser.parse_xml(auth_resp)
+pdf_binary = CentrixCore.InvoicePdfBuilder.build(parsed, logo_path, barcode_path)
 ```
 
 ---

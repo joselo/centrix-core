@@ -1,16 +1,16 @@
-defmodule BillingCore.Dataset.Retencion.DocSustento do
+defmodule CentrixCore.Dataset.Retencion.DocSustento do
   @moduledoc false
 
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  alias BillingCore.Dataset.Retencion.DocSustento
-  alias BillingCore.Dataset.Retencion.ImpuestoDocSustento
-  alias BillingCore.Dataset.Retencion.Pago
-  alias BillingCore.Dataset.Retencion.Retencion
+  alias CentrixCore.Dataset.Retencion.DocSustento
+  alias CentrixCore.Dataset.Retencion.ImpuestoDocSustento
+  alias CentrixCore.Dataset.Retencion.Pago
+  alias CentrixCore.Dataset.Retencion.Retencion
 
-  @decimals BillingCore.decimals()
+  @decimals CentrixCore.decimals()
 
   embedded_schema do
     field(:cod_sustento, :string)

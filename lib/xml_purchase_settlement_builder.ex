@@ -1,7 +1,7 @@
-defmodule BillingCore.XmlPurchaseSettlementBuilder do
+defmodule CentrixCore.XmlPurchaseSettlementBuilder do
   @moduledoc false
 
-  alias BillingCore.Dataset.LiquidacionCompra
+  alias CentrixCore.Dataset.LiquidacionCompra
 
   def build_purchase_settlement(liquidacion_compra_params) do
     case validate_purchase_settlement(liquidacion_compra_params) do
@@ -23,7 +23,7 @@ defmodule BillingCore.XmlPurchaseSettlementBuilder do
         {:ok, Ecto.Changeset.apply_changes(changeset)}
 
       changeset ->
-        {:error, BillingCore.ChangesetParser.format_errors(changeset)}
+        {:error, CentrixCore.ChangesetParser.format_errors(changeset)}
     end
   end
 end

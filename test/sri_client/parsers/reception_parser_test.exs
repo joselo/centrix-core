@@ -1,7 +1,7 @@
-defmodule BillingCore.ReceptionParserTest do
+defmodule CentrixCore.ReceptionParserTest do
   use ExUnit.Case
 
-  alias BillingCore.ReceptionParser
+  alias CentrixCore.ReceptionParser
 
   setup do
     success_response = File.read!("test/fixtures/success_reception_response.xml")

@@ -1,7 +1,7 @@
-defmodule BillingCore.XmlPurchaseSettlementBuilderTest do
+defmodule CentrixCore.XmlPurchaseSettlementBuilderTest do
   use ExUnit.Case
 
-  alias BillingCore.XmlPurchaseSettlementBuilder
+  alias CentrixCore.XmlPurchaseSettlementBuilder
 
   describe "build_purchase_settlement/1" do
     test "build purchase settlement and returns the xml and clave_acceso" do

@@ -1,7 +1,7 @@
-defmodule BillingCore.P12ReaderTest do
+defmodule CentrixCore.P12ReaderTest do
   use ExUnit.Case
 
-  alias BillingCore.P12Reader
+  alias CentrixCore.P12Reader
 
   setup do
     path = Path.absname("test/fixtures/file.p12")

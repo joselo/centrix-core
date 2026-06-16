@@ -1,4 +1,4 @@
-defmodule BillingCore.P12Reader do
+defmodule CentrixCore.P12Reader do
   @moduledoc false
 
   def read(path, password) do

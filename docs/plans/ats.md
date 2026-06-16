@@ -14,7 +14,7 @@ Implementar un generador de archivos XML para el **Anexo Transaccional Simplific
 
 ## 4. Definición de Ecto Schemas
 
-### `BillingCore.Dataset.Ats.Iva` (Raíz)
+### `CentrixCore.Dataset.Ats.Iva` (Raíz)
 Representa el nodo `<iva>`.
 - `tipo_id_informante`: (R, RUC)
 - `id_informante`: (RUC del emisor)
@@ -25,7 +25,7 @@ Representa el nodo `<iva>`.
 - `total_ventas`: (Suma total de base gravada + base 0 + no objeto de ventas)
 - `codigo_operativo`: ("IVA")
 
-### `BillingCore.Dataset.Ats.Compra`
+### `CentrixCore.Dataset.Ats.Compra`
 Mapea el bloque `<detalleCompras> -> <detalleCompra>`.
 - `cod_sustento`: (Código de sustento tributario)
 - `tp_id_prov`: (Tipo ID proveedor)
@@ -42,7 +42,7 @@ Mapea el bloque `<detalleCompras> -> <detalleCompra>`.
 - **EmbedsMany:** `detalles_air` (Retenciones en la Fuente)
 - **EmbedsMany:** `formas_de_pago`
 
-### `BillingCore.Dataset.Ats.Venta`
+### `CentrixCore.Dataset.Ats.Venta`
 Mapea el bloque `<detalleVentas> -> <detalleVenta>`.
 - `tp_id_cliente`, `id_cliente`
 - `tipo_comprobante`, `tipo_emision`
@@ -51,7 +51,7 @@ Mapea el bloque `<detalleVentas> -> <detalleVenta>`.
 - `valor_ret_iva`, `valor_ret_renta`
 - **EmbedsMany:** `formas_de_pago`
 
-### `BillingCore.Dataset.Ats.Anulado`
+### `CentrixCore.Dataset.Ats.Anulado`
 Mapea el bloque `<detalleAnulados> -> <detalleAnulado>`.
 - `tipo_comprobante`
 - `establecimiento`, `punto_emision`

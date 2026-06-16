@@ -1,7 +1,7 @@
-defmodule BillingCore.XmlRemissionGuideBuilderTest do
+defmodule CentrixCore.XmlRemissionGuideBuilderTest do
   use ExUnit.Case
 
-  alias BillingCore.XmlRemissionGuideBuilder
+  alias CentrixCore.XmlRemissionGuideBuilder
 
   describe "build_remission_guide/1" do
     test "build remission_guide and returns the xml and clave_acceso" do

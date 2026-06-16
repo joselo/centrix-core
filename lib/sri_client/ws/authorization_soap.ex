@@ -1,4 +1,4 @@
-defmodule BillingCore.Ws.AuthorizationSoap do
+defmodule CentrixCore.Ws.AuthorizationSoap do
   @moduledoc false
 
   def create_request(clave_acceso, operation) when is_atom(operation) do

@@ -1,8 +1,8 @@
-defmodule BillingCore.RideEngineTest do
+defmodule CentrixCore.RideEngineTest do
   use ExUnit.Case
 
-  alias BillingCore.DocumentXmlParser
-  alias BillingCore.RidePdfBuilder
+  alias CentrixCore.DocumentXmlParser
+  alias CentrixCore.RidePdfBuilder
 
   @nc_fixture "test/fixtures/nota_credito_authorized.xml"
   @invoice_fixture "test/fixtures/success_authorization_response.xml"

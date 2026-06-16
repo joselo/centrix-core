@@ -1,4 +1,4 @@
-defmodule BillingCore.BarcodeGenerator do
+defmodule CentrixCore.BarcodeGenerator do
   @moduledoc """
   Generates a Code128 barcode PNG from a string and saves it to a temp file.
   Returns {:ok, path} or {:error, reason}.

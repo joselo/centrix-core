@@ -1,7 +1,7 @@
-defmodule BillingCore.InvoiceXmlParserTest do
+defmodule CentrixCore.InvoiceXmlParserTest do
   use ExUnit.Case
 
-  alias BillingCore.InvoiceXmlParser
+  alias CentrixCore.InvoiceXmlParser
 
   setup do
     xml = File.read!("test/fixtures/success_authorization_response.xml")

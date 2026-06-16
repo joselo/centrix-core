@@ -1,4 +1,4 @@
-defmodule BillingCore.Xbes.P12.Key do
+defmodule CentrixCore.Xbes.P12.Key do
   @moduledoc false
 
   def sign_with_pem(value, pem_file, index) do

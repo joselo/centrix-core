@@ -1,7 +1,7 @@
-defmodule BillingCore.XmlBuilderTest do
+defmodule CentrixCore.XmlBuilderTest do
   use ExUnit.Case
 
-  alias BillingCore.XmlBuilder
+  alias CentrixCore.XmlBuilder
 
   describe "build_invoice/1" do
     test "build invoice and starts the sign xml worker" do

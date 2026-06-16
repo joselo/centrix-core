@@ -15,8 +15,8 @@
   - `reembolso_detalle.ex` y `detalle_impuesto.ex` (Para casos de reembolso)
   - `pago.ex` (Para mapear `<formapago>`)
 - **Reutilizados:** 
-  - `BillingCore.Dataset.Factura.InfoTributaria` (Ajustando `cod_doc: 7`)
-  - `BillingCore.Dataset.Factura.CampoAdicional`
+  - `CentrixCore.Dataset.Factura.InfoTributaria` (Ajustando `cod_doc: 7`)
+  - `CentrixCore.Dataset.Factura.CampoAdicional`
 - **Tests:**
   - `test/xml_retention_builder_test.exs`
   - `test/fixtures/comprobante_retencion/`

@@ -1,9 +1,9 @@
-defmodule BillingCore.Dataset.NotaCredito.DetAdicionalTest do
+defmodule CentrixCore.Dataset.NotaCredito.DetAdicionalTest do
   use ExUnit.Case
 
-  alias BillingCore.Dataset.NotaCredito.DetAdicional
-  alias BillingCore.Dataset.NotaCredito.Test.FactorySupport
-  alias BillingCore.Dataset.Test.XmlSupport
+  alias CentrixCore.Dataset.NotaCredito.DetAdicional
+  alias CentrixCore.Dataset.NotaCredito.Test.FactorySupport
+  alias CentrixCore.Dataset.Test.XmlSupport
 
   setup do
     det_adicional = FactorySupport.det_adicional_factory()

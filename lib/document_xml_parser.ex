@@ -1,4 +1,4 @@
-defmodule BillingCore.DocumentXmlParser do
+defmodule CentrixCore.DocumentXmlParser do
   @moduledoc """
   Generic SRI Document XML Parser.
   Supports Factura (01), Nota de Crédito (04) and others.

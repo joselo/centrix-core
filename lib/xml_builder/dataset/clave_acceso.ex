@@ -1,4 +1,4 @@
-defmodule BillingCore.Dataset.ClaveAcceso do
+defmodule CentrixCore.Dataset.ClaveAcceso do
   @moduledoc false
 
   use Ecto.Schema

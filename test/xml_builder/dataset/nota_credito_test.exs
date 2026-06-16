@@ -1,13 +1,13 @@
-defmodule BillingCore.Dataset.NotaCreditoTest do
+defmodule CentrixCore.Dataset.NotaCreditoTest do
   use ExUnit.Case
 
-  alias BillingCore.Dataset.NotaCredito
-  alias BillingCore.Dataset.NotaCredito.CampoAdicional
-  alias BillingCore.Dataset.NotaCredito.Detalle
-  alias BillingCore.Dataset.NotaCredito.InfoNotaCredito
-  alias BillingCore.Dataset.NotaCredito.InfoTributaria
-  alias BillingCore.Dataset.NotaCredito.Test.FactorySupport
-  alias BillingCore.Dataset.Test.XmlSupport
+  alias CentrixCore.Dataset.NotaCredito
+  alias CentrixCore.Dataset.NotaCredito.CampoAdicional
+  alias CentrixCore.Dataset.NotaCredito.Detalle
+  alias CentrixCore.Dataset.NotaCredito.InfoNotaCredito
+  alias CentrixCore.Dataset.NotaCredito.InfoTributaria
+  alias CentrixCore.Dataset.NotaCredito.Test.FactorySupport
+  alias CentrixCore.Dataset.Test.XmlSupport
 
   setup do
     nota_credito = FactorySupport.nota_credito_factory()

@@ -1,7 +1,7 @@
-defmodule BillingCore.DocumentXmlParserTest do
+defmodule CentrixCore.DocumentXmlParserTest do
   use ExUnit.Case
 
-  alias BillingCore.DocumentXmlParser
+  alias CentrixCore.DocumentXmlParser
 
   test "parse_xml with multiple payments in factura" do
     xml = """

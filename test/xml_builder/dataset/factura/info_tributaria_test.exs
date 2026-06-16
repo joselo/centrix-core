@@ -1,9 +1,9 @@
-defmodule BillingCore.Dataset.Factura.InfoTributariaTest do
+defmodule CentrixCore.Dataset.Factura.InfoTributariaTest do
   use ExUnit.Case
 
-  alias BillingCore.Dataset.Factura.InfoTributaria
-  alias BillingCore.Dataset.Factura.Test.FactorySupport
-  alias BillingCore.Dataset.Test.XmlSupport
+  alias CentrixCore.Dataset.Factura.InfoTributaria
+  alias CentrixCore.Dataset.Factura.Test.FactorySupport
+  alias CentrixCore.Dataset.Test.XmlSupport
 
   setup do
     info_tributaria = FactorySupport.info_tributaria_factory()

@@ -1,2 +1,2 @@
 Code.compile_file("sandbox/purchase_settlement_sandbox.ex")
-BillingCore.PurchaseSettlementSandbox.test_purchase_settlement_sandbox()
+CentrixCore.PurchaseSettlementSandbox.test_purchase_settlement_sandbox()

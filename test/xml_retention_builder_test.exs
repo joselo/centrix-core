@@ -1,7 +1,7 @@
-defmodule BillingCore.XmlRetentionBuilderTest do
+defmodule CentrixCore.XmlRetentionBuilderTest do
   use ExUnit.Case
 
-  alias BillingCore.XmlRetentionBuilder
+  alias CentrixCore.XmlRetentionBuilder
 
   describe "build_retention/1" do
     test "build retention and returns the xml and clave_acceso" do

@@ -1,7 +1,7 @@
-defmodule BillingCore.XmlBuilder do
+defmodule CentrixCore.XmlBuilder do
   @moduledoc false
 
-  alias BillingCore.Dataset.Factura
+  alias CentrixCore.Dataset.Factura
 
   def build_invoice(factura_params) do
     case validate_invoice(factura_params) do
@@ -19,7 +19,7 @@ defmodule BillingCore.XmlBuilder do
         {:ok, Ecto.Changeset.apply_changes(changeset)}
 
       changeset ->
-        {:error, BillingCore.ChangesetParser.format_errors(changeset)}
+        {:error, CentrixCore.ChangesetParser.format_errors(changeset)}
     end
   end
 end

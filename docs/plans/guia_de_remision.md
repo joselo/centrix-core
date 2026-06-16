@@ -10,8 +10,8 @@
   - `destinatario.ex`
   - `detalle.ex` (Simplificado: sin precio ni impuestos)
 - **Reutilizados:** 
-  - `BillingCore.Dataset.Factura.InfoTributaria` (Ajustando `cod_doc: 6`)
-  - `BillingCore.Dataset.Factura.CampoAdicional`
+  - `CentrixCore.Dataset.Factura.InfoTributaria` (Ajustando `cod_doc: 6`)
+  - `CentrixCore.Dataset.Factura.CampoAdicional`
 - **Tests:**
   - `test/xml_remission_guide_builder_test.exs`
   - `test/fixtures/guia_remision/`
@@ -19,7 +19,7 @@
 
 ## 2. Definición de Ecto Schemas (Novedades)
 
-### `BillingCore.Dataset.GuiaRemision.InfoGuiaRemision`
+### `CentrixCore.Dataset.GuiaRemision.InfoGuiaRemision`
 Define los datos del transportista y del traslado.
 | Campo | XML Tag | Requerido |
 |---|---|---|
@@ -35,13 +35,13 @@ Define los datos del transportista y del traslado.
 | `fecha_fin_transporte` | `<fechaFinTransporte>` | Sí |
 | `placa` | `<placa>` | Sí |
 
-### `BillingCore.Dataset.GuiaRemision.Destinatario`
+### `CentrixCore.Dataset.GuiaRemision.Destinatario`
 Una guía puede tener múltiples destinatarios. 
 Campos principales: `identificacion_destinatario`, `razon_social_destinatario`, `dir_destinatario`, `motivo_traslado`.
 Campos opcionales para aduanas / sustento: `doc_aduanero_unico`, `cod_estab_destino`, `ruta`, `cod_doc_sustento`, `num_doc_sustento`, `num_aut_doc_sustento`, `fecha_emision_doc_sustento`.
 **Relación:** `detalles` (EmbedsMany). ¡Ojo! Los detalles van dentro de cada destinatario.
 
-### `BillingCore.Dataset.GuiaRemision.Detalle`
+### `CentrixCore.Dataset.GuiaRemision.Detalle`
 Detalle de los bienes transportados (no monetario):
 - `codigo_interno` (Opcional)
 - `codigo_adicional` (Opcional)

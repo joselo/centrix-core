@@ -1,15 +1,15 @@
-defmodule BillingCore.Dataset.NotaCredito.Detalle do
+defmodule CentrixCore.Dataset.NotaCredito.Detalle do
   @moduledoc false
 
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  alias BillingCore.Dataset.NotaCredito.DetAdicional
-  alias BillingCore.Dataset.NotaCredito.Detalle
-  alias BillingCore.Dataset.NotaCredito.Impuesto
+  alias CentrixCore.Dataset.NotaCredito.DetAdicional
+  alias CentrixCore.Dataset.NotaCredito.Detalle
+  alias CentrixCore.Dataset.NotaCredito.Impuesto
 
-  @decimals BillingCore.decimals()
+  @decimals CentrixCore.decimals()
 
   embedded_schema do
     field(:codigo_interno, :string)

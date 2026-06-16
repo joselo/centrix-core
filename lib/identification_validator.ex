@@ -1,4 +1,4 @@
-defmodule BillingCore.IdentificationValidator do
+defmodule CentrixCore.IdentificationValidator do
   @moduledoc """
   Pure logic for validating Ecuadorian identification numbers (Cédula, RUC, Consumidor Final and Pasaporte).
   Returns `:ok` or `{:error, reason}` where reason is an atom or a tuple.

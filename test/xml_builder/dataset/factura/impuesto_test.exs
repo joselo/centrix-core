@@ -1,9 +1,9 @@
-defmodule BillingCore.Dataset.Factura.ImpuestoTest do
+defmodule CentrixCore.Dataset.Factura.ImpuestoTest do
   use ExUnit.Case
 
-  alias BillingCore.Dataset.Factura.Impuesto
-  alias BillingCore.Dataset.Factura.Test.FactorySupport
-  alias BillingCore.Dataset.Test.XmlSupport
+  alias CentrixCore.Dataset.Factura.Impuesto
+  alias CentrixCore.Dataset.Factura.Test.FactorySupport
+  alias CentrixCore.Dataset.Test.XmlSupport
 
   setup do
     impuesto = FactorySupport.impuesto_factory()

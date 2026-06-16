@@ -1,4 +1,4 @@
-defmodule BillingCore.Dataset.ClaveAcceso.DigitoVerificador do
+defmodule CentrixCore.Dataset.ClaveAcceso.DigitoVerificador do
   @moduledoc false
 
   def generate(

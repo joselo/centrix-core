@@ -1,14 +1,14 @@
-defmodule BillingCore.RetentionSandbox do
+defmodule CentrixCore.RetentionSandbox do
   def test_retention_sandbox do
     environment = 1
     retencion_params = get_retencion_params()
     p12_path = "test/fixtures/file.p12"
     p12_password = System.get_env("TEST_P12_FILE_PASSWORD")
 
-    with {:ok, [xml: xml, clave_acceso: access_key]} <- BillingCore.XmlRetentionBuilder.build_retention(retencion_params),
-         {:ok, xml_signed} <- BillingCore.Signing.sign(xml, p12_path, p12_password),
-         {:ok, %{status: sri_status, response: response}} <- BillingCore.SriClient.send_document(xml_signed, environment),
-         {:ok, %{status: authorization_status, response: authorization_response}} <- BillingCore.SriClient.is_authorized(access_key, environment) do
+    with {:ok, [xml: xml, clave_acceso: access_key]} <- CentrixCore.XmlRetentionBuilder.build_retention(retencion_params),
+         {:ok, xml_signed} <- CentrixCore.Signing.sign(xml, p12_path, p12_password),
+         {:ok, %{status: sri_status, response: response}} <- CentrixCore.SriClient.send_document(xml_signed, environment),
+         {:ok, %{status: authorization_status, response: authorization_response}} <- CentrixCore.SriClient.is_authorized(access_key, environment) do
 
       IO.puts "Access Key:"
       IO.puts access_key

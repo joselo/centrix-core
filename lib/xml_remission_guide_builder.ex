@@ -1,7 +1,7 @@
-defmodule BillingCore.XmlRemissionGuideBuilder do
+defmodule CentrixCore.XmlRemissionGuideBuilder do
   @moduledoc false
 
-  alias BillingCore.Dataset.GuiaRemision
+  alias CentrixCore.Dataset.GuiaRemision
 
   def build_remission_guide(guia_remision_params) do
     case validate_remission_guide(guia_remision_params) do
@@ -23,7 +23,7 @@ defmodule BillingCore.XmlRemissionGuideBuilder do
         {:ok, Ecto.Changeset.apply_changes(changeset)}
 
       changeset ->
-        {:error, BillingCore.ChangesetParser.format_errors(changeset)}
+        {:error, CentrixCore.ChangesetParser.format_errors(changeset)}
     end
   end
 end

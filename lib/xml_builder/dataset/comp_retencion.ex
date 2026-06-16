@@ -1,15 +1,15 @@
-defmodule BillingCore.Dataset.CompRetencion do
+defmodule CentrixCore.Dataset.CompRetencion do
   @moduledoc false
 
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  alias BillingCore.Dataset.CompRetencion
-  alias BillingCore.Dataset.Factura.CampoAdicional
-  alias BillingCore.Dataset.Factura.InfoTributaria
-  alias BillingCore.Dataset.Retencion.DocSustento
-  alias BillingCore.Dataset.Retencion.InfoCompRetencion
+  alias CentrixCore.Dataset.CompRetencion
+  alias CentrixCore.Dataset.Factura.CampoAdicional
+  alias CentrixCore.Dataset.Factura.InfoTributaria
+  alias CentrixCore.Dataset.Retencion.DocSustento
+  alias CentrixCore.Dataset.Retencion.InfoCompRetencion
 
   embedded_schema do
     embeds_one(:info_tributaria, InfoTributaria)

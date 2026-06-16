@@ -1,9 +1,9 @@
-defmodule BillingCore.MixProject do
+defmodule CentrixCore.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :billing_core,
+      app: :centrix_core,
       version: "0.1.0",
       elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,

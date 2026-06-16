@@ -1,4 +1,4 @@
-defmodule BillingCore.ChangesetParser do
+defmodule CentrixCore.ChangesetParser do
   @moduledoc """
   Provides functions to parse and format Ecto changeset errors.
   """

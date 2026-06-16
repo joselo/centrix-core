@@ -1,13 +1,13 @@
-defmodule BillingCore.Dataset.Factura.Pago do
+defmodule CentrixCore.Dataset.Factura.Pago do
   @moduledoc false
 
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  alias BillingCore.Dataset.Factura.Pago
+  alias CentrixCore.Dataset.Factura.Pago
 
-  @decimals BillingCore.decimals()
+  @decimals CentrixCore.decimals()
 
   embedded_schema do
     field(:forma_pago, :integer)
