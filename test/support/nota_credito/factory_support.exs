@@ -1,14 +1,14 @@
-defmodule BillingCore.Dataset.NotaCredito.Test.FactorySupport do
+defmodule CentrixCore.Dataset.NotaCredito.Test.FactorySupport do
   @moduledoc false
-  alias BillingCore.Dataset.ClaveAcceso
-  alias BillingCore.Dataset.NotaCredito
-  alias BillingCore.Dataset.NotaCredito.CampoAdicional
-  alias BillingCore.Dataset.NotaCredito.DetAdicional
-  alias BillingCore.Dataset.NotaCredito.Detalle
-  alias BillingCore.Dataset.NotaCredito.Impuesto
-  alias BillingCore.Dataset.NotaCredito.InfoNotaCredito
-  alias BillingCore.Dataset.NotaCredito.InfoTributaria
-  alias BillingCore.Dataset.NotaCredito.TotalImpuesto
+  alias CentrixCore.Dataset.ClaveAcceso
+  alias CentrixCore.Dataset.NotaCredito
+  alias CentrixCore.Dataset.NotaCredito.CampoAdicional
+  alias CentrixCore.Dataset.NotaCredito.DetAdicional
+  alias CentrixCore.Dataset.NotaCredito.Detalle
+  alias CentrixCore.Dataset.NotaCredito.Impuesto
+  alias CentrixCore.Dataset.NotaCredito.InfoNotaCredito
+  alias CentrixCore.Dataset.NotaCredito.InfoTributaria
+  alias CentrixCore.Dataset.NotaCredito.TotalImpuesto
 
   def info_tributaria_factory do
     %InfoTributaria{

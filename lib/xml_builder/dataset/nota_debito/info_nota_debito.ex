@@ -1,15 +1,15 @@
-defmodule BillingCore.Dataset.NotaDebito.InfoNotaDebito do
+defmodule CentrixCore.Dataset.NotaDebito.InfoNotaDebito do
   @moduledoc false
 
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  alias BillingCore.Dataset.NotaDebito.Impuesto
-  alias BillingCore.Dataset.NotaDebito.InfoNotaDebito
-  alias BillingCore.Dataset.NotaDebito.Pago
+  alias CentrixCore.Dataset.NotaDebito.Impuesto
+  alias CentrixCore.Dataset.NotaDebito.InfoNotaDebito
+  alias CentrixCore.Dataset.NotaDebito.Pago
 
-  @decimals BillingCore.decimals()
+  @decimals CentrixCore.decimals()
 
   embedded_schema do
     field(:fecha_emision, :date)

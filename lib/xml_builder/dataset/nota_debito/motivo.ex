@@ -1,11 +1,11 @@
-defmodule BillingCore.Dataset.NotaDebito.Motivo do
+defmodule CentrixCore.Dataset.NotaDebito.Motivo do
   @moduledoc false
 
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  alias BillingCore.Dataset.NotaDebito.Motivo
+  alias CentrixCore.Dataset.NotaDebito.Motivo
 
   embedded_schema do
     field(:razon, :string)

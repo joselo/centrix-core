@@ -1,11 +1,11 @@
-defmodule BillingCore.Dataset.Retencion.InfoCompRetencion do
+defmodule CentrixCore.Dataset.Retencion.InfoCompRetencion do
   @moduledoc false
 
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  alias BillingCore.Dataset.Retencion.InfoCompRetencion
+  alias CentrixCore.Dataset.Retencion.InfoCompRetencion
 
   embedded_schema do
     field(:fecha_emision, :date)

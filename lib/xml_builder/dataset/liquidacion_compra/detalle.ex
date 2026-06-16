@@ -1,15 +1,15 @@
-defmodule BillingCore.Dataset.LiquidacionCompra.Detalle do
+defmodule CentrixCore.Dataset.LiquidacionCompra.Detalle do
   @moduledoc false
 
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  alias BillingCore.Dataset.Factura.DetAdicional
-  alias BillingCore.Dataset.Factura.Impuesto
-  alias BillingCore.Dataset.LiquidacionCompra.Detalle
+  alias CentrixCore.Dataset.Factura.DetAdicional
+  alias CentrixCore.Dataset.Factura.Impuesto
+  alias CentrixCore.Dataset.LiquidacionCompra.Detalle
 
-  @decimals BillingCore.decimals()
+  @decimals CentrixCore.decimals()
   @quantity_decimals 6
 
   embedded_schema do

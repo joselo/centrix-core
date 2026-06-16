@@ -11,8 +11,8 @@
   - `pago.ex` (Comparte estructura con Factura)
   - `motivo.ex`
 - **Reutilizados:** 
-  - `BillingCore.Dataset.Factura.InfoTributaria` (Ajustando `cod_doc: 5`)
-  - `BillingCore.Dataset.Factura.CampoAdicional`
+  - `CentrixCore.Dataset.Factura.InfoTributaria` (Ajustando `cod_doc: 5`)
+  - `CentrixCore.Dataset.Factura.CampoAdicional`
 - **Tests:**
   - `test/xml_debit_note_builder_test.exs`
   - `test/fixtures/nota_debito/` (nota_debito.xml, etc.)
@@ -20,7 +20,7 @@
 
 ## 2. Definición de Ecto Schemas
 
-### `BillingCore.Dataset.NotaDebito.InfoNotaDebito`
+### `CentrixCore.Dataset.NotaDebito.InfoNotaDebito`
 | Campo | XML Tag | Tipo | Requerido |
 |---|---|---|---|
 | `fecha_emision` | `<fechaEmision>` | Date | Sí |
@@ -38,7 +38,7 @@
 | `valor_total` | `<valorTotal>` | Float | Sí |
 | `pagos` | `<pagos>` -> `<pago>` | EmbedsMany | Sí |
 
-### `BillingCore.Dataset.NotaDebito.Motivo`
+### `CentrixCore.Dataset.NotaDebito.Motivo`
 | Campo | XML Tag | Tipo | Requerido |
 |---|---|---|---|
 | `razon` | `<razon>` | String (Max 300) | Sí |

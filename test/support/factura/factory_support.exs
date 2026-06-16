@@ -1,15 +1,15 @@
-defmodule BillingCore.Dataset.Factura.Test.FactorySupport do
+defmodule CentrixCore.Dataset.Factura.Test.FactorySupport do
   @moduledoc false
-  alias BillingCore.Dataset.ClaveAcceso
-  alias BillingCore.Dataset.Factura
-  alias BillingCore.Dataset.Factura.CampoAdicional
-  alias BillingCore.Dataset.Factura.DetAdicional
-  alias BillingCore.Dataset.Factura.Detalle
-  alias BillingCore.Dataset.Factura.Impuesto
-  alias BillingCore.Dataset.Factura.InfoFactura
-  alias BillingCore.Dataset.Factura.InfoTributaria
-  alias BillingCore.Dataset.Factura.Pago
-  alias BillingCore.Dataset.Factura.TotalImpuesto
+  alias CentrixCore.Dataset.ClaveAcceso
+  alias CentrixCore.Dataset.Factura
+  alias CentrixCore.Dataset.Factura.CampoAdicional
+  alias CentrixCore.Dataset.Factura.DetAdicional
+  alias CentrixCore.Dataset.Factura.Detalle
+  alias CentrixCore.Dataset.Factura.Impuesto
+  alias CentrixCore.Dataset.Factura.InfoFactura
+  alias CentrixCore.Dataset.Factura.InfoTributaria
+  alias CentrixCore.Dataset.Factura.Pago
+  alias CentrixCore.Dataset.Factura.TotalImpuesto
 
   def info_tributaria_factory do
     %InfoTributaria{

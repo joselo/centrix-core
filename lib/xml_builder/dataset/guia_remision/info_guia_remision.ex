@@ -1,11 +1,11 @@
-defmodule BillingCore.Dataset.GuiaRemision.InfoGuiaRemision do
+defmodule CentrixCore.Dataset.GuiaRemision.InfoGuiaRemision do
   @moduledoc false
 
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  alias BillingCore.Dataset.GuiaRemision.InfoGuiaRemision
+  alias CentrixCore.Dataset.GuiaRemision.InfoGuiaRemision
 
   embedded_schema do
     field(:dir_establecimiento, :string)

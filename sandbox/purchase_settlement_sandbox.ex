@@ -1,4 +1,4 @@
-defmodule BillingCore.PurchaseSettlementSandbox do
+defmodule CentrixCore.PurchaseSettlementSandbox do
   def test_purchase_settlement_sandbox do
     environment = 1
     params = get_params()
@@ -6,12 +6,12 @@ defmodule BillingCore.PurchaseSettlementSandbox do
     p12_password = System.get_env("TEST_P12_FILE_PASSWORD")
 
     with {:ok, [xml: xml, clave_acceso: access_key]} <-
-           BillingCore.XmlPurchaseSettlementBuilder.build_purchase_settlement(params),
-         {:ok, xml_signed} <- BillingCore.Signing.sign(xml, p12_path, p12_password),
+           CentrixCore.XmlPurchaseSettlementBuilder.build_purchase_settlement(params),
+         {:ok, xml_signed} <- CentrixCore.Signing.sign(xml, p12_path, p12_password),
          {:ok, %{status: sri_status, response: response}} <-
-           BillingCore.SriClient.send_document(xml_signed, environment),
+           CentrixCore.SriClient.send_document(xml_signed, environment),
          {:ok, %{status: authorization_status, response: authorization_response}} <-
-           BillingCore.SriClient.is_authorized(access_key, environment) do
+           CentrixCore.SriClient.is_authorized(access_key, environment) do
       IO.puts("Access Key:")
       IO.puts(access_key)
       IO.puts("--------------------")

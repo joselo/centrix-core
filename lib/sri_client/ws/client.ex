@@ -1,6 +1,6 @@
-defmodule BillingCore.Ws.Client do
+defmodule CentrixCore.Ws.Client do
   @moduledoc false
-  @behaviour BillingCore.Ws.ClientBehaviour
+  @behaviour CentrixCore.Ws.ClientBehaviour
 
   require Logger
 
@@ -12,8 +12,8 @@ defmodule BillingCore.Ws.Client do
       {"Vary", "Accept-Encoding"}
     ]
 
-    timeout = Keyword.get(opts, :timeout, BillingCore.timeout())
-    recv_timeout = Keyword.get(opts, :recv_timeout, BillingCore.soap_server_recv_timeout())
+    timeout = Keyword.get(opts, :timeout, CentrixCore.timeout())
+    recv_timeout = Keyword.get(opts, :recv_timeout, CentrixCore.soap_server_recv_timeout())
 
     wsdl_url
     |> HTTPoison.post(body, headers,
@@ -32,8 +32,8 @@ defmodule BillingCore.Ws.Client do
 
     url
     |> HTTPoison.put(body, headers,
-      timeout: BillingCore.timeout(),
-      recv_timeout: BillingCore.soap_server_recv_timeout()
+      timeout: CentrixCore.timeout(),
+      recv_timeout: CentrixCore.soap_server_recv_timeout()
     )
     |> handle_response()
   end

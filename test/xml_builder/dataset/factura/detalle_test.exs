@@ -1,11 +1,11 @@
-defmodule BillingCore.Dataset.Factura.DetalleTest do
+defmodule CentrixCore.Dataset.Factura.DetalleTest do
   use ExUnit.Case
 
-  alias BillingCore.Dataset.Factura.DetAdicional
-  alias BillingCore.Dataset.Factura.Detalle
-  alias BillingCore.Dataset.Factura.Impuesto
-  alias BillingCore.Dataset.Factura.Test.FactorySupport
-  alias BillingCore.Dataset.Test.XmlSupport
+  alias CentrixCore.Dataset.Factura.DetAdicional
+  alias CentrixCore.Dataset.Factura.Detalle
+  alias CentrixCore.Dataset.Factura.Impuesto
+  alias CentrixCore.Dataset.Factura.Test.FactorySupport
+  alias CentrixCore.Dataset.Test.XmlSupport
 
   setup do
     detalle = FactorySupport.detalle_factory()

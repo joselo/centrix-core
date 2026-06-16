@@ -1,1 +1,1 @@
-Mimic.copy(BillingCore.Ws.Client)
+Mimic.copy(CentrixCore.Ws.Client)

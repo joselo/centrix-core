@@ -1,14 +1,14 @@
-defmodule BillingCore.CreditNoteSandbox do
+defmodule CentrixCore.CreditNoteSandbox do
   def test_credit_note_sandbox do
     environment = 1
     credit_note_params = get_credit_note_params()
     p12_path = "test/fixtures/file.p12"
     p12_password = System.get_env("TEST_P12_FILE_PASSWORD")
 
-    with {:ok, [xml: xml, clave_acceso: access_key]} <- BillingCore.XmlCreditNoteBuilder.build_credit_note(credit_note_params),
-    {:ok, xml_signed} <- BillingCore.Signing.sign(xml, p12_path, p12_password),
-      {:ok, %{status: sri_status, response: response}} <- BillingCore.SriClient.send_document(xml_signed, environment),
-       {:ok, %{status: authorization_status, response: authorization_response}} <- BillingCore.SriClient.is_authorized(access_key, environment) do
+    with {:ok, [xml: xml, clave_acceso: access_key]} <- CentrixCore.XmlCreditNoteBuilder.build_credit_note(credit_note_params),
+    {:ok, xml_signed} <- CentrixCore.Signing.sign(xml, p12_path, p12_password),
+      {:ok, %{status: sri_status, response: response}} <- CentrixCore.SriClient.send_document(xml_signed, environment),
+       {:ok, %{status: authorization_status, response: authorization_response}} <- CentrixCore.SriClient.is_authorized(access_key, environment) do
 
       IO.puts "Access Key:"
       IO.puts access_key

@@ -1,11 +1,11 @@
-defmodule BillingCore.Dataset.Factura.CampoAdicional do
+defmodule CentrixCore.Dataset.Factura.CampoAdicional do
   @moduledoc false
 
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  alias BillingCore.Dataset.Factura.CampoAdicional
+  alias CentrixCore.Dataset.Factura.CampoAdicional
 
   embedded_schema do
     field(:nombre, :string)

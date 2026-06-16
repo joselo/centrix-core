@@ -1,7 +1,7 @@
-defmodule BillingCore.XmlCreditNoteBuilderTest do
+defmodule CentrixCore.XmlCreditNoteBuilderTest do
   use ExUnit.Case
 
-  alias BillingCore.XmlCreditNoteBuilder
+  alias CentrixCore.XmlCreditNoteBuilder
 
   describe "build_credit_note/1" do
     test "build credit_note and starts the sign xml worker" do

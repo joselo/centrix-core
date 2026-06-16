@@ -10,7 +10,7 @@ A diferencia de otros documentos, el Anexo GP tiene una estructura plana y simpl
 
 ## 3. Definición de Ecto Schemas
 
-### `BillingCore.Dataset.AnexoGp.Cabecera`
+### `CentrixCore.Dataset.AnexoGp.Cabecera`
 Información del informante y resumen:
 - `anio`: (Año fiscal, ej: 2025)
 - `tipo_id_informante`: (C para Cédula, R para RUC, P para Pasaporte)
@@ -18,7 +18,7 @@ Información del informante y resumen:
 - `total_gastos`: (Suma total de todos los rubros)
 - `total_base_imponible`: (Suma de bases imponibles)
 
-### `BillingCore.Dataset.AnexoGp.Detalle`
+### `CentrixCore.Dataset.AnexoGp.Detalle`
 Mapea el bloque `<detalleAnexo> -> <itemAnexo>`.
 - `ruc_proveedor`: (RUC del establecimiento donde se hizo el gasto)
 - `valor_gasto`: (Monto total del gasto en esa categoría)

@@ -1,6 +1,6 @@
 # Nota de Crédito (Credit Note) — Implementation Reference
 
-> **Intended audience:** AI agents and developers maintaining or extending the credit note implementation in `BillingCore`. This document is a code-level reference for the Nota de Crédito (`cod_doc = 04`) document type.
+> **Intended audience:** AI agents and developers maintaining or extending the credit note implementation in `CentrixCore`. This document is a code-level reference for the Nota de Crédito (`cod_doc = 04`) document type.
 >
 > **Relationship to Factura:** The Nota de Crédito shares ~80% of its structure with the Factura. Read [facturas.md](./facturas.md) first. This document focuses on what is **different**.
 
@@ -25,20 +25,20 @@ Key differences from Factura:
 
 ```elixir
 # Build XML
-BillingCore.XmlCreditNoteBuilder.build_credit_note(params)
+CentrixCore.XmlCreditNoteBuilder.build_credit_note(params)
 # => {:ok, [xml: xml_string, clave_acceso: "49-digit-key"]}
 # => {:error, %Ecto.Changeset{}}
 
 # Sign — identical to Factura
-BillingCore.Signing.sign(xml_string, p12_path, p12_password)
+CentrixCore.Signing.sign(xml_string, p12_path, p12_password)
 # => {:ok, signed_xml_string}
 
 # Send to SRI — identical to Factura
-BillingCore.SriClient.send_document(signed_xml, environment)
+CentrixCore.SriClient.send_document(signed_xml, environment)
 # => {:ok, %{status: "RECIBIDA" | "DEVUELTA", response: soap_xml}}
 
 # Poll authorization — identical to Factura
-BillingCore.SriClient.is_authorized(clave_acceso, environment)
+CentrixCore.SriClient.is_authorized(clave_acceso, environment)
 # => {:ok, %{status: "AUTORIZADO" | "NO AUTORIZADO" | "NO ENCONTRADO O PENDIENTE", response: soap_xml}}
 ```
 
@@ -49,17 +49,17 @@ BillingCore.SriClient.is_authorized(clave_acceso, environment)
 ## 3. Module Map
 
 ```
-lib/xml_credit_note_builder.ex                          BillingCore.XmlCreditNoteBuilder
-lib/xml_builder/dataset/nota_credito.ex                 BillingCore.Dataset.NotaCredito (root)
-lib/xml_builder/dataset/nota_credito/info_tributaria.ex BillingCore.Dataset.NotaCredito.InfoTributaria
-lib/xml_builder/dataset/clave_acceso.ex                 BillingCore.Dataset.ClaveAcceso        (SHARED)
+lib/xml_credit_note_builder.ex                          CentrixCore.XmlCreditNoteBuilder
+lib/xml_builder/dataset/nota_credito.ex                 CentrixCore.Dataset.NotaCredito (root)
+lib/xml_builder/dataset/nota_credito/info_tributaria.ex CentrixCore.Dataset.NotaCredito.InfoTributaria
+lib/xml_builder/dataset/clave_acceso.ex                 CentrixCore.Dataset.ClaveAcceso        (SHARED)
 lib/xml_builder/dataset/clave_acceso/digito_verificador.ex  ClaveAcceso.DigitoVerificador      (SHARED)
-lib/xml_builder/dataset/nota_credito/info_nota_credito.ex   BillingCore.Dataset.NotaCredito.InfoNotaCredito
-lib/xml_builder/dataset/nota_credito/total_impuesto.ex  BillingCore.Dataset.NotaCredito.TotalImpuesto
-lib/xml_builder/dataset/nota_credito/detalle.ex         BillingCore.Dataset.NotaCredito.Detalle
-lib/xml_builder/dataset/nota_credito/det_adicional.ex   BillingCore.Dataset.NotaCredito.DetAdicional
-lib/xml_builder/dataset/nota_credito/impuesto.ex        BillingCore.Dataset.NotaCredito.Impuesto
-lib/xml_builder/dataset/nota_credito/campo_adicional.ex BillingCore.Dataset.NotaCredito.CampoAdicional
+lib/xml_builder/dataset/nota_credito/info_nota_credito.ex   CentrixCore.Dataset.NotaCredito.InfoNotaCredito
+lib/xml_builder/dataset/nota_credito/total_impuesto.ex  CentrixCore.Dataset.NotaCredito.TotalImpuesto
+lib/xml_builder/dataset/nota_credito/detalle.ex         CentrixCore.Dataset.NotaCredito.Detalle
+lib/xml_builder/dataset/nota_credito/det_adicional.ex   CentrixCore.Dataset.NotaCredito.DetAdicional
+lib/xml_builder/dataset/nota_credito/impuesto.ex        CentrixCore.Dataset.NotaCredito.Impuesto
+lib/xml_builder/dataset/nota_credito/campo_adicional.ex CentrixCore.Dataset.NotaCredito.CampoAdicional
 ```
 
 > `ClaveAcceso` and `DigitoVerificador` are **shared** with the Factura implementation under `lib/xml_builder/dataset/`.
@@ -416,8 +416,8 @@ XML: `<campoAdicional nombre="Email">user@example.com</campoAdicional>`
 | `InfoTributaria.agente_retencion` | ❌ No | ✅ Optional |
 | Detalle code field 1 | `codigo_principal` (required) | `codigo_interno` (required) |
 | Detalle code field 2 | `codigo_auxiliar` (optional, nil omits XML) | `codigo_adicional` (**required**) |
-| Module namespace | `BillingCore.Dataset.Factura.*` | `BillingCore.Dataset.NotaCredito.*` |
-| Entry point | `BillingCore.XmlBuilder.build_invoice/1` | `BillingCore.XmlCreditNoteBuilder.build_credit_note/1` |
+| Module namespace | `CentrixCore.Dataset.Factura.*` | `CentrixCore.Dataset.NotaCredito.*` |
+| Entry point | `CentrixCore.XmlBuilder.build_invoice/1` | `CentrixCore.XmlCreditNoteBuilder.build_credit_note/1` |
 
 ---
 

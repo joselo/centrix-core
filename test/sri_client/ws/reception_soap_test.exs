@@ -1,8 +1,8 @@
-defmodule BillingCore.SoapTest do
+defmodule CentrixCore.SoapTest do
   use ExUnit.Case
 
-  alias BillingCore.Dataset.Test.XmlSupport
-  alias BillingCore.Ws
+  alias CentrixCore.Dataset.Test.XmlSupport
+  alias CentrixCore.Ws
 
   setup do
     xml = "<xml />"

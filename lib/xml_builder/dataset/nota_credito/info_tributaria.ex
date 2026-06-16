@@ -1,13 +1,13 @@
-defmodule BillingCore.Dataset.NotaCredito.InfoTributaria do
+defmodule CentrixCore.Dataset.NotaCredito.InfoTributaria do
   @moduledoc false
 
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  alias BillingCore.Dataset.ClaveAcceso
-  alias BillingCore.Dataset.ClaveAcceso.DigitoVerificador
-  alias BillingCore.Dataset.NotaCredito.InfoTributaria
+  alias CentrixCore.Dataset.ClaveAcceso
+  alias CentrixCore.Dataset.ClaveAcceso.DigitoVerificador
+  alias CentrixCore.Dataset.NotaCredito.InfoTributaria
 
   embedded_schema do
     field(:ambiente, :integer)

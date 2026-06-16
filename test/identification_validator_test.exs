@@ -1,7 +1,7 @@
-defmodule BillingCore.IdentificationValidatorTest do
+defmodule CentrixCore.IdentificationValidatorTest do
   use ExUnit.Case, async: true
 
-  alias BillingCore.IdentificationValidator
+  alias CentrixCore.IdentificationValidator
 
   describe "valid_identification?/2" do
     test "validates cedula" do

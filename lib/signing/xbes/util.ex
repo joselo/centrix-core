@@ -1,4 +1,4 @@
-defmodule BillingCore.Xbes.Util do
+defmodule CentrixCore.Xbes.Util do
   @moduledoc false
 
   def digest(value) do

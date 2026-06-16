@@ -1,4 +1,4 @@
-defmodule BillingCore do
+defmodule CentrixCore do
   @moduledoc false
 
   def decimals do

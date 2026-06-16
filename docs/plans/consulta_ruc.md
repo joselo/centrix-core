@@ -9,14 +9,14 @@ Implementar un cliente para el servicio REST de catastro del SRI que permita obt
 - **Formato de Respuesta:** JSON (Array de objetos)
 
 ## 3. Estructura del Módulo
-- **Módulo:** `BillingCore.RucClient`
+- **Módulo:** `CentrixCore.RucClient`
 - **Archivo:** `lib/ruc_client.ex`
 
 ## 4. Definición de la Interfaz
 
 ### `get_info(ruc)`
 Recibe un string de 13 dígitos y retorna:
-- `{:ok, %BillingCore.Dataset.RucInfo{}}` si el RUC existe.
+- `{:ok, %CentrixCore.Dataset.RucInfo{}}` si el RUC existe.
 - `{:error, :not_found}` si el RUC no existe en el catastro.
 - `{:error, reason}` en caso de fallos de red o del servidor SRI.
 
@@ -35,7 +35,7 @@ El JSON del SRI se mapeará a un struct interno para mantener la consistencia de
 | `contribuyenteEspecial` | `contribuyente_especial` | SI / NO |
 
 ## 6. Implementación Técnica
-1. **HTTP Client:** Usar `HTTPoison` con los mismos headers de `gzip` y timeouts que ya usamos en `BillingCore.Ws.Client`.
+1. **HTTP Client:** Usar `HTTPoison` con los mismos headers de `gzip` y timeouts que ya usamos en `CentrixCore.Ws.Client`.
 2. **Parser JSON:** Usar `Poison.decode!/1` o `Jason` para procesar la respuesta.
 3. **Seguridad:** Asegurar que el RUC pase la validación de formato antes de realizar la petición HTTP para evitar llamadas innecesarias.
 

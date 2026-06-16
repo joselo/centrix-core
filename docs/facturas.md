@@ -1,6 +1,6 @@
 # Factura (Invoice) — Implementation Reference
 
-> **Intended audience:** AI agents and developers maintaining or extending the invoice implementation in `BillingCore`. This is a code-level reference for the Factura (`cod_doc = 01`) document type.
+> **Intended audience:** AI agents and developers maintaining or extending the invoice implementation in `CentrixCore`. This is a code-level reference for the Factura (`cod_doc = 01`) document type.
 
 ---
 
@@ -20,20 +20,20 @@ A **Factura** is Ecuador's primary SRI electronic invoice. The library handles t
 
 ```elixir
 # Build XML
-BillingCore.XmlBuilder.build_invoice(params)
+CentrixCore.XmlBuilder.build_invoice(params)
 # => {:ok, [xml: xml_string, clave_acceso: "49-digit-key"]}
 # => {:error, %Ecto.Changeset{}}
 
 # Sign
-BillingCore.Signing.sign(xml_string, p12_path, p12_password)
+CentrixCore.Signing.sign(xml_string, p12_path, p12_password)
 # => {:ok, signed_xml_string}
 
 # Send to SRI
-BillingCore.SriClient.send_document(signed_xml, environment)
+CentrixCore.SriClient.send_document(signed_xml, environment)
 # => {:ok, %{status: "RECIBIDA" | "DEVUELTA", response: soap_xml}}
 
 # Poll authorization
-BillingCore.SriClient.is_authorized(clave_acceso, environment)
+CentrixCore.SriClient.is_authorized(clave_acceso, environment)
 # => {:ok, %{status: "AUTORIZADO" | "NO AUTORIZADO" | "NO ENCONTRADO O PENDIENTE", response: soap_xml}}
 ```
 
@@ -44,18 +44,18 @@ BillingCore.SriClient.is_authorized(clave_acceso, environment)
 ## 3. Module Map
 
 ```
-lib/xml_builder.ex                                    BillingCore.XmlBuilder
-lib/xml_builder/dataset/factura.ex                    BillingCore.Dataset.Factura (root schema)
-lib/xml_builder/dataset/factura/info_tributaria.ex    BillingCore.Dataset.Factura.InfoTributaria
-lib/xml_builder/dataset/clave_acceso.ex               BillingCore.Dataset.ClaveAcceso
+lib/xml_builder.ex                                    CentrixCore.XmlBuilder
+lib/xml_builder/dataset/factura.ex                    CentrixCore.Dataset.Factura (root schema)
+lib/xml_builder/dataset/factura/info_tributaria.ex    CentrixCore.Dataset.Factura.InfoTributaria
+lib/xml_builder/dataset/clave_acceso.ex               CentrixCore.Dataset.ClaveAcceso
 lib/xml_builder/dataset/clave_acceso/digito_verificador.ex  ClaveAcceso.DigitoVerificador
-lib/xml_builder/dataset/factura/info_factura.ex       BillingCore.Dataset.Factura.InfoFactura
-lib/xml_builder/dataset/factura/total_impuesto.ex     BillingCore.Dataset.Factura.TotalImpuesto
-lib/xml_builder/dataset/factura/pago.ex               BillingCore.Dataset.Factura.Pago
-lib/xml_builder/dataset/factura/detalle.ex            BillingCore.Dataset.Factura.Detalle
-lib/xml_builder/dataset/factura/det_adicional.ex      BillingCore.Dataset.Factura.DetAdicional
-lib/xml_builder/dataset/factura/impuesto.ex           BillingCore.Dataset.Factura.Impuesto
-lib/xml_builder/dataset/factura/campo_adicional.ex    BillingCore.Dataset.Factura.CampoAdicional
+lib/xml_builder/dataset/factura/info_factura.ex       CentrixCore.Dataset.Factura.InfoFactura
+lib/xml_builder/dataset/factura/total_impuesto.ex     CentrixCore.Dataset.Factura.TotalImpuesto
+lib/xml_builder/dataset/factura/pago.ex               CentrixCore.Dataset.Factura.Pago
+lib/xml_builder/dataset/factura/detalle.ex            CentrixCore.Dataset.Factura.Detalle
+lib/xml_builder/dataset/factura/det_adicional.ex      CentrixCore.Dataset.Factura.DetAdicional
+lib/xml_builder/dataset/factura/impuesto.ex           CentrixCore.Dataset.Factura.Impuesto
+lib/xml_builder/dataset/factura/campo_adicional.ex    CentrixCore.Dataset.Factura.CampoAdicional
 ```
 
 ---

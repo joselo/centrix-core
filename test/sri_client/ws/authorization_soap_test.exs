@@ -1,8 +1,8 @@
-defmodule BillingCore.AuthorizationSoapTest do
+defmodule CentrixCore.AuthorizationSoapTest do
   use ExUnit.Case
 
-  alias BillingCore.Dataset.Test.XmlSupport
-  alias BillingCore.Ws
+  alias CentrixCore.Dataset.Test.XmlSupport
+  alias CentrixCore.Ws
 
   setup do
     clave_acceso = "123456789"

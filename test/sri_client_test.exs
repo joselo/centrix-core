@@ -1,9 +1,9 @@
-defmodule BillingCore.SriClientTest do
+defmodule CentrixCore.SriClientTest do
   use ExUnit.Case
   use Mimic
 
-  alias BillingCore.SriClient
-  alias BillingCore.Ws.Client
+  alias CentrixCore.SriClient
+  alias CentrixCore.Ws.Client
 
   @environment 1
 

@@ -1,14 +1,14 @@
-defmodule BillingCore.XbesTest do
+defmodule CentrixCore.XbesTest do
   use ExUnit.Case
 
-  alias BillingCore.Xbes.Cfg
-  alias BillingCore.Xbes.P12.Certificate
-  alias BillingCore.Xbes.P12.Key
-  alias BillingCore.Xbes.Signature
-  alias BillingCore.Xbes.SignedInfo
-  alias BillingCore.Xbes.SignedInfo.Doc
-  alias BillingCore.Xbes.SignedInfo.KeyInfo
-  alias BillingCore.Xbes.SignedInfo.Properties
+  alias CentrixCore.Xbes.Cfg
+  alias CentrixCore.Xbes.P12.Certificate
+  alias CentrixCore.Xbes.P12.Key
+  alias CentrixCore.Xbes.Signature
+  alias CentrixCore.Xbes.SignedInfo
+  alias CentrixCore.Xbes.SignedInfo.Doc
+  alias CentrixCore.Xbes.SignedInfo.KeyInfo
+  alias CentrixCore.Xbes.SignedInfo.Properties
 
   setup do
     xml =
@@ -72,7 +72,7 @@ defmodule BillingCore.XbesTest do
       |> XmlBuilder.generate(format: :none)
 
     # Output
-    BillingCore.Xbes.merge(xml, signature)
+    CentrixCore.Xbes.merge(xml, signature)
   end
 
   test "sign", %{
@@ -82,9 +82,9 @@ defmodule BillingCore.XbesTest do
     key_pem: key_pem,
     signing_time: signing_time
   } do
-    # BillingCore.XbesMock
+    # CentrixCore.XbesMock
     # |> expect(:get_cfg, fn _crt, _signing_time, _signed_data_description -> cfg end)
 
-    assert {:ok, _signed} = BillingCore.Xbes.sign(xml, crt_pem, key_pem, signing_time)
+    assert {:ok, _signed} = CentrixCore.Xbes.sign(xml, crt_pem, key_pem, signing_time)
   end
 end

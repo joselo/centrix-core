@@ -1,12 +1,12 @@
-defmodule BillingCore.Signing do
+defmodule CentrixCore.Signing do
   @moduledoc false
 
-  alias BillingCore.P12Reader
-  alias BillingCore.Xbes
+  alias CentrixCore.P12Reader
+  alias CentrixCore.Xbes
 
   def sign(xml, p12_path, p12_password) do
     signing_time =
-      BillingCore.timezone()
+      CentrixCore.timezone()
       |> Timex.now()
       |> Timex.format!("%FT%T%:z", :strftime)
 

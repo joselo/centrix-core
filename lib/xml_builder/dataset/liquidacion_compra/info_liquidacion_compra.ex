@@ -1,15 +1,15 @@
-defmodule BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
+defmodule CentrixCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra do
   @moduledoc false
 
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  alias BillingCore.Dataset.Factura.Pago
-  alias BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra
-  alias BillingCore.Dataset.LiquidacionCompra.TotalImpuesto
+  alias CentrixCore.Dataset.Factura.Pago
+  alias CentrixCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra
+  alias CentrixCore.Dataset.LiquidacionCompra.TotalImpuesto
 
-  @decimals BillingCore.decimals()
+  @decimals CentrixCore.decimals()
 
   embedded_schema do
     field(:fecha_emision, :date)

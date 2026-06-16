@@ -1,20 +1,20 @@
-defmodule BillingCore.XbesBehaviour do
+defmodule CentrixCore.XbesBehaviour do
   @moduledoc false
   @callback get_cfg(String.t(), String.t(), String.t()) :: struct()
 end
 
-defmodule BillingCore.Xbes do
+defmodule CentrixCore.Xbes do
   @moduledoc false
-  @behaviour BillingCore.XbesBehaviour
+  @behaviour CentrixCore.XbesBehaviour
 
-  alias BillingCore.Xbes.Cfg
-  alias BillingCore.Xbes.P12.Certificate
-  alias BillingCore.Xbes.P12.Key
-  alias BillingCore.Xbes.Signature
-  alias BillingCore.Xbes.SignedInfo
-  alias BillingCore.Xbes.SignedInfo.Doc
-  alias BillingCore.Xbes.SignedInfo.KeyInfo
-  alias BillingCore.Xbes.SignedInfo.Properties
+  alias CentrixCore.Xbes.Cfg
+  alias CentrixCore.Xbes.P12.Certificate
+  alias CentrixCore.Xbes.P12.Key
+  alias CentrixCore.Xbes.Signature
+  alias CentrixCore.Xbes.SignedInfo
+  alias CentrixCore.Xbes.SignedInfo.Doc
+  alias CentrixCore.Xbes.SignedInfo.KeyInfo
+  alias CentrixCore.Xbes.SignedInfo.Properties
 
   def sign(xml, crt_pem, key_pem, signing_time, signed_data_description \\ "contenido comprobante")
       when is_bitstring(crt_pem) and is_bitstring(key_pem) and is_bitstring(xml) do
@@ -47,7 +47,7 @@ defmodule BillingCore.Xbes do
       |> XmlBuilder.generate(format: :none)
 
     # Result Merged
-    {:ok, BillingCore.Xbes.merge(xml, signature)}
+    {:ok, CentrixCore.Xbes.merge(xml, signature)}
   end
 
   def merge(doc, signature) do

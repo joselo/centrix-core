@@ -1,7 +1,7 @@
-defmodule BillingCore.XmlDebitNoteBuilder do
+defmodule CentrixCore.XmlDebitNoteBuilder do
   @moduledoc false
 
-  alias BillingCore.Dataset.NotaDebito
+  alias CentrixCore.Dataset.NotaDebito
 
   def build_debit_note(nota_debito_params) do
     case validate_debit_note(nota_debito_params) do
@@ -23,7 +23,7 @@ defmodule BillingCore.XmlDebitNoteBuilder do
         {:ok, Ecto.Changeset.apply_changes(changeset)}
 
       changeset ->
-        {:error, BillingCore.ChangesetParser.format_errors(changeset)}
+        {:error, CentrixCore.ChangesetParser.format_errors(changeset)}
     end
   end
 end

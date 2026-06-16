@@ -1,4 +1,4 @@
-defmodule BillingCore.ReceptionParser do
+defmodule CentrixCore.ReceptionParser do
   @moduledoc false
   import SweetXml
 

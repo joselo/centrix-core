@@ -12,10 +12,10 @@
   - `reembolso_detalle.ex` (Bloque nuevo opcional)
   - `maquina_fiscal.ex` (Bloque nuevo opcional)
 - **Reutilizados:** 
-  - `BillingCore.Dataset.Factura.InfoTributaria` (Ajustando `cod_doc: 3`)
-  - `BillingCore.Dataset.Factura.Impuesto`
-  - `BillingCore.Dataset.Factura.Pago`
-  - `BillingCore.Dataset.Factura.CampoAdicional`
+  - `CentrixCore.Dataset.Factura.InfoTributaria` (Ajustando `cod_doc: 3`)
+  - `CentrixCore.Dataset.Factura.Impuesto`
+  - `CentrixCore.Dataset.Factura.Pago`
+  - `CentrixCore.Dataset.Factura.CampoAdicional`
 - **Tests:**
   - `test/xml_purchase_settlement_builder_test.exs`
   - `test/fixtures/liquidacion_compra/`
@@ -23,7 +23,7 @@
 
 ## 2. Definición de Ecto Schemas (Novedades vs Factura)
 
-### `BillingCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra`
+### `CentrixCore.Dataset.LiquidacionCompra.InfoLiquidacionCompra`
 Se invierten lógicamente los roles (el emisor del XML es el comprador, y el nodo describe al "proveedor").
 
 | Campo (Elixir) | XML Tag | Requerido | Notas |
@@ -45,7 +45,7 @@ Se invierten lógicamente los roles (el emisor del XML es el comprador, y el nod
 | `moneda` | `<moneda>` | Sí | "DOLAR" |
 | `pagos` | `<pagos>` -> `<pago>` | Sí | |
 
-### `BillingCore.Dataset.LiquidacionCompra.TotalImpuesto`
+### `CentrixCore.Dataset.LiquidacionCompra.TotalImpuesto`
 Similar a Factura, pero agrega `<descuentoAdicional>`:
 - `codigo`
 - `codigo_porcentaje`
@@ -54,7 +54,7 @@ Similar a Factura, pero agrega `<descuentoAdicional>`:
 - `tarifa`
 - `valor`
 
-### `BillingCore.Dataset.LiquidacionCompra.Detalle`
+### `CentrixCore.Dataset.LiquidacionCompra.Detalle`
 Agrega un nuevo campo `<unidadMedida>` después de la descripción:
 - `codigo_principal`
 - `codigo_auxiliar` (Opcional)

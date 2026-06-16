@@ -1,4 +1,4 @@
-defmodule BillingCore.DocumentNumberValidator do
+defmodule CentrixCore.DocumentNumberValidator do
   @moduledoc """
   Validates the format of Ecuadorian electronic document numbers.
   The format is: XXX-XXX-XXXXXXXXX (Establishment-EmissionPoint-Sequential).

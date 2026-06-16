@@ -1,13 +1,13 @@
-defmodule BillingCore.Dataset.FacturaTest do
+defmodule CentrixCore.Dataset.FacturaTest do
   use ExUnit.Case
 
-  alias BillingCore.Dataset.Factura
-  alias BillingCore.Dataset.Factura.CampoAdicional
-  alias BillingCore.Dataset.Factura.Detalle
-  alias BillingCore.Dataset.Factura.InfoFactura
-  alias BillingCore.Dataset.Factura.InfoTributaria
-  alias BillingCore.Dataset.Factura.Test.FactorySupport
-  alias BillingCore.Dataset.Test.XmlSupport
+  alias CentrixCore.Dataset.Factura
+  alias CentrixCore.Dataset.Factura.CampoAdicional
+  alias CentrixCore.Dataset.Factura.Detalle
+  alias CentrixCore.Dataset.Factura.InfoFactura
+  alias CentrixCore.Dataset.Factura.InfoTributaria
+  alias CentrixCore.Dataset.Factura.Test.FactorySupport
+  alias CentrixCore.Dataset.Test.XmlSupport
 
   setup do
     factura = FactorySupport.factura_factory()

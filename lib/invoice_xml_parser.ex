@@ -1,9 +1,9 @@
-defmodule BillingCore.InvoiceXmlParser do
+defmodule CentrixCore.InvoiceXmlParser do
   @moduledoc """
   XML Invoice Parser (Legacy wrapper for DocumentXmlParser)
   """
 
-  alias BillingCore.DocumentXmlParser
+  alias CentrixCore.DocumentXmlParser
 
   def parse_xml(xml), do: DocumentXmlParser.parse_xml(xml)
   def parse(xml_invoice), do: DocumentXmlParser.parse(xml_invoice)

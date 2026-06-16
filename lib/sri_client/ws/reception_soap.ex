@@ -1,4 +1,4 @@
-defmodule BillingCore.Ws.ReceptionSoap do
+defmodule CentrixCore.Ws.ReceptionSoap do
   @moduledoc false
 
   def create_request(xml, operation) when is_atom(operation) do

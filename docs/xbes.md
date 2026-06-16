@@ -1,6 +1,6 @@
 # XAdES-BES Digital Signing — Implementation Reference
 
-> **Intended audience:** AI agents and developers who need to understand, maintain, or extend the XML digital signing implementation in `BillingCore`. This document covers every module in `lib/signing/` with precise code-level detail.
+> **Intended audience:** AI agents and developers who need to understand, maintain, or extend the XML digital signing implementation in `CentrixCore`. This document covers every module in `lib/signing/` with precise code-level detail.
 
 ---
 
@@ -34,7 +34,7 @@ lib/signing/
 
 ```elixir
 # lib/signing.ex
-BillingCore.Signing.sign(xml_string, p12_path, p12_password)
+CentrixCore.Signing.sign(xml_string, p12_path, p12_password)
 # Returns:
 {:ok, signed_xml_string}
 {:error, reason_string}
@@ -49,7 +49,7 @@ BillingCore.Signing.sign(xml_string, p12_path, p12_password)
 
 ## 3. Step 1 — P12 Certificate Reading (`lib/signing/p12_reader.ex`)
 
-**Module:** `BillingCore.P12Reader`
+**Module:** `CentrixCore.P12Reader`
 
 The `.p12` (PKCS#12) certificate file is the digital identity issued by an Ecuadorian CA (e.g., BCE, Security Data). It contains both the certificate and the private key, protected by a password.
 
@@ -93,7 +93,7 @@ end
 
 ## 4. Step 2 — Certificate Parsing (`lib/signing/xbes/p12/certificate.ex`)
 
-**Module:** `BillingCore.Xbes.P12.Certificate`
+**Module:** `CentrixCore.Xbes.P12.Certificate`
 
 Takes the PEM certificate string output from `openssl` and extracts the fields needed to build the XAdES signature blocks.
 
@@ -143,12 +143,12 @@ end)
 
 ## 5. Step 3 — Building the Configuration (`lib/signing/xbes/xbes.ex`)
 
-**Module:** `BillingCore.Xbes` — function `get_cfg/3`
+**Module:** `CentrixCore.Xbes` — function `get_cfg/3`
 
 A `%Cfg{}` struct is built once and passed to all subsequent steps. It holds both the certificate data and 8 randomly generated IDs used to uniquely identify each XAdES XML element.
 
 ```elixir
-%BillingCore.Xbes.Cfg{
+%CentrixCore.Xbes.Cfg{
   # 8 random 6-digit integers for XML element IDs
   certificate_number:         123456,
   signature_number:           234567,
@@ -189,7 +189,7 @@ The `<ds:SignedInfo>` block must commit to exactly **three digests**:
 
 ### 6.1 Properties Digest (`lib/signing/xbes/signed_info/properties.ex`)
 
-**Module:** `BillingCore.Xbes.SignedInfo.Properties`
+**Module:** `CentrixCore.Xbes.SignedInfo.Properties`
 
 Builds `<etsi:SignedProperties>` containing:
 - `<etsi:SigningTime>` — the ISO 8601 signing timestamp
@@ -233,7 +233,7 @@ get(cfg)                          # Build the XmlBuilder tuple tree
 
 ### 6.2 KeyInfo Digest (`lib/signing/xbes/signed_info/key_info.ex`)
 
-**Module:** `BillingCore.Xbes.SignedInfo.KeyInfo`
+**Module:** `CentrixCore.Xbes.SignedInfo.KeyInfo`
 
 Builds `<ds:KeyInfo>` containing:
 - `<ds:X509Certificate>` — raw Base64 certificate
@@ -259,7 +259,7 @@ Builds `<ds:KeyInfo>` containing:
 
 ### 6.3 Document Digest (`lib/signing/xbes/signed_info/doc.ex`)
 
-**Module:** `BillingCore.Xbes.SignedInfo.Doc`
+**Module:** `CentrixCore.Xbes.SignedInfo.Doc`
 
 The source XML document **must be canonicalized** before digesting. Raw XML strings are not suitable because whitespace, attribute order, and namespace declarations can differ between implementations.
 
@@ -282,7 +282,7 @@ end
 
 ## 7. Step 5 — Building `<ds:SignedInfo>` (`lib/signing/xbes/signed_info.ex`)
 
-**Module:** `BillingCore.Xbes.SignedInfo`
+**Module:** `CentrixCore.Xbes.SignedInfo`
 
 `SignedInfo` is the data structure that is actually **signed with the private key**. It contains three `<ds:Reference>` elements, each pointing to one of the three digested inputs.
 
@@ -334,7 +334,7 @@ end
 
 ## 8. Step 6 — RSA Signing (`lib/signing/xbes/p12/key.ex`)
 
-**Module:** `BillingCore.Xbes.P12.Key`
+**Module:** `CentrixCore.Xbes.P12.Key`
 
 The serialized `<ds:SignedInfo>` string is signed with the RSA private key using **SHA1withRSA**:
 
@@ -354,7 +354,7 @@ end
 
 ## 9. Step 7 — Assembling `<ds:Signature>` (`lib/signing/xbes/signature.ex`)
 
-**Module:** `BillingCore.Xbes.Signature`
+**Module:** `CentrixCore.Xbes.Signature`
 
 Assembles the complete `<ds:Signature>` block from all previously built pieces:
 
@@ -392,7 +392,7 @@ Full assembled structure:
 
 ## 10. Step 8 — Injecting the Signature into the XML Document
 
-**Module:** `BillingCore.Xbes` — function `merge/2`
+**Module:** `CentrixCore.Xbes` — function `merge/2`
 
 The `<ds:Signature>` block is injected **inside** the root element of the source XML, just before its closing tag:
 
@@ -423,7 +423,7 @@ This regex finds the last `<...` substring in the document (which is the root cl
 
 ## 11. Full Signing Orchestration (`lib/signing/xbes/xbes.ex`)
 
-**Module:** `BillingCore.Xbes` — function `sign/5`
+**Module:** `CentrixCore.Xbes` — function `sign/5`
 
 ```elixir
 def sign(xml, crt_pem, key_pem, signing_time, signed_data_description \\ "contenido comprobante")
@@ -466,7 +466,7 @@ Complete step-by-step flow:
 
 ## 12. XML Namespace Handling (`lib/signing/xbes/util.ex`)
 
-**Module:** `BillingCore.Xbes.Util`
+**Module:** `CentrixCore.Xbes.Util`
 
 The `attrs/2` function controls whether namespace declarations are emitted on an element:
 
