@@ -30,7 +30,7 @@ defmodule CentrixCore.MixProject do
     [
       {:ecto_sql, "~> 3.13.2"},
       {:xml_builder, "~> 2.4.0"},
-      {:httpoison, "~> 2.2.3"},
+      {:req, "~> 0.6"},
       {:timex, "~> 3.7.13"},
       {:xmerl_c14n, "~> 0.2.0"},
       {:sweet_xml, "~> 0.7.4"},

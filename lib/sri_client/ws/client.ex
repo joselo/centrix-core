@@ -6,19 +6,18 @@ defmodule CentrixCore.Ws.Client do
 
   def post(wsdl_url, body, opts \\ []) do
     headers = [
-      {"Content-Encoding", "gzip"},
-      {"Content-Type", "text/xml;charset=UTF-8"},
-      {"Accept-Encoding", "gzip,deflate"},
-      {"Vary", "Accept-Encoding"}
+      {"Content-Type", "text/xml;charset=UTF-8"}
     ]
 
     timeout = Keyword.get(opts, :timeout, CentrixCore.timeout())
     recv_timeout = Keyword.get(opts, :recv_timeout, CentrixCore.soap_server_recv_timeout())
 
-    wsdl_url
-    |> HTTPoison.post(body, headers,
-      timeout: timeout,
-      recv_timeout: recv_timeout
+    Req.post(wsdl_url,
+      body: body,
+      headers: headers,
+      connect_options: [timeout: timeout],
+      receive_timeout: recv_timeout,
+      retry: false
     )
     |> handle_response()
   end
@@ -30,52 +29,42 @@ defmodule CentrixCore.Ws.Client do
 
     body = URI.encode_query(params)
 
-    url
-    |> HTTPoison.put(body, headers,
-      timeout: CentrixCore.timeout(),
-      recv_timeout: CentrixCore.soap_server_recv_timeout()
+    Req.put(url,
+      body: body,
+      headers: headers,
+      connect_options: [timeout: CentrixCore.timeout()],
+      receive_timeout: CentrixCore.soap_server_recv_timeout(),
+      retry: false
     )
     |> handle_response()
   end
 
-  defp handle_response({:ok, %HTTPoison.Response{status_code: 200, body: body, headers: headers}}) do
-    {:ok, unzip_body(body, headers)}
+  defp handle_response({:ok, %Req.Response{status: 200, body: body}}) do
+    {:ok, body}
   end
 
   # Catch-all for other status codes
-  defp handle_response({:ok, %HTTPoison.Response{status_code: _, body: body, headers: headers}}) do
-    {:error, unzip_body(body, headers)}
+  defp handle_response({:ok, %Req.Response{body: body}}) do
+    {:error, body}
   end
 
   # Handle connection timeout
-  defp handle_response({:error, %HTTPoison.Error{reason: :timeout}}) do
+  defp handle_response({:error, %Req.TransportError{reason: :timeout}}) do
     {:error, "Tiempo de espera agotado al consultar al SRI"}
   end
 
   # Handle connection refused or DNS issues
-  defp handle_response({:error, %HTTPoison.Error{reason: :connect_timeout}}) do
+  defp handle_response({:error, %Req.TransportError{reason: :econnrefused}}) do
     {:error, "No se pudo establecer conexión con los servidores del SRI"}
   end
 
   # Handle connection closed prematurely (typically overload or crash)
-  defp handle_response({:error, %HTTPoison.Error{reason: :closed}}) do
+  defp handle_response({:error, %Req.TransportError{reason: :closed}}) do
     {:error, "La conexión fue cerrada inesperadamente por el SRI (posible sobrecarga o caída del servidor)"}
   end
 
   # Handle other errors like `:nxdomain`, etc.
-  defp handle_response({:error, %HTTPoison.Error{reason: reason}}) do
-    {:error, "Error en la solicitud: #{inspect(reason)}"}
-  end
-
-  defp unzip_body(body, headers) do
-    header_map = Map.new(headers)
-
-    case header_map do
-      %{"Content-Encoding" => "gzip"} ->
-        :zlib.gunzip(body)
-
-      _ ->
-        body
-    end
+  defp handle_response({:error, exception}) do
+    {:error, "Error en la solicitud: #{inspect(exception)}"}
   end
 end
