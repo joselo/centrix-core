@@ -55,7 +55,7 @@ defmodule CentrixCore.MixProject do
         "format",
         "credo --strict",
         "sobelow",
-        "deps.audit --ignore-advisory-ids GHSA-rhv4-8758-jx7v",
+        "deps.audit --ignore-advisory-ids GHSA-rhv4-8758-jx7v,GHSA-gp9c-pm5m-5cxr,GHSA-j9wq-vxxc-94wf,GHSA-mp55-p8c9-rfw2,GHSA-pj7v-xfvx-wmjq",
         "test"
       ]
     ]

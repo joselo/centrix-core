@@ -12,7 +12,8 @@ defmodule CentrixCore.Ws.Client do
     timeout = Keyword.get(opts, :timeout, CentrixCore.timeout())
     recv_timeout = Keyword.get(opts, :recv_timeout, CentrixCore.soap_server_recv_timeout())
 
-    Req.post(wsdl_url,
+    wsdl_url
+    |> Req.post(
       body: body,
       headers: headers,
       connect_options: [timeout: timeout],
@@ -29,7 +30,8 @@ defmodule CentrixCore.Ws.Client do
 
     body = URI.encode_query(params)
 
-    Req.put(url,
+    url
+    |> Req.put(
       body: body,
       headers: headers,
       connect_options: [timeout: CentrixCore.timeout()],
