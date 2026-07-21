@@ -124,6 +124,8 @@ defmodule CentrixCore.Dataset.Factura.InfoFactura do
     Enum.join([day, month, fecha_emision.year], "/")
   end
 
+  defp add_contribuyente_especial(doc, %{contribuyente_especial: nil}), do: doc
+
   defp add_contribuyente_especial(doc, %{obligado_contabilidad: "SI", contribuyente_especial: contribuyente_especial}) do
     List.insert_at(doc, 2, {:contribuyenteEspecial, nil, contribuyente_especial})
   end
