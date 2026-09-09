@@ -1,7 +1,6 @@
 <infoTributaria>
   <ambiente>2</ambiente>
   <tipoEmision>1</tipoEmision>
-  <agente_retencion>00000001</agente_retencion>
   <razonSocial>ENRIQUE ULLAURI MATERIALES DE CONSTRUCCION CIA LTDA</razonSocial>
   <nombreComercial>ENRIQUE ULLAURI CIA. LTDA.</nombreComercial>
   <ruc>1191714098001</ruc>
@@ -11,4 +10,5 @@
   <ptoEmi>001</ptoEmi>
   <secuencial>000006460</secuencial>
   <dirMatriz>BOLIVAR Y AV CATAMAYO</dirMatriz>
+  <agenteRetencion>00000001</agenteRetencion>
 </infoTributaria>
