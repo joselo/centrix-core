@@ -65,7 +65,6 @@ defmodule CentrixCore.Dataset.NotaCredito.InfoTributariaTest do
       [
         {:ambiente, nil, info_tributaria.ambiente},
         {:tipoEmision, nil, info_tributaria.tipo_emision},
-        {:agente_retencion, nil, agente_retencion},
         {:razonSocial, nil, info_tributaria.razon_social},
         {:nombreComercial, nil, info_tributaria.nombre_comercial},
         {:ruc, nil, info_tributaria.ruc},
@@ -74,11 +73,22 @@ defmodule CentrixCore.Dataset.NotaCredito.InfoTributariaTest do
         {:estab, nil, estab},
         {:ptoEmi, nil, pto_emi},
         {:secuencial, nil, secuencial},
-        {:dirMatriz, nil, info_tributaria.dir_matriz}
+        {:dirMatriz, nil, info_tributaria.dir_matriz},
+        {:agenteRetencion, nil, agente_retencion}
       ]
     }
 
     assert InfoTributaria.to_doc(info_tributaria) == doc_expected
+  end
+
+  test "to_doc includes contribuyenteRimpe after agenteRetencion when set", %{
+    info_tributaria: info_tributaria
+  } do
+    info_tributaria = %{info_tributaria | contribuyente_rimpe: "CONTRIBUYENTE REGIMEN RIMPE"}
+
+    {:infoTributaria, nil, children} = InfoTributaria.to_doc(info_tributaria)
+
+    assert List.last(children) == {:contribuyenteRimpe, nil, "CONTRIBUYENTE REGIMEN RIMPE"}
   end
 
   test "to_xml", %{info_tributaria: info_tributaria} do

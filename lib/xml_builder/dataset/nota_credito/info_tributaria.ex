@@ -22,6 +22,7 @@ defmodule CentrixCore.Dataset.NotaCredito.InfoTributaria do
     field(:secuencial, :integer)
     field(:dir_matriz, :string)
     field(:agente_retencion, :integer)
+    field(:contribuyente_rimpe, :string)
 
     embeds_one(:clave, ClaveAcceso)
   end
@@ -39,7 +40,8 @@ defmodule CentrixCore.Dataset.NotaCredito.InfoTributaria do
       :pto_emi,
       :secuencial,
       :dir_matriz,
-      :agente_retencion
+      :agente_retencion,
+      :contribuyente_rimpe
     ])
     |> validate_required([
       :ambiente,
@@ -64,22 +66,21 @@ defmodule CentrixCore.Dataset.NotaCredito.InfoTributaria do
     secuencial = info_tributaria.secuencial |> Integer.to_string() |> String.pad_leading(9, "0")
 
     doc =
-      add_agente_retencion(
-        [
-          {:ambiente, nil, info_tributaria.ambiente},
-          {:tipoEmision, nil, info_tributaria.tipo_emision},
-          {:razonSocial, nil, info_tributaria.razon_social},
-          {:nombreComercial, nil, info_tributaria.nombre_comercial},
-          {:ruc, nil, info_tributaria.ruc},
-          {:claveAcceso, nil, info_tributaria.clave_acceso},
-          {:codDoc, nil, cod_doc},
-          {:estab, nil, estab},
-          {:ptoEmi, nil, pto_emi},
-          {:secuencial, nil, secuencial},
-          {:dirMatriz, nil, info_tributaria.dir_matriz}
-        ],
-        info_tributaria
-      )
+      [
+        {:ambiente, nil, info_tributaria.ambiente},
+        {:tipoEmision, nil, info_tributaria.tipo_emision},
+        {:razonSocial, nil, info_tributaria.razon_social},
+        {:nombreComercial, nil, info_tributaria.nombre_comercial},
+        {:ruc, nil, info_tributaria.ruc},
+        {:claveAcceso, nil, info_tributaria.clave_acceso},
+        {:codDoc, nil, cod_doc},
+        {:estab, nil, estab},
+        {:ptoEmi, nil, pto_emi},
+        {:secuencial, nil, secuencial},
+        {:dirMatriz, nil, info_tributaria.dir_matriz}
+      ]
+      |> add_agente_retencion(info_tributaria)
+      |> add_contribuyente_rimpe(info_tributaria)
 
     {
       :infoTributaria,
@@ -110,6 +111,12 @@ defmodule CentrixCore.Dataset.NotaCredito.InfoTributaria do
   defp add_agente_retencion(doc, %{agente_retencion: agente_retencion}) do
     agente_retencion = agente_retencion |> Integer.to_string() |> String.pad_leading(8, "0")
 
-    List.insert_at(doc, 2, {:agente_retencion, nil, agente_retencion})
+    doc ++ [{:agenteRetencion, nil, agente_retencion}]
+  end
+
+  defp add_contribuyente_rimpe(doc, %{contribuyente_rimpe: nil}), do: doc
+
+  defp add_contribuyente_rimpe(doc, %{contribuyente_rimpe: contribuyente_rimpe}) do
+    doc ++ [{:contribuyenteRimpe, nil, contribuyente_rimpe}]
   end
 end
