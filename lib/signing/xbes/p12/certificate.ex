@@ -56,24 +56,47 @@ defmodule CentrixCore.Xbes.P12.Certificate do
     |> Base.encode64()
   end
 
-  # Reference Codes: https://www.cryptosys.net/pki/manpki/pki_distnames.html
+  # Formats the issuer the same way `openssl x509 -issuer` prints it
+  # (e.g. "C=EC, O=SECURITY DATA S.A. 2, OU=..., CN=..."), but by reading the
+  # certificate's own Issuer Name structure instead of parsing openssl's
+  # text output — nothing here shells out to `openssl` any more (see
+  # CentrixCore.Signing.Pkcs12).
   def issuer_name_from_pem(pem_file) do
-    ~r/^issuer=(.+)$/m
-    |> Regex.run(pem_file)
-    |> List.last()
-    |> String.replace(~r/[\/]/, ", ")
-    |> String.replace(~r/^, /, "")
+    {pem, _index} = pem_decode(pem_file)
 
-    # ssl =
-    #   pem
-    #   |> List.wrap()
-    #   |> :public_key.pem_encode()
-    #   |> EasySSL.parse_pem()
+    issuer =
+      pem
+      |> :public_key.pem_entry_decode()
+      |> elem(1)
+      |> elem(4)
 
-    # ssl[:issuer].aggregated
-    # |> String.replace(~r/[\/]/, ", ")
-    # |> String.replace(~r/^, /, "")
+    format_name(issuer)
   end
+
+  defp format_name({:rdnSequence, rdns}) do
+    rdns
+    |> Enum.map(fn [{:AttributeTypeAndValue, oid, value}] ->
+      "#{attribute_type_short_name(oid)} = #{directory_string_to_binary(value)}"
+    end)
+    |> Enum.join(", ")
+  end
+
+  defp attribute_type_short_name({2, 5, 4, 3}), do: "CN"
+  defp attribute_type_short_name({2, 5, 4, 5}), do: "serialNumber"
+  defp attribute_type_short_name({2, 5, 4, 6}), do: "C"
+  defp attribute_type_short_name({2, 5, 4, 7}), do: "L"
+  defp attribute_type_short_name({2, 5, 4, 8}), do: "ST"
+  defp attribute_type_short_name({2, 5, 4, 10}), do: "O"
+  defp attribute_type_short_name({2, 5, 4, 11}), do: "OU"
+  defp attribute_type_short_name(oid), do: inspect(oid)
+
+  defp directory_string_to_binary({:utf8String, value}), do: value
+  defp directory_string_to_binary({:printableString, value}), do: List.to_string(value)
+  defp directory_string_to_binary({:teletexString, value}), do: List.to_string(value)
+  defp directory_string_to_binary({:universalString, value}), do: List.to_string(value)
+  defp directory_string_to_binary({:bmpString, value}), do: List.to_string(value)
+  defp directory_string_to_binary(value) when is_list(value), do: List.to_string(value)
+  defp directory_string_to_binary(value) when is_binary(value), do: value
 
   def validity_from_pem(pem) do
     validity =

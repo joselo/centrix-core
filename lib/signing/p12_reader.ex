@@ -1,6 +1,8 @@
 defmodule CentrixCore.P12Reader do
   @moduledoc false
 
+  alias CentrixCore.Signing.Pkcs12
+
   def read(path, password) do
     case read_cert(path, password) do
       {:ok, cert} ->
@@ -32,92 +34,61 @@ defmodule CentrixCore.P12Reader do
   end
 
   defp extract_expiration_date(cert_pem) do
-    temp_path = Path.join(System.tmp_dir!(), "cert_#{:erlang.unique_integer([:positive])}.pem")
-    File.write!(temp_path, cert_pem)
+    [pem_entry] = :public_key.pem_decode(cert_pem)
 
-    case System.cmd("openssl", ["x509", "-enddate", "-noout", "-in", temp_path]) do
-      {output, 0} ->
-        File.rm(temp_path)
-        parse_expiration_date(output)
+    # Same access pattern as CentrixCore.Xbes.P12.Certificate.validity_from_pem/1:
+    # pem_entry_decode/1 -> Certificate -> (elem 1) TBSCertificate -> (elem 5) Validity.
+    validity = pem_entry |> :public_key.pem_entry_decode() |> elem(1) |> elem(5)
 
-      {error, _} ->
-        File.rm(temp_path)
-        {:error, error}
+    case validity do
+      {:Validity, _not_before, not_after} -> asn1_time_to_date(not_after)
+      _ -> {:error, "Could not find expiration date in certificate"}
     end
   end
 
-  defp parse_expiration_date(output) do
-    case Regex.run(~r/notAfter=(.*)/, output) do
-      [_, date_str] ->
-        normalized_date = date_str |> String.trim() |> String.replace(~r/\s+/, " ")
-
-        case Timex.parse(normalized_date, "{Mshort} {D} {h24}:{m}:{s} {YYYY} GMT") do
-          {:ok, datetime} -> {:ok, NaiveDateTime.to_date(datetime)}
-          {:error, _} -> {:error, "Could not parse date: #{normalized_date}"}
-        end
-
-      _ ->
-        {:error, "Could not find expiration date in openssl output"}
-    end
+  defp asn1_time_to_date({:utcTime, time}) do
+    <<yy::binary-2, mm::binary-2, dd::binary-2, _rest::binary>> = List.to_string(time)
+    year = String.to_integer(yy)
+    full_year = if year >= 50, do: 1900 + year, else: 2000 + year
+    Date.new(full_year, String.to_integer(mm), String.to_integer(dd))
   end
+
+  defp asn1_time_to_date({:generalTime, time}) do
+    <<yyyy::binary-4, mm::binary-2, dd::binary-2, _rest::binary>> = List.to_string(time)
+    Date.new(String.to_integer(yyyy), String.to_integer(mm), String.to_integer(dd))
+  end
+
+  defp asn1_time_to_date(_), do: {:error, "unsupported certificate time format"}
 
   def read_cert(path, password) do
-    options = [
-      "pkcs12",
-      "-in",
-      path,
-      "-clcerts",
-      "-nokeys",
-      "-passin",
-      "pass:#{password}"
-    ]
-
-    options = legacy_options(options)
-
-    case System.cmd("openssl", options, stderr_to_stdout: true) do
-      {cert, 0} -> {:ok, cert}
-      {error, 1} -> {:error, error}
+    with {:ok, %{cert_der: cert_der}} <- extract(path, password) do
+      {:ok, :public_key.pem_encode([{:Certificate, cert_der, :not_encrypted}])}
     end
   end
 
   def read_rsa(path, password) do
-    options = [
-      "pkcs12",
-      "-in",
-      path,
-      "-nocerts",
-      "-nodes",
-      "-passin",
-      "pass:#{password}"
-    ]
-
-    options = legacy_options(options)
-
-    case System.cmd("openssl", options, stderr_to_stdout: true) do
-      {rsa, 0} -> {:ok, rsa}
-      {error, 1} -> {:error, error}
+    with {:ok, %{key_der: key_der}} <- extract(path, password) do
+      {:ok, :public_key.pem_encode([{:PrivateKeyInfo, key_der, :not_encrypted}])}
     end
   end
 
-  defp legacy_options(options) do
-    {major, minor, _patch} = openssl_version()
+  defp extract(path, password) do
+    case File.read(path) do
+      {:ok, der} ->
+        case Pkcs12.extract(der, password) do
+          {:ok, result} -> {:ok, result}
+          # A wrong password corrupts the padding/ASN.1 we then try to
+          # decrypt and parse, which surfaces as a garbled-structure error
+          # from deep inside the DER walker rather than a clean reason — same
+          # end-user-visible case openssl's own "invalid password" used to
+          # cover, and just as unspecific about *why* parsing failed.
+          {:error, _reason} -> {:error, "invalid password"}
+        end
 
-    if major > 3 or (major == 3 and minor >= 0) do
-      options ++ ["-legacy"]
-    else
-      options
+      {:error, reason} ->
+        {:error, "could not read #{path}: #{:file.format_error(reason)}"}
     end
-  end
-
-  defp openssl_version do
-    {output, 0} = System.cmd("openssl", ["version"])
-
-    case Regex.run(~r/OpenSSL (\d+)\.(\d+)\.(\d+)/, output) do
-      [_, major, minor, patch] ->
-        {String.to_integer(major), String.to_integer(minor), String.to_integer(patch)}
-
-      _ ->
-        {0, 0, 0}
-    end
+  rescue
+    _ -> {:error, "invalid password"}
   end
 end
