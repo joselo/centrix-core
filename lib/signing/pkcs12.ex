@@ -37,6 +37,12 @@ defmodule CentrixCore.Signing.Pkcs12 do
   @aes_192_cbc_oid {2, 16, 840, 1, 101, 3, 4, 1, 22}
   @aes_256_cbc_oid {2, 16, 840, 1, 101, 3, 4, 1, 42}
 
+  @hmac_sha1 {1, 2, 840, 113549, 2, 7}
+  @hmac_sha224 {1, 2, 840, 113549, 2, 8}
+  @hmac_sha256 {1, 2, 840, 113549, 2, 9}
+  @hmac_sha384 {1, 2, 840, 113549, 2, 10}
+  @hmac_sha512 {1, 2, 840, 113549, 2, 11}
+
   @local_key_id {1, 2, 840, 113549, 1, 9, 21}
 
   @doc """
@@ -228,7 +234,17 @@ defmodule CentrixCore.Signing.Pkcs12 do
          ciphertext
        ) do
     {:sequence, [{:oid, @pbkdf2}, {:sequence, kdf_params}]} = kdf_alg_id
-    [{:octet_string, salt}, {:integer, iterations} | _rest] = kdf_params
+    [{:octet_string, salt}, {:integer, iterations} | rest] = kdf_params
+
+    # PBKDF2-params ::= SEQUENCE { salt, iterationCount, keyLength OPTIONAL,
+    # prf AlgorithmIdentifier DEFAULT hmacWithSHA1 } — `rest` holds whichever
+    # of the two optional fields are present; keyLength is a bare INTEGER,
+    # prf is the only SEQUENCE, so it's the only one we need to look for.
+    prf_hash =
+      Enum.find_value(rest, :sha, fn
+        {:sequence, [{:oid, prf_oid} | _]} -> pbkdf2_prf_hash(prf_oid)
+        _ -> nil
+      end)
 
     {:sequence, [{:oid, enc_oid}, {:octet_string, iv}]} = enc_scheme_alg_id
 
@@ -240,10 +256,17 @@ defmodule CentrixCore.Signing.Pkcs12 do
         @aes_256_cbc_oid -> {:aes_256_cbc, 32}
       end
 
-    key = :crypto.pbkdf2_hmac(:sha, password, salt, iterations, key_len)
+    key = :crypto.pbkdf2_hmac(prf_hash, password, salt, iterations, key_len)
     padded = :crypto.crypto_one_time(cipher, key, iv, ciphertext, false)
     {:ok, remove_pkcs5_padding(padded)}
   end
+
+  defp pbkdf2_prf_hash(@hmac_sha1), do: :sha
+  defp pbkdf2_prf_hash(@hmac_sha224), do: :sha224
+  defp pbkdf2_prf_hash(@hmac_sha256), do: :sha256
+  defp pbkdf2_prf_hash(@hmac_sha384), do: :sha384
+  defp pbkdf2_prf_hash(@hmac_sha512), do: :sha512
+  defp pbkdf2_prf_hash(_unknown), do: :sha
 
   defp remove_pkcs5_padding(data) do
     pad = :binary.last(data)
