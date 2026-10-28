@@ -2,6 +2,12 @@ defmodule CentrixCore.RidePdfBuilder do
   @moduledoc """
   Generic RIDE PDF Builder.
   Handles layout and dispatching for different SRI documents.
+
+  ## Options
+
+    * `:footer_note` - a short line under the page number of every page (e.g. what the document was made with).
+      None by default: the library puts no name of its own on the document.
+    * `:producer` - the "producer" and "creator" of the PDF's properties. Defaults to `"CentrixCore"`.
   """
 
   @table_opts [
@@ -28,8 +34,9 @@ defmodule CentrixCore.RidePdfBuilder do
     }
   ]
 
-  def build(xml_map, logo_path \\ nil, bar_code_path \\ nil) do
+  def build(xml_map, logo_path \\ nil, bar_code_path \\ nil, opts \\ []) do
     document = xml_map.document
+    producer = Keyword.get(opts, :producer, "CentrixCore")
     symbol = currency_symbol(document.currency)
 
     # Prepare totals table
@@ -56,6 +63,7 @@ defmodule CentrixCore.RidePdfBuilder do
       |> Map.put(:totals_row_count, length(totals_table))
       |> Map.put(:items, formatted_items)
       |> Map.put(:currency_symbol, symbol)
+      |> Map.put(:footer_note, footer_note(opts))
 
     {:ok, pdf} = Pdf.new(size: :a4, compress: false)
 
@@ -63,8 +71,8 @@ defmodule CentrixCore.RidePdfBuilder do
       pdf
       |> Pdf.set_info(
         title: "RIDE - #{document.invoice_number}",
-        producer: "CentrixCore",
-        creator: "CentrixCore",
+        producer: producer,
+        creator: producer,
         created: Date.utc_today(),
         modified: Date.utc_today(),
         author: document.business_name
@@ -276,7 +284,29 @@ defmodule CentrixCore.RidePdfBuilder do
         rows: %{row_count => [bold: true, background: :gainsboro]}
       )
 
-    Pdf.text_wrap!(pdf, {20, 100}, {width - 40, 20}, "Página #{page_number}", align: :center)
+    pdf
+    |> Pdf.text_wrap!({20, 100}, {width - 40, 20}, "Página #{page_number}", align: :center)
+    |> add_footer_note(Map.get(doc, :footer_note), width)
+  end
+
+  # Small and grey at the foot of the page, about 1 cm from its edge (printers leave the last 5 mm blank), so it never
+  # competes with what the SRI asks the document to say. Its place does not depend on the page number.
+  defp add_footer_note(pdf, nil, _width), do: pdf
+
+  defp add_footer_note(pdf, note, width) do
+    pdf
+    |> Pdf.set_font_size(6)
+    |> Pdf.set_fill_color(:gray)
+    |> Pdf.text_wrap!({20, 34}, {width - 40, 10}, note, align: :center)
+    |> Pdf.set_fill_color(:black)
+    |> Pdf.set_font_size(7)
+  end
+
+  defp footer_note(opts) do
+    case Keyword.get(opts, :footer_note) do
+      note when is_binary(note) and note != "" -> note
+      _none -> nil
+    end
   end
 
   defp add_table({pdf, :complete}, _doc, _l, _b), do: pdf
