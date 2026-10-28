@@ -48,4 +48,33 @@ defmodule CentrixCore.RideEngineTest do
     assert is_binary(pdf_binary)
     assert String.starts_with?(pdf_binary, "%PDF")
   end
+
+  describe "footer note" do
+    setup do
+      %{parsed: DocumentXmlParser.parse_xml(File.read!(@invoice_fixture))}
+    end
+
+    test "is written on the page when given", %{parsed: parsed} do
+      pdf = RidePdfBuilder.build(parsed, nil, nil, footer_note: "Generado con Centrix · centrix.ec")
+
+      assert pdf =~ "Generado con Centrix"
+      # the page number is still there (the PDF keeps its text in WinAnsi, not UTF-8)
+      assert pdf =~ "gina 1"
+    end
+
+    test "is not there by default: the library puts no name of its own", %{parsed: parsed} do
+      pdf = RidePdfBuilder.build(parsed)
+
+      refute pdf =~ "Generado con"
+      assert pdf =~ "CentrixCore"
+    end
+
+    test "an empty note is no note, and the producer can be named", %{parsed: parsed} do
+      pdf = RidePdfBuilder.build(parsed, nil, nil, footer_note: "", producer: "Centrix")
+
+      refute pdf =~ "Generado con"
+      assert pdf =~ "Centrix"
+      refute pdf =~ "CentrixCore"
+    end
+  end
 end
